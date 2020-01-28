@@ -9,3 +9,12 @@
 java -> byte code -> JVM(번역) -> OS
 
 JVM 만 해당 OS 타입에 맞게 번역 해주면 됨
+
+```java
+public class test{
+  public void test(){
+    return 0;
+  }
+}
+
+```
