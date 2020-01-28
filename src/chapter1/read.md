@@ -10,6 +10,7 @@ java -> byte code -> JVM(번역) -> OS
 
 JVM 만 해당 OS 타입에 맞게 번역 해주면 됨
 
+<<<<<<< HEAD
 ##### 2. 타입
 int(4byte) 보다 작은 타입의 정수 계산은 int 타입을 기본으로 한다.<br>
 연산자의 크기가 4byte 기 때문
