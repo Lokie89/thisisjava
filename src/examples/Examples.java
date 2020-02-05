@@ -1,4 +1,4 @@
-package chapter3;
+package examples;
 
 public class Examples {
     public static void main(String[] args) {

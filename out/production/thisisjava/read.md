@@ -76,31 +76,9 @@ JVM이 실행되면 운영체제에서 메모리 영역을 할당 받는다
     
 #### 7. main() 메소드
 ```java
-class MainStringArrayArgument {
-    public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("프로그램의 사용법");
-            System.out.println("java MainStringArrayArgument num1 num2");
-            System.exit(0);
-        }
-        String strNum1 = args[0];
-        String strNum2 = args[1];
-
-        int num1 = Integer.parseInt(strNum1);
-        int num2 = Integer.parseInt(strNum2);
-        int result = num1 + num2;
-        System.out.println(num1 + " + " + num2 + " = " + result);
-    }
+public static void main(String[] args){
+    if(args.length != 2){
+        
+    }     
 }
 ```
-    run configuration 에서 arguments 를 10 20 으로 수정하면 10 + 20 = 30
-    근데 이거 어디다가 쓰는건지 모르겠음
-    Command line 에서 java 파일을 실행할때 ( class 파일로 변환하여 main 함수 실행 )
-    뒤쪽에 옵션 형태로 입력 하면 String[] args 배열로 그 문자들이 들어옴
-    e.g) javac Foo.java
-        java Foo 111 222 333 444
-        -> main 함수의 String[] args = {"111","222","333","444"} 로 입력되어 실행
-        
-#### 8. 다차원 배열
-배열 안의 배열, 맨 안쪽 배열 힙 영역에 생성, 안쪽배열의 주소값 '도' 힙영역에 생성
-가장 바깥쪽 배열의 주소값만 스택영역에 저장 
