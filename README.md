@@ -10,7 +10,6 @@ java -> byte code -> JVM(번역) -> OS
 
 JVM 만 해당 OS 타입에 맞게 번역 해주면 됨
 
-<<<<<<< HEAD
 #### 2. 타입
 int(4byte) 보다 작은 타입의 정수 계산은 int 타입을 기본으로 한다.<br>
 연산자의 크기가 4byte 기 때문
@@ -104,3 +103,46 @@ class MainStringArrayArgument {
 #### 8. 다차원 배열
 배열 안의 배열, 맨 안쪽 배열 힙 영역에 생성, 안쪽배열의 주소값 '도' 힙영역에 생성
 가장 바깥쪽 배열의 주소값만 스택영역에 저장 
+
+#### 9. ENUM
+```java
+public enum Week {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}
+```
+열거형 상수 enum 은 Method 영역에 생성, 한 상수가 객체형이므로 Heap 영역에 한 상수 당 한 객체(위에선 Week)가 생성된다.<br>
+위의 enum 에선 7개의 Week 객체가 Heap 영역에 생성되며 열거형 상수 값을 들고있다.<br>
+열거형 상수의 값을 다른 객체에 대입 하였을 경우
+```java
+Week today = Week.SUNDAY;
+```
+Method 영역에 들어가있는 주소 값 (Heap 영역의 SUNDAY 상수 값을 가진 Week 객체)<br>
+Stack 영역의 today 변수에 넣는다.<br>
+그러므로 Stack 영역의 today 변수와 Method 영역의 SUNDAY 변수는 같은 주소 값(Heap 영역의 SUNDAY 상수 값을 가진 Week 객체)를 갖게 된다.
+```java
+today == Week.SUNDAY // true
+```
+
+###### ENUM method
+```java
+class enumMethod{
+    public static void main(String[] args) {
+        System.out.println(Week.SUNDAY.name()); // 열거 타입을 정의할 때 사용한 상수 이름
+        System.out.println(Week.FRIDAY.ordinal()); // 열거 객체가 전체 열거 객체에서 몇 번째 순번
+        System.out.println(Week.FRIDAY.compareTo(Week.MONDAY)); // 앞.compareTo(뒤) 뒤에 객체 기준 앞에 객체 순번차이
+        System.out.println(Week.valueOf("SATURDAY")); // 매개값과 동일한 문자열을 가지는 객체 반환
+        System.out.println();
+        Week[] values = Week.values(); // 전체 열거 객체를 배열로 반환
+        for(Week value : values){
+            System.out.println(value);
+        }
+    }
+}
+```
+ 
