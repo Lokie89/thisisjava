@@ -19,3 +19,21 @@ public class Car {
         this.maxSpeed = maxSpeed;
     }
 }
+
+class Television {
+    static String company = "SAMSUNG";
+    static String model = "LCD";
+    static String info;
+    static String info2 = company + " - " + model;
+
+    static {
+        info = company + " - " + model;
+    }
+}
+
+class TelevisionExample {
+    public static void main(String[] args) {
+        System.out.println(Television.info);
+        System.out.println(Television.info2);
+    }
+}

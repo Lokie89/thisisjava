@@ -168,4 +168,63 @@ public class Car {
     }
 }
 ```
- 
+
+#### 11. 메소드 선언 시 매개변수의 수를 모를 경우
+```java
+public class Dontknow {
+    public static void main(String[] args) {
+        int[] values = {1, 2, 3};
+        dontknow(values);
+        int value = 1;
+        int value2 = 2;
+        dontknow2(value, value2);
+        dontknow2(values);
+    }
+
+    public static void dontknow(int[] values) {
+        for (int i = 0; i < values.length; i++) {
+            System.out.println(values[i]);
+        }
+    }
+
+    public static void dontknow2(int... values) {
+        for (int i = 0; i < values.length; i++) {
+            System.out.println(values[i]);
+        }
+    }
+}
+```
+    배열 변수 또는 ... 매개 변수를 통해 수를 예상 하지 못하는 상황에 대비할 수 있다.
+
+#### 12. 정적 멤버 ( 메소드 ) 선언
+    메소드의 경우, 인스턴스 메소드르 선언할 것인가, 아니면 정적 메소드로 선언할 것인가의 판단 기준은
+    '인스턴스 필드' 를 이용해서 실행해야 한다면 인스턴스 메소드,
+    '인스턴스 필드' 를 이용하지 않는다면 정적 메소드로 선언
+```java
+public class Calculator{
+    String color;                                       // 인스턴스 필드
+    void setColor(String color){ this.color = color; }  // 인스턴스 메소드
+    static int plus(int x, int y) { return x + y; }     // 정적 메소드
+    static int minus(int x, int y) { return x - y; }    // 정적 메소드
+}
+```
+
+#### 13. 정적 블록
+    정적 필드 선언 할 때 계산이 필요한 경우
+```java
+class Television {
+    static String company = "SAMSUNG";
+    static String model = "LCD";
+    static String info;
+    static String info2 = company + " - " + model; 
+
+    static {
+        info = company + " - " + model;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(info);   // 둘다 가틍ㄴ 결과
+        System.out.println(info2);
+    }
+}
+```
