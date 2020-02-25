@@ -228,3 +228,67 @@ class Television {
     }
 }
 ```
+
+#### 14. 어노테이션 타입 정의와 적용 ( ★ 다시 공부 )
+    어노테이션 타입의 엘리먼트는 기본 데이터 타입, 열거 타입, Class 타입, 이들의 배열 타입을 사용
+    엘리먼트의 default 값이 없을 경우 선언 시 반드시 기술
+    기본 엘리먼트는 value
+```java
+public @interface Annotation {
+    String value();
+    String elementName1();
+    int elementName2() default 5;
+}
+```
+#### 15. 어노테이션 적용 대상 ( ★ 다시 공부 )
+    ElementType 열거 상수에 따른 적용 대상
+    TYPE                :       클래스, 인터페이스, 열거 타입
+    ANNOTATION_TYPE     :       어노테이션
+    FIELD               :       필드
+    CONSTRUCTOR         :       생성자
+    METHOD              :       메소드
+    LOCAL_VARIABLE      :       로컬변수
+    PACKAGE             :       패키지
+
+```java
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@interface Annotation2 {
+
+}
+
+@Annotation2
+class testAnnotation2 {
+    
+    @Annotation2
+    final int a = 1;
+    
+    //    @Annotation2       - 적용안됨
+    public testAnnotation2() {
+
+    }
+
+    @Annotation2
+    public void test2() {
+
+    }
+}
+```
+    위의 예시처럼 어노테이션이 적용될 대상을 한정할때는 @Target 어노테이션을 사용하여 정의
+#### 16. 어노테이션 유지 정책 ( ★ 다시 공부 )
+    어노테이션 정의 시 사용 용도에 따라 어느 범위까지 유지할 것인지 지정해야함
+    java.lang.annotation.RetentionPolicy 의 열거상수로 정의
+    
+    RetentionPolicy 열거 상수
+        SOURCE : 소스상에서만 어노테이션 정보를 유지함, 소스 코드 분석때만 의미가 있으면 바이트 코드에는 남지않는다.
+        CLASS : 바이트 코드 파일까지 정보를 유지한다. 하지만 리플렉션을 이용하여 정보를 얻을 수 없다.
+        RUNTIME : 바이트 코드 파일까지 정보를 유지한다. 리플렉션을 이용하여 정보를 얻을 수 있다.
+        
+```java
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@interface Annotation3{
+    
+}
+```
+
+#### 17. 런타임 시 어노테이션 정보 사용하기
