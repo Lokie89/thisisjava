@@ -61,3 +61,9 @@ class enumMethod{
         }
     }
 }
+class a{
+    public a(){
+        System.out.println("a");
+    }
+    int a;
+}

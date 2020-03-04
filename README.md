@@ -15,34 +15,50 @@ int(4byte) 보다 작은 타입의 정수 계산은 int 타입을 기본으로 �
 연산자의 크기가 4byte 기 때문
 
 ```java
-byte b = 4;
-byte result = b + b; // 컴파일 에러
+class CompileError{
+    public static void main(String[] args){
+        byte b = 4;
+        byte result = b + b; // 컴파일 에러
+    }
+}
 ```
 
 #### 3. 쓰레기값 생성
 가수를 사용하는 부동소수점 타입 (float, double) 은 0.1을 정확하게 표현할 수 없어 근사치로 처리함<br>
 만약 정확하게 표현하고 싶으면 int 형으로 변경후 계산 
 ```java
-int apple = 1;
-double pieceUnit = 0.1;
-int number = 7;
-double result = apple - number * pieceUnit; // 쓰레기값 생성
-System.out.println(result); // 0.29999999999999993
+class Trash{
+    public static void main(String[] args){
+        int apple = 1;
+        double pieceUnit = 0.1;
+        int number = 7;
+        double result = apple - number * pieceUnit; // 쓰레기값 생성
+        System.out.println(result); // 0.29999999999999993
+    }
+}
 ```
 
 ```java
-double v4 = 0.1;
-float v5 = 0.1f;
-System.out.println(v4 == v5); // false
+class Bit{
+    public static void main(String[] args){
+        double v4 = 0.1;
+        float v5 = 0.1f;
+        System.out.println(v4 == v5); // false
+    }
+}
 ```
 
 #### 4. 비트 논리 연산자
 2진법으로 바꾼 후 같은 자리수를 연산하여 나타냄
 ```java
-System.out.println("45 & 25 = " + (45 & 25)); // 45 & 25 = 9
-System.out.println("45 | 25 = " + (45 | 25)); // 45 | 25 = 61
-System.out.println("45 ^ 25 = " + (45 ^ 25)); // 45 ^ 25 = 52
-System.out.println("~45 = " + (~45)); // ~45 = -46
+class Bit{
+    public static void main(String[] args){
+        System.out.println("45 & 25 = " + (45 & 25)); // 45 & 25 = 9
+        System.out.println("45 | 25 = " + (45 | 25)); // 45 | 25 = 61
+        System.out.println("45 ^ 25 = " + (45 ^ 25)); // 45 ^ 25 = 52
+        System.out.println("~45 = " + (~45)); // ~45 = -46
+    }   
+}
 ```
 
 #### 5. 비트 이동 연산자
@@ -51,9 +67,13 @@ a << b  : 정수 a를 b만큼 왼쪽으로 이동 (빈칸은 0으로 채움)<br>
 a >> b  : 정수 a를 b만큼 오른쪽으로 이동 (빈칸은 부호비트로 채움 -일때는 1 +일때는 0)<br>
 a >>> b : 정수 a를 b만큼 오른쪽으로 이동 (빈칸은 0으로 채움)
 ```java
-System.out.println("1 << 3 = " + (1 << 3));     // 1 << 3 = 8
-System.out.println("-8 >> 3 = " + (-8 >> 3));   // -8 >> 3 = -1
-System.out.println("-8 >>> 3 = " + (-8 >>> 3)); // -8 >>> 3 = 536870911
+class Bit{
+    public static void main(String[] args){
+        System.out.println("1 << 3 = " + (1 << 3));     // 1 << 3 = 8
+        System.out.println("-8 >> 3 = " + (-8 >> 3));   // -8 >> 3 = -1
+        System.out.println("-8 >>> 3 = " + (-8 >>> 3)); // -8 >>> 3 = 536870911
+    }
+}
 ```
 
 #### 6. 메모리 사용 영역
@@ -120,13 +140,21 @@ public enum Week {
 위의 enum 에선 7개의 Week 객체가 Heap 영역에 생성되며 열거형 상수 값을 들고있다.<br>
 열거형 상수의 값을 다른 객체에 대입 하였을 경우
 ```java
-Week today = Week.SUNDAY;
+class EnumWeekExample{
+    public static void main(String[] args){
+        Week today = Week.SUNDAY;
+    }
+}
 ```
 Method 영역에 들어가있는 주소 값 (Heap 영역의 SUNDAY 상수 값을 가진 Week 객체)<br>
 Stack 영역의 today 변수에 넣는다.<br>
 그러므로 Stack 영역의 today 변수와 Method 영역의 SUNDAY 변수는 같은 주소 값(Heap 영역의 SUNDAY 상수 값을 가진 Week 객체)를 갖게 된다.
 ```java
-today == Week.SUNDAY // true
+class EnumWeekExample{
+    public static void main(String[] args){
+        today == Week.SUNDAY; // true
+    }
+}
 ```
 
 ###### ENUM method
@@ -291,4 +319,75 @@ class testAnnotation2 {
 }
 ```
 
-#### 17. 런타임 시 어노테이션 정보 사용하기
+#### 17. 런타임 시 어노테이션 정보 사용하기 ( ★ 다시 공부 )
+    리플렉션을 이용해 어노테이션의 적용여부와 엘리먼트값을 읽을 수 있음.
+    Field[]         getFields()             필드 정보를 Field 배열로 리턴
+    Constructor[]   getConstuctors()        생성자 정보를 Constructor 배열로 리턴
+    Method[]        getDeclaredMethods()    메소드 정보를 Method 배열로 리턴
+    
+    Class, Field, Constructor, Method가 가지고 있는 다음 메소드를 호출하여 어노테이션 정보 얻음
+    리턴 타입           메소드명
+    boolean         isAnnotationPresent( Class<? extends Annotation> annotationClass )
+                    지정한 어노테이션이 적용되었는지 여부, Class 에서 호출했을 때 상위클래스에
+                    적용된 경우에도 true 리턴
+                   
+    Annotation      getAnnotation( Class<T> annotationClass )
+                    지정한 어노테이션이 적용되어 있으면 어노테이션을 리턴 else null
+                    Class에서 호출했을 때 상위 클래스에 적용된 경우에도 어노테이션을 리턴
+    
+    Annotation[]    getAnnotations()
+                    적용된 모든 어노티에션을 리턴, Class에서 호출했을 때 상위 클래스에
+                    적용된 어노테이션도 모두 포함된다. 없을때는 길이가 0인 배열을 리턴
+    
+    Annotation[]    getDeclaredAnnotations()
+                    직접 적용된 모든 어노테이션을 리턴한다. Class에서 호출했을 때
+                    상위 클래스에 적용된 어노테이션은 포함하지 않는다.
+```java
+@Target(ElementType.METHOD) // 적용 범위 지정
+@Retention(RetentionPolicy.RUNTIME) // 대부분 RUNTIME
+public @interface PrintAnnotation { // 인터페이스 생성
+    String value() default "-"; // String value default "-"
+    int number() default 15;
+}
+
+
+class Service {
+
+    @PrintAnnotation // default 값을 가지고 있는 PrintAnnotation 지정?
+    public void method1() {
+        System.out.println("example 1");
+    }
+
+    @PrintAnnotation("*") // value 값 * 로 초기화 시킨 PrintAnnotation 지정?
+    public void method2() {
+        System.out.println("example 2");
+    }
+
+    @PrintAnnotation(value = "#", number = 20) // value 값 # number 20 으로 초기화 시킨 PrintAnnotation 지정?
+    public void method3() {
+        System.out.println("example 3");
+    }
+}
+
+class PrintAnnotationExample {
+    public static void main(String[] args) {
+        Method[] declaredMethods = Service.class.getDeclaredMethods(); // Method 정보를 리턴
+
+        for (Method method : declaredMethods) {
+            if (method.isAnnotationPresent(PrintAnnotation.class)) { // Annotation 이 지정되었다면
+                PrintAnnotation printAnnotation = method.getAnnotation(PrintAnnotation.class); // Annotation 을 가져온다
+                System.out.println(method.getName()); // method 이름을 출력한다
+                for (int i = 0; i < printAnnotation.number(); i++) { // Annotation number 값을 가져온다
+                    System.out.print(printAnnotation.value()); // Annotation value 값을 가져온다.
+                }
+                System.out.println();
+                try {
+                    method.invoke(new Service()); // 생성된 객체에 해당하는 method 를 호출한다
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+```        
