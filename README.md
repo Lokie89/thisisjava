@@ -390,4 +390,158 @@ class PrintAnnotationExample {
         }
     }
 }
-```        
+```
+
+#### 18. 상속 ( 오버라이딩 )
+    규칙
+        1. 부모의 메소드와 동일한 시그너처( 리턴 타입, 메소드 이름, 매개 변수 리스트 ) 를 가져야 한다.
+        2. 접근 제한을 더 강하게 오버라이딩할 수 없다.
+        3. 새로운 예외( Exception )를 throws 할 수 없다.
+        
+```java
+public class Calculator {
+    double areaCircle(double r) {
+        System.out.println("Calculator 객체의 areaCircle 실행");
+        return 3.14159 * r * r;
+    }
+}
+
+class Computer extends Calculator {
+
+    // 1. 리턴 타입 변경 : Error, 메소드 이름 변경 : 부모 메소드 호출, 매개 변수 리스트 변경 : 부모 메소드 호출 ( overloading )
+    // 2. private 으로 접근 제한자 변경 : Error
+    // 3. 메소드의 throws Exception 을 맞춰야 한다는 뜻같은데 RuntimeException 은 허용됨? 
+    @Override
+    double areaCircle(double r) {  
+        System.out.println("Computer 객체의 areaCircle 실행");
+        return Math.PI * r * r;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Computer computer = new Computer();
+        System.out.println(computer.areaCircle(3));
+    }
+}
+```
+### 19. final
+    클래스 선언 시 final 키워드를 붙이면 상속할 수 없는 클래스가 된다.
+```java
+public final class FinalClass {
+}
+
+class ChildClass extends FinalClass { // FinalClass 에러
+    
+}
+```
+    메소드 선언 시 final 키워드를 붙이면 Override 할수 없는 메소드가 된다.
+```java
+public class FinalClass {
+    public final void p(){
+        System.out.println("final");
+    }
+}
+
+class ChildClass extends FinalClass{
+    public void p() { // 에러 발생
+        System.out.println("final child");
+    }
+}
+```
+### 20. 자동 타입 변환
+    부모클래스 변수 = 자식클래스타입; // 이때 자식클래스 타입을 대입하여도 부모클래스로 자동 타입변환이 일어남
+    
+```java
+// Cat 클래스가 Animal 클래스를 상속 받았다고 하자.
+
+public class Animal {
+    public void method1(){
+        System.out.println("Animal");
+    }
+    public void method2(){}
+}
+
+class Cat extends Animal{
+    public void method1(){
+        System.out.println("Cat");
+    }
+    public void method2(){}
+    public void method3(){}
+}
+
+class Main3{
+    public static void main(String[] args) {
+        Cat cat = new Cat();
+        Animal animal = cat; // 이때 animal 변수와 cat 변수는 같은 주소값을 가지고 있다.
+        System.out.println(animal==cat); // true 동일한 Cat 객체를 가리키고 있다.
+        cat.method3(); // 호출 가능
+        animal.method3(); // 호출 불가능
+
+        cat.method1(); // Cat 
+        animal.method1(); // Cat
+        Animal animal2 = new Animal();
+        animal2.method1(); // Animal
+    }
+}
+```
+### 21. instanceof
+    boolean result = 객체 instanceof 타입
+    e.g) boolean isChild = parent instanceof Child
+### 22. 추상클래스
+    접근제한자 abstract class 클래스명 {}
+    
+    실체 간에 공통되는 특성을 추출하여 선언한 클래스
+    new 로 객체를 생성할 수 없다.
+    
+    용도
+        1. 실체 클래스들의 공통된 필드와 메소드의 이름을 통일할 목적
+        2. 실체 클래스를 작성할 때 시간을 절약
+        
+        설계자가 코더들에게 설계 내용을 전달하면서 추상 클래스를 함께 전달
+        코더는 전달받은 추상 클래스를 공통적으로 갖고 하위 클래스를 작성한다.
+        
+### 23. 추상메소드
+    접근제한자(public || protect) abstract 리턴타입 메소드명 ( 매개변수 );
+    직접 구현하지 않고 실체 클래스가 공통적으로 가져야할 기능들을 정의. 만 한다.
+    실체클래스에 강제 구현
+    
+### 24. 인터페이스 사용 가능 Element
+    상수 필드
+        모든 필드는 컴파일 과정에서 상수 필드( final static ) 으로 변환됨
+        선언과 동시에 초기화 시켜줘야함
+    추상 메소드
+        기본 메소드는 모두 추상 메소드 자동으로 ( public abstract ) 가 붙음
+    디폴트 메소드
+        메소드 앞에 default 선언 모두 public 접근자를 갖는다. 
+    정적 메소드
+        메소드 앞에 static 선언 모두 public 접근자를 갖는다.
+        
+```java
+public interface RemoteController {
+    int MAX_VOLUME = 10;
+    int MIN_VOLUME = 0;
+    
+    void turnOn();
+    void turnOff();
+    void setVolume(int volume);
+    
+    default void setMute(boolean mute){
+        if(mute){
+            System.out.println("무음 처리 합니다.");
+            return;
+        }
+        System.out.println("무음 해제합니다.");
+    }
+    
+    static void changeBattery(){
+        System.out.println("건전지를 교환 합니다.");
+    }
+}
+```
+
+### 25. 인터페이스 디폴트 메소드의 필요성
+    인터페이스를 상속받은 클래스A가 있는데, 인터페이스의 기능을 확장 시켜야 할때
+    메소드를 추가하면 클래스 A에서 컴파일 에러가 발생, 따라서 영향 없이 메소드 추가가
+    가능하게 하기 위해 디폴트 메소드가 탄생함.
+    
