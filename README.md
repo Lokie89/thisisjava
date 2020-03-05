@@ -425,7 +425,7 @@ class Main {
     }
 }
 ```
-### 19. final
+### 19. final 클래스
     클래스 선언 시 final 키워드를 붙이면 상속할 수 없는 클래스가 된다.
 ```java
 public final class FinalClass {

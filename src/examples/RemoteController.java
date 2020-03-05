@@ -4,6 +4,8 @@ public interface RemoteController {
     int MAX_VOLUME = 10;
     int MIN_VOLUME = 0;
 
+    Main a = new Main();
+
     void turnOn();
     void turnOff();
     void setVolume(int volume);
