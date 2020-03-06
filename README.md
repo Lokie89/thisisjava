@@ -545,3 +545,136 @@ public interface RemoteController {
     메소드를 추가하면 클래스 A에서 컴파일 에러가 발생, 따라서 영향 없이 메소드 추가가
     가능하게 하기 위해 디폴트 메소드가 탄생함.
     
+### 26. 중첩클래스 사용 이유
+    두 클래스의 멤버들을 서로 쉽게 접근할 수 있다는 장점,
+    외부에는 불필요한 관계 클래스를 감출수 있어 코드의 복잡성이 줄어든다는 장점
+    
+### 27. 중첩클래스 바이트 코드 파일
+    중첩 클래스의 경우도 하나의 클래스이기 때문에 컴파일하면 별도로 바이트 코드 파일 생성
+    멤버 클래스 : 바깥클래스 $ 멤버클래스 .class
+    로컬 클래스 : 바깥클래스 $1 로컬클래스 .class
+### 28. 로컬클래스에서 사용 제한
+    로컬 클래스의 내부에서는 바깥 클래스의 필드나 메소드를 제한 없이 사용
+    그러나 메소드안의 매개 변수나 로컬 변수를 로컬 클래스에서 사용할 때,
+    로컬 클래스의 객체는 힙메모리에 존재하여 사용할 수 있지만 메소드의 매개변수나 로컬 변수는
+    실행이 끝나면 사라진다. 따라서 로컬 클래스에서 매개변수나 로컬 변수값을 사용할 때는
+    로컬 클래스 내부에 복사하여 사용 ( 자바 8부터는 자동으로 final 변수로 선언 )
+```java
+public class Outter {
+    // 자바 8 이전 버전
+    public void method1(final int arg) {
+        final int localVariable = 1;
+
+        class Inner {
+            public void method() {
+                int result = arg + localVariable;
+            }
+        }
+    }
+
+    // 자바 8 이후 버전
+    public void method2(int arg) {
+        int localVariable = 1;
+        class Inner {
+            public void method() {
+                int result = arg + localVariable;
+            }
+        }
+    }
+}
+```
+
+### 29. 중첩 클래스에서 바깥 클래스 참조 얻기
+    바깥 클래스의 참조를 얻을때는 바깥클래스.this.필드, 바깥클래스.this.메소드 로 호출할 수 있다.
+```java
+public class Outter {
+    String field = "Outter-Field";
+
+    void method() {
+        System.out.println("Outter-Method");
+    }
+
+    class Nested {
+        String field = "Nested-Field";
+
+        void method() {
+            System.out.println("Nested-Method");
+        }
+
+        void print() {
+            System.out.println(this.field); // 자신의 필드
+            this.method(); // 자신의 메소드
+            System.out.println(Outter.this.field); // 바깥 클래스 필드
+            Outter.this.method(); // 바깥 클래스 메소드
+        }
+    }
+
+}
+class Main6 {
+    public static void main(String[] args) {
+        Outter outter = new Outter();
+        Outter.Nested nested = outter.new Nested();
+        nested.print();
+    }
+}
+```
+### 30. 익명 객체 ( ★ 다시 공부 )
+    이름 없는 객체를 말한다.
+    단독으로 생성할 수 없고 클래스를 상속하거나 인터페이스를 구현해야만 생성할 수 있다.
+    필드의 초기값이나 로컬변수의 초기값, 매개 변수의 매개값으로 주로 대입된다.
+    UI 이벤트 처리 객체나 스레드 객체를 간편하게 생성할 목적으로 많이 활용된다.
+    
+    부모타입으로 선언, 자식 객체를 초기값으로 대입할 경우
+    
+    기본
+```java
+public class Parent {}
+class Child extends Parent{}
+class Another{
+    Parent parent = new Child();
+    void method(){
+        Parent localParent = new Child();
+    }
+}
+```
+    그러나 자식 클래스가 "재사용되지 않고" 오로지 해당 필드와 변수의 초기값으로만 사용할 경우,
+    익명 자식 객체를 생성하여 초기값으로 대입
+```java
+public class Parent {}
+class Child extends Parent{}
+class Another{
+    Parent parent = new Parent(){
+        int childField;
+        void childMethod(){
+            
+        }
+        @Override
+        void parentMethod(){
+            
+        }
+    };
+}
+```
+    메소드의 매개 변수가 부모 타입일 경우 메소드 호출 코드에서 
+    익명 자식 객체를 생성해서 매개값으로 대입할 수 있다.
+```java
+public class Parent {}
+class Child extends Parent{}
+class Another {
+    void method1(Parent parent){
+        
+    }
+    void method2(){
+        method1(new Parent(){
+           int childField;
+           void childMethod(){}
+           @Override
+            void parentMethod(){}
+        });
+    }
+}
+```
+    
+### 31. 예외처리 중 try catch
+    try catch 블록에서 return 문을 사용하더라도 finally 블록은 항상 실행된다.
+    
