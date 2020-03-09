@@ -669,7 +669,7 @@ class Another {
            int childField;
            void childMethod(){}
            @Override
-            void parentMethod(){}
+           void parentMethod(){}
         });
     }
 }
@@ -677,4 +677,173 @@ class Another {
     
 ### 31. 예외처리 중 try catch
     try catch 블록에서 return 문을 사용하더라도 finally 블록은 항상 실행된다.
+### 32. hashCode();
+    객체를 식별할 하나의 정수값, Object의 hashCode() 메소드는 객체의 메모리 번지를
+    이용해서 해시코드를 만들어 리턴
+### 33. clone()
+    Cloneable 인터페이스를 상속하는 클래스의 clone() 메소드는 얕은 복사를 한다.
+### 34. finalize()
+    객체가 소멸(Garbage Collector가 실행) 될때 실행되는 메소드
+### 35. Objects 클래스의 메소드
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>compare(T a, T b, Comparator&lt;T&gt; c)</td>
+        <td>두 객체 a와 b를 Comparator 를 사용하여 비교</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>deepEquals(Object a, Object b)</td>
+        <td>두 객체의 깊은 비교( 배열의 항목까지 비교 )</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>equals(Object a, Object b)</td>
+        <td>두 객체의 얕은 비교( 번지만 비교 )</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>hash(Object... values)</td>
+        <td>매개값이 저장된 배열의 해시코드 생성</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>hashCode(Object o)</td>
+        <td>객체의 해시코드 생성</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isNull(Object obj)</td>
+        <td>객체가 null 인지 조사</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>nonNull(Object obj)</td>
+        <td>객체가 null 이 아닌지 조사</td>
+    </tr>
+    <tr>
+        <td>T</td>
+        <td>requireNonNull(T obj)</td>
+        <td>객체가 null 인 경우 예외 발생</td>
+    </tr>
+    <tr>
+        <td>T</td>
+        <td>requireNonNull(T obj, String message)</td>
+        <td>객체가 null 인 경우 예외 발생( 주어진 예외 메시지 포함 )</td>
+    </tr>
+    <tr>
+        <td>T</td>
+        <td>requireNonnull(T obj, Supplier&lt;String&gt; messageSupplier)</td>
+        <td>객체가 null 인 경우 예외 발생( 람다식이 만든 예외 메시지 포함 )</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString(Object o)</td>
+        <td>객체의 toString() 리턴값 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString(Object o, String nullDefault)</td>
+        <td>객체의 toString() 리턴값 리턴, 첫 번째 매개값이 null 일 경우 두 번째 매개값 리턴</td>
+    </tr>
+</table>
+
+### 36. System 클래스
+    exit()  :   JVM 종료
+    gc()    :   Garbage Collector '가능한 빨리' 실행
+    currentTimeMillies()    :   현재 시간을 1/1000 초로 계산
+    nanoTime()    :   현재 시간을 1/1000000000 (10의 9승) 초로 계산
+    getProperty()
+        java.version    :   자바의 버전
+        java.home   :   사용하는 JRE의 파일 경로
+        os.name :   Operating system name
+        file.separator  :   File separator ( "/" on UNIX )
+        user.name   :   사용자의 이름
+        user.home   :   사용자의 홈 디렉토리
+        user.dir    :   사용자가 현재 작업 중인 디렉토리 경로
+    getenv()    :   환경변수
+### 37. Class 클래스
+    getClass()  :   생성된 객체의 클래스값
+    forName()   :   패키지가 포함된 이름으로 클래스 얻기
+    newInstance()   :   기본생성자로 객체생성
+        예외 처리   : InstantiationException - 추상클래스 또는 인터페이스일경우
+                    IllegalAccessException - 생성자의 접근제한자 오류
+### 38. reflection
+    Class 객체를 이용하여 생성자, 필드, 메소드 정보 알아내기
+    getDeclaredConstructors()   :    constructor 배열 리턴
+    getDeclaredFields()   :    field 배열 리턴
+    getDeclaredMethods()   :    method 배열 리턴
     
+    getDeclared 메소드는 클래스에 선언된 멤버만 가져옴
+    
+    상속된 멤버까지 가져온다면
+    getFields, getMethods 메소드 사용
+    
+### 39. String 클래스
+    StringTokenizer 클래스는 문자로 구분, split() 은 정규표현식으로 구분
+### 40. Pattern 클래스
+    정규 표현식으로 문자열을 검증
+### 41. Arrays 클래스
+    배열 조작 기능
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드 이름</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>binarySearch( 배열, 찾는값 )</td>
+        <td>전체 배열 항목에서찾는 값이 있는 인덱스 리턴</td>
+    </tr>
+    <tr>
+        <td>배열</td>
+        <td>copy( 원본배열, 복사할 길이 )</td>
+        <td>원본 배열의 0번 인덱스에서 복사할 길이 만큼 복사한 배열 리턴,
+        복사할 길이는 원본 배열의 길이보다 커도 됨</td>
+    </tr>
+    <tr>
+        <td>배열</td>
+        <td>copyOfRange( 원본배열, 시작인덱스, 끝인덱스 )</td>
+        <td>원본 배열의 시작 인덱스에서 끝 인덱스까지 복사한 배열 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>deepEquals( 배열, 배열 )</td>
+        <td>두 배열의 깊은 비교 ( 중첩 배열의 항목까지 비교 )</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>equals( 배열, 배열 )</td>
+        <td>두 배열의 얕은 비교 ( 중첩 배열의 항목은 비교하지 않음 )</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>fill( 배열, 값 )</td>
+        <td>전체 배열 항목에 동일한 값을 저장</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>fill( 배열, 시작인덱스, 끝인덱스, 값 )</td>
+        <td>시작 인덱스부터 끝 인덱스까지의 항목에만 동일한 값을 저장</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>sort( 배열 )</td>
+        <td>배열 전체 항목을 오름차순으로 정렬</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString( 배열 )</td>
+        <td>"[값1, 값2, ... ]"와 같은 문자열 리턴</td>
+    </tr>
+</table>
+
+### 42. Calendar 클래스
+    getInstance() 메소드를 이용해여 현재 운영체제에 설정되어 있는
+    시간대(TimeZone)를 기준으로 한 Calendar 하위 객체를 얻을 수 있음.
