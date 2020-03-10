@@ -847,3 +847,244 @@ class Another {
 ### 42. Calendar 클래스
     getInstance() 메소드를 이용해여 현재 운영체제에 설정되어 있는
     시간대(TimeZone)를 기준으로 한 Calendar 하위 객체를 얻을 수 있음.
+### 43. 멀티 스레드
+    멀티 스레드는 하나의 프로세스 내부에 생성되기 때문에
+    하나의 스레드가 예외를 발생시키면 프로세스 자체가 종료될 수 있다
+### 44. 스레드의 이름
+    생성한 스레드는 자동적으로 Thread-n 의 이름을 갖는다.
+    이를 변경하려면 thread.setName("이름") 으로 변경 가능하다.
+### 45. 현재 스레드
+    Thread.currentThread()로 코드를 실행하는 현재 스레드의 참조를 얻을 수 있다.  
+### 46. 스레드 우선순위
+    멀티 스레드는 동시성(Concurrency) 또는 병렬성(Parallelism) 으로 실행된다.
+    동시성은 멀티 작업을 위해 하나의 코어에서 멀티 스레드가 번갈아가며 실행,
+    병렬성은 멀티 작업을 위해 멀티 코어에서 개별 스레드를 동시에 실행
+    
+    스레드 스케줄링
+        우선순위(Priority), 순환할당(Round-Robin) 방식이 있음
+        
+        우선순위는 우선순위가 높은 스레드가 실행 상태를 더 많이 가지도록 스케줄링,
+        순환할당은 시간 할당량을 정해서 하나의 스레드를 정해진 시간만큼 실행하도록 스케줄링
+        
+        우선순위는 개발자가 코드로 순위 번호를 제어할 수 있음, (setPriority(1 ~ 10) 숫자 높을수록 우선순위 높음)
+        순환할당은 JVM에서 정하기 때문에 개발자가 제어할 수 없음.
+### 47. 동기화 메소드
+    공유 객체 사용
+```java
+public class MainThreadExample {
+    public static void main(String[] args) {
+        Calculator2 calculator2 = new Calculator2();
+
+        User1 user1 = new User1();
+        user1.setCalculator2(calculator2);
+        user1.start();
+
+        User2 user2 = new User2();
+        user2.setCalculator2(calculator2);
+        user2.start();
+    }
+}
+
+class Calculator2 {
+    private int memory;
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public void setMemory(int memory) {
+        this.memory = memory;
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+        }
+        //  실행 결과
+        //  User2: 50
+        //  User1: 50
+        System.out.println(Thread.currentThread().getName() + ": " + this.memory);
+    }
+}
+
+class User1 extends Thread {
+    private Calculator2 calculator2;
+
+    public void setCalculator2(Calculator2 calculator2) {
+        this.setName("User1");
+        this.calculator2 = calculator2;
+    }
+
+    @Override
+    public void run() {
+        calculator2.setMemory(100);
+    }
+}
+class User2 extends Thread {
+    private Calculator2 calculator2;
+
+    public void setCalculator2(Calculator2 calculator2) {
+        this.setName("User2");
+        this.calculator2 = calculator2;
+    }
+
+    @Override
+    public void run() {
+        calculator2.setMemory(50);
+    }
+}
+```
+    동기화 메소드 사용
+        스레드가 사용 중인 객체를 다른 스레드가 변경할 수 없도록 하려면 
+        스레드 작업이 끝날 때까지 "객체에 잠금"을 걸어서 
+        다른 스레드가 사용할 수 없도록 해야 한다. 
+        
+    임계 영역(critical section)
+        멀티 스레드 프로그램에서 단 하나의 스레드만 실행할 수 있는 코드 영역
+        
+    동기화 메소드 정의 (synchronized)
+```java
+class Calculator2 {
+    private int memory;
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public synchronized void setMemory(int memory) {
+        this.memory = memory;
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+        }
+        //  실행 결과
+        //  User1: 100
+        //  User2: 50
+        System.out.println(Thread.currentThread().getName() + ": " + this.memory);
+    }
+}
+
+// or
+
+class Calculator2 {
+    private int memory;
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public void setMemory(int memory) {
+        synchronized (this) {
+            this.memory = memory;
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+            System.out.println(Thread.currentThread().getName() + ": " + this.memory);
+        }
+    }
+}
+
+```
+
+### 48. 스레드 상태
+    스레드 객체를 생성하고 start() 메소드를 실행 시키면
+    실행대기 (Runnable) - cpu점유 - 실행 (Running) - ( 반복 ) - 일시 정지 (Wating) - 종료 (Terminated)
+    로 진행된다. getState()로 현재 상태 확인 가능
+<table>
+    <tr>
+        <th>상태</th>
+        <th>열거 상수</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>객체 생성</td>
+        <td>NEW</td>
+        <td>스레드 객체가 생성, 아직 start() 메소드가 호출되지 않은 상태</td>
+    </tr>
+    <tr>
+        <td>실행 대기</td>
+        <td>RUNNABLE</td>
+        <td>실행 상태로 언제든지 갈 수 있는 상태</td>
+    </tr>
+    <tr>
+        <td rowspan="3">일시 정지</td>
+        <td>WAITING</td>
+        <td>다른 스레드가 통지할 때까지 기다리는 상태</td>
+    </tr>
+    <tr>
+        <td>TIMED_WAITING</td>
+        <td>주어진 시간 동안 기다리는 상태</td>
+    </tr>
+    <tr>
+        <td>BLOCKED</td>
+        <td>사용하고자 하는 객체의 락이 풀리 때까지 기다리는 상태</td>
+    </tr>
+    <tr>
+        <td>종료</td>
+        <td>TERMINATED</td>
+        <td>실행을 마친 상태</td>
+    </tr>
+</table>
+
+    NEW -> RUNNABLE -> TIMED_WAITING -> RUNNABLE -> TERMINATED
+
+### 49. 스레드 상태 제어
+<table>
+    <tr>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>interrupt()</td>
+        <td>일시 정지 상태의 스레드에서 InterruptedException 예외를 발생시켜,
+        예외처리 코드(catch)에서 실행 대기 상태로 가거나종료 상태로 갈 수 있도록 한다.</td>
+    </tr>
+    <tr>
+        <td>notify()
+        notifyAll()</td>
+        <td>동기화 블록 내에서 wait() 메소드에 의해 일시 정지 상태에 있는
+        스레드를 실행 대기 상태로 만든다.</td>
+    </tr>
+    <tr>
+        <td>resume()</td>
+        <td>suspend() 메소드에 의해 일시 정지 상태에 있는 스레드를 실행 대기 상태로 만든다.
+        -Deprecated ( 대신 notify(), notifyAll() 사용 )</td>
+    </tr>
+    <tr>
+        <td>sleep(long millis)
+        sleep(long millis, int nanos)</td>
+        <td>주어진 시간 동안 스레드를 일시 정지 상태로 만든다. 
+        주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.</td>
+    </tr>
+    <tr>
+        <td>join()
+        join(long millis)
+        join(long millis, int nanos)</td>
+        <td>join() 메소드를 호출한 스레드는 일시 정지 상태가 된다.
+        실행 대기 상태로 가려면, join() 메소드를 멤버로 가지는 스레드가 종료되거나,
+        매개값으로 주어진 시간이 지나야 한다.</td>
+    </tr>
+    <tr>
+        <td>wait()
+        wait(long millis)
+        wait(long millis, int nanos)</td>
+        <td>동기화(synchronized) 블록 내에서 스레드를 일시 정지 상태로 만든다. 
+        매개값으로 주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.
+        시간이 주어지지 않으면 notify(), notifyAll() 메소드에 의해
+        실행 대기 상태로 갈 수 있다.</td>
+    </tr>
+    <tr>
+        <td>suspend()</td>
+        <td>스레드를 일시 정지 상태로 만든다. 
+        resume() 메소드를 호출하면 다시 실행 대기 상태가 된다.
+        -Deprecated ( 대신 wait() 사용 )</td>
+    </tr>
+    <tr>
+        <td>yield()</td>
+        <td>실행 중에 우선순위가 동일한 다른 스레드에게 실행을 양보하고 
+        실행 대기 상태가 된다.</td>
+    </tr>
+    <tr>
+        <td>stop()</td>
+        <td>스레드를 즉시 종료시킨다. -Deprecated</td>
+    </tr>    
+</table>
