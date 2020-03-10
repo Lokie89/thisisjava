@@ -1380,6 +1380,9 @@ class PrintThread1 extends Thread {
 }
 ```
     interrupt 메소드 사용
+        스레드가 실행 대기 또는 실행 상태에 있을 때 interrupt() 메소드가
+        실행되면 즉시 InterruptedException 예외가 발생하는 것이 아니라,
+        스레드가 미래에 일시 정지 상태가 되면 예외가 발생하는 것이다.
 ```java
 public class InterruptExample {
     public static void main(String[] args) {
@@ -1399,13 +1402,219 @@ class PrintThread2 extends Thread {
         try {
             while (true) {
                 System.out.println("실행 중");
-                Thread.sleep(1); // interrupt 가 발생하면 예외처리
+                Thread.sleep(1); // interrupt 가 발생하면 예외발생
             }
         } catch (InterruptedException e) {
 
         }
         System.out.println("자원 정리");
         System.out.println("실행 종료");
+    }
+}
+```
+    interrupt 상태 확인
+        Thread.interrupted();
+        objThread.isInterrupted();
+```java
+class PrintThread2 extends Thread {
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println("실행 중");
+            if (Thread.interrupted()) {
+                break;
+            }
+        }
+        System.out.println("자원 정리");
+        System.out.println("실행 종료");
+    }
+}
+```
+### 50. 데몬 스레드
+    주 스레드의 작업을 돕는 보조적인 역할을 수행하는 스레드
+    주 스레드의 작업이 종료되면 데몬 스레드도 강제적으로 종료
+    e.g) 워드프로세스, 미디어 플레이어, JVM 등
+    데몬 스레드로 사용할 스레드를 setDaemon 하면 등록됨
+    + start() 메소드 실행전에 해야함 안그러면 InterruptedException 발생
+```java
+public class AutoSaveThread extends Thread {
+    public void save() {
+        System.out.println("작업 내용 저장");
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                break;
+            }
+            save();
+        }
+    }
+}
+
+class DaemonExample {
+    public static void main(String[] args) {
+        AutoSaveThread autoSaveThread = new AutoSaveThread();
+        autoSaveThread.setDaemon(true);
+        autoSaveThread.start();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+        System.out.println("메인 스레드 종료");
+    }
+}
+```
+### 51. 스레드 그룹
+    스레드 그룹은 관련된 스레드를 묶어서 관리할 목적으로 이용
+    JVM 이 실행되면 system 스레드 그룹을 만들고, 
+    JVM 운영에 필요한 스레드들을 생성해서 system 그룹에 포함시킨다.
+    main 스레드는 system 하위 그룹인 main 스레드 그룹에 포함됨.
+    스레드 생성 시 스레드 그룹 명시하지 않으면 생성한 스레드가 속해있는 그룹에 포함.
+        ThreadGroup group = Thread.currentThread().getThreadGroup();
+        String groupName = group.getName();
+```java
+public class ThreadInfoExample {
+    public static void main(String[] args) {
+        AutoSaveThread autoSaveThread = new AutoSaveThread();
+        autoSaveThread.setName("AutoSaveThread");
+        autoSaveThread.setDaemon(true);
+        autoSaveThread.start();
+        Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces(); // 프로세스에서 실행하는 모든 스레드의 정보
+        for (Thread thread : map.keySet()) {
+            System.out.println("Name: " + thread.getName()
+                    + (thread.isDaemon() ? "(데몬)" : "주"));
+            System.out.println("\t" + "소속그룹: " + thread.getThreadGroup().getName());
+            System.out.println();
+        }
+    }
+}
+```
+#### 생성
+    ThreadGroup tg = new ThreadGroup(String name);
+    ThreadGroup tg = new ThreadGroup(ThreadGroup parent, String name);
+    부모 스레드 그룹 지정하지 않으면 현재 스레드 그룹의 하위 그룹으로 생성
+#### 일괄 interrupt()
+    스레드 그룹의 interrupt() 메소드는 포함된 모든 스레드의 interrupt() 메소드를 호출
+<table>
+    <tr>
+        <th>리턴타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>activeCount()</td>
+        <td>현재 그룹 및 하위 그룹에서 활동 중인 모든 스레드의 수를 리턴</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>activeGroupCount()</td>
+        <td>현재 그룹에서 활동 중인 모든 하위 그룹의 수를 리턴</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>checkAccess()</td>
+        <td>현재 스레드가 스레드 그룹을 변경한 권한이 있는지 체크,
+        없다면 SecurityException 발생</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>destroy()</td>
+        <td>현재 그룹 및 하위 그룹을 삭제, 단 모든 스레드들이 종료 상태가 되어야 함</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDestroyed()</td>
+        <td>현재 그룹이 삭제되었는지 여부</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>getMaxPriority()</td>
+        <td>현재 그룹에 포함된 스레드가 가질수 있는 최대 우선순위를 리턴</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>setMaxPriority(int priority)</td>
+        <td>현재 그룹에 포함된 스레드가 가질수 있는 최대 우선순위를 변경</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getName()</td>
+        <td>현재 그룹의 이름을 리턴</td>
+    </tr>
+    <tr>
+        <td>ThreadGroup</td>
+        <td>getParent()</td>
+        <td>현재 그룹의 부모 그룹을 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>parentOf(ThreadGroup tg)</td>
+        <td>매개값의 부모인지 여부 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDaemon()</td>
+        <td>현재 그룹이 데몬 그룹인지 여부 리턴</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>setDaemon(boolean daemon)</td>
+        <td>현재 그룹을 데몬 그룹으로 설정</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>list()</td>
+        <td>현재 그룹에 포함된 스레드와 하위 그룹에 대한 정보를 출력</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>interrupt()</td>
+        <td>현재 그룹에 포함된 모든 스레드들을 interrupt함</td>
+    </tr>    
+</table>
+
+```java
+public class WorkThread extends Thread {
+    public WorkThread(ThreadGroup threadGroup, String threadName) {
+        super(threadGroup, threadName);
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println(getName() + " interrupted");
+                break;
+            }
+        }
+        System.out.println(getName() + " 종료됨");
+    }
+}
+
+class ThreadGroupExample {
+    public static void main(String[] args) {
+        ThreadGroup myGroup = new ThreadGroup("myGroup");
+        WorkThread workThread1 = new WorkThread(myGroup, "workThread1");
+        WorkThread workThread2 = new WorkThread(myGroup, "workThread2");
+
+        workThread1.start();
+        workThread2.start();
+
+        ThreadGroup mainGroup = Thread.currentThread().getThreadGroup();
+        mainGroup.list();
+        System.out.println();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+        myGroup.interrupt();
     }
 }
 ```
