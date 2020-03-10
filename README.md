@@ -1028,7 +1028,7 @@ class Calculator2 {
     NEW -> RUNNABLE -> TIMED_WAITING -> RUNNABLE -> TERMINATED
 
 ### 49. 스레드 상태 제어
-<table>
+<table style="width: 100%;">
     <tr>
         <th>메소드</th>
         <th>설명</th>
