@@ -1034,57 +1034,378 @@ class Calculator2 {
         <th>설명</th>
     </tr>
     <tr>
-        <td>interrupt()</td>
+        <td><b>interrupt()</b></td>
         <td>일시 정지 상태의 스레드에서 InterruptedException 예외를 발생시켜,
         예외처리 코드(catch)에서 실행 대기 상태로 가거나종료 상태로 갈 수 있도록 한다.</td>
     </tr>
     <tr>
-        <td>notify()
-        notifyAll()</td>
+        <td><b>notify()
+        notifyAll()</b></td>
         <td>동기화 블록 내에서 wait() 메소드에 의해 일시 정지 상태에 있는
         스레드를 실행 대기 상태로 만든다.</td>
     </tr>
     <tr>
-        <td>resume()</td>
+        <td><b>resume()</b></td>
         <td>suspend() 메소드에 의해 일시 정지 상태에 있는 스레드를 실행 대기 상태로 만든다.
         -Deprecated ( 대신 notify(), notifyAll() 사용 )</td>
     </tr>
     <tr>
-        <td>sleep(long millis)
-        sleep(long millis, int nanos)</td>
+        <td><b>sleep(long millis)
+        sleep(long millis, int nanos)</b></td>
         <td>주어진 시간 동안 스레드를 일시 정지 상태로 만든다. 
         주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.</td>
     </tr>
     <tr>
-        <td>join()
+        <td><b>join()
         join(long millis)
-        join(long millis, int nanos)</td>
+        join(long millis, int nanos)</b></td>
         <td>join() 메소드를 호출한 스레드는 일시 정지 상태가 된다.
         실행 대기 상태로 가려면, join() 메소드를 멤버로 가지는 스레드가 종료되거나,
         매개값으로 주어진 시간이 지나야 한다.</td>
     </tr>
     <tr>
-        <td>wait()
+        <td><b>wait()
         wait(long millis)
-        wait(long millis, int nanos)</td>
+        wait(long millis, int nanos)</b></td>
         <td>동기화(synchronized) 블록 내에서 스레드를 일시 정지 상태로 만든다. 
         매개값으로 주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.
         시간이 주어지지 않으면 notify(), notifyAll() 메소드에 의해
         실행 대기 상태로 갈 수 있다.</td>
     </tr>
     <tr>
-        <td>suspend()</td>
+        <td><b>suspend()</b></td>
         <td>스레드를 일시 정지 상태로 만든다. 
         resume() 메소드를 호출하면 다시 실행 대기 상태가 된다.
         -Deprecated ( 대신 wait() 사용 )</td>
     </tr>
     <tr>
-        <td>yield()</td>
+        <td><b>yield()</b></td>
         <td>실행 중에 우선순위가 동일한 다른 스레드에게 실행을 양보하고 
         실행 대기 상태가 된다.</td>
     </tr>
     <tr>
-        <td>stop()</td>
+        <td><b>stop()</b></td>
         <td>스레드를 즉시 종료시킨다. -Deprecated</td>
     </tr>    
 </table>
+    
+#### Sleep
+```java
+public class ThreadSleepExample {
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; i++) {
+            System.out.println("삡");
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+            }
+        }
+    }
+}
+```
+#### Yield
+```java
+public class ThreadYieldExample {
+    public static void main(String[] args) {
+        ThreadA threadA = new ThreadA();
+        ThreadB threadB = new ThreadB();
+        threadA.start();
+        threadB.start();
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+        threadA.work = false;
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+        threadA.work = true;
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+        threadA.stop = true;
+        threadB.stop = true;
+    }
+}
+
+class ThreadA extends Thread {
+    public boolean stop = false;
+    public boolean work = true;
+
+    @Override
+    public void run() {
+        while (!stop) {
+            if (work) {
+                System.out.println("ThreadA");
+            } else {
+                Thread.yield();
+            }
+        }
+        System.out.println("ThreadA 종료");
+    }
+}
+
+class ThreadB extends Thread {
+    public boolean stop = false;
+    public boolean work = true;
+
+    @Override
+    public void run() {
+        while (!stop) {
+            if (work) {
+                System.out.println("ThreadB");
+            } else {
+                Thread.yield();
+            }
+        }
+        System.out.println("ThreadB 종료");
+    }
+}
+```
+#### Join
+```java
+public class ThreadJoinExample {
+    public static void main(String[] args) {
+        SumThread sumThread = new SumThread();
+        sumThread.start();
+
+        try {
+            sumThread.join(); // sumThread가 종료할 때까지 메인 스레드 정지
+        } catch (InterruptedException e) {
+        }
+        System.out.println("합 : " + sumThread.getSum());
+    }
+
+}
+
+class SumThread extends Thread {
+    private long sum;
+
+    public long getSum() {
+        return sum;
+    }
+
+    public void setSum(long sum) {
+        this.sum = sum;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i <= 100; i++) {
+            sum += i;
+        }
+    }
+}
+```
+#### Wait, Notify, NotifyAll
+    두 스레드가 작업할 내용을 "동기화(synchronized) 메소드"로 구분
+    한 메소드가 작업을 완료하면 notify() ( 다른 스레드를 실행 대기 상태로 만듬 )
+    wait() ( 자신을 일시 정지 상태로 만듬 )
+```java
+public class WorkObject {
+    public synchronized void methodA() {
+        System.out.println("ThreadA의 methodA() 작업 실행");
+        notify();
+        try {
+            wait();
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public synchronized void methodB() {
+        System.out.println("ThreadB의 methodB() 작업 실행");
+        notify();
+        try {
+            wait();
+        } catch (InterruptedException e) {
+        }
+    }
+}
+
+class ThreadA2 extends Thread {
+    private WorkObject workObject;
+
+    public ThreadA2(WorkObject workObject) {
+        this.workObject = workObject;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            workObject.methodA();
+        }
+    }
+}
+
+class ThreadB2 extends Thread {
+    private WorkObject workObject;
+
+    public ThreadB2(WorkObject workObject) {
+        this.workObject = workObject;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            workObject.methodB();
+
+        }
+    }
+}
+
+class WaitNotifyExample{
+    public static void main(String[] args) {
+        WorkObject sharedWorkObject = new WorkObject();
+        ThreadA2 threadA2 = new ThreadA2(sharedWorkObject);
+        ThreadB2 threadB2 = new ThreadB2(sharedWorkObject);
+
+        threadA2.start();
+        threadB2.start();
+    }
+}
+```
+```java
+public class DataBox {
+    private String data;
+
+    public synchronized String getData() {
+        if (this.data == null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        String returnValue = data;
+        System.out.println(returnValue);
+        data = null;
+        notify();
+        return returnValue;
+    }
+
+    public synchronized void setData(String data) {
+        if (this.data != null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        this.data = data;
+        System.out.println(data);
+        notify();
+    }
+}
+
+class ProducerThread extends Thread {
+    private DataBox dataBox;
+
+    public ProducerThread(DataBox dataBox) {
+        this.dataBox = dataBox;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 3; i++) {
+            String data = "Data-" + i;
+            dataBox.setData(data);
+        }
+    }
+}
+
+class ConsumerThread extends Thread {
+    private DataBox dataBox;
+
+    public ConsumerThread(DataBox dataBox) {
+        this.dataBox = dataBox;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 3; i++) {
+            dataBox.getData();
+        }
+    }
+}
+
+class WaitNotifyExample2 {
+    public static void main(String[] args) {
+        DataBox dataBox = new DataBox();
+
+        ProducerThread producerThread = new ProducerThread(dataBox);
+        ConsumerThread consumerThread = new ConsumerThread(dataBox);
+
+        producerThread.start();
+        consumerThread.start();
+    }
+}
+```
+
+#### Stop, Interrupt
+    stop() 메소드는 갑자기 종료하면 스레드가 사용하던 자원들이 불안정한 상태로 남기때문에
+    deprecated 되었다. 스레드를 종료시키는 방법
+    
+    stop 플래그 사용
+```java
+public class StopFlagExample {
+    public static void main(String[] args) {
+        PrintThread1 printThread1 = new PrintThread1();
+        printThread1.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
+        printThread1.setStop(true);
+    }
+}
+
+class PrintThread1 extends Thread {
+    private boolean stop;
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
+    }
+
+    @Override
+    public void run() {
+        while(!stop){
+            System.out.println("실행 중");
+        }
+        System.out.println("자원 정리");
+        System.out.println("실행 종료");
+    }
+}
+```
+    interrupt 메소드 사용
+```java
+public class InterruptExample {
+    public static void main(String[] args) {
+        Thread thread = new PrintThread2();
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
+        thread.interrupt();
+    }
+}
+
+class PrintThread2 extends Thread {
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                System.out.println("실행 중");
+                Thread.sleep(1); // interrupt 가 발생하면 예외처리
+            }
+        } catch (InterruptedException e) {
+
+        }
+        System.out.println("자원 정리");
+        System.out.println("실행 종료");
+    }
+}
+```
