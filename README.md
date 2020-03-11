@@ -804,7 +804,7 @@ class Another {
     <tr>
         <td>배열</td>
         <td>copy( 원본배열, 복사할 길이 )</td>
-        <td>원본 배열의 0번 인덱스에서 복사할 길이 만큼 복사한 배열 리턴,
+        <td>원본 배열의 0번 인덱스에서 복사할 길이 만큼 복사한 배열 리턴,<br>
         복사할 길이는 원본 배열의 길이보다 커도 됨</td>
     </tr>
     <tr>
@@ -1035,24 +1035,24 @@ class Calculator2 {
     </tr>
     <tr>
         <td><b>interrupt()</b></td>
-        <td>일시 정지 상태의 스레드에서 InterruptedException 예외를 발생시켜,
+        <td>일시 정지 상태의 스레드에서 InterruptedException 예외를 발생시켜,<br>
         예외처리 코드(catch)에서 실행 대기 상태로 가거나종료 상태로 갈 수 있도록 한다.</td>
     </tr>
     <tr>
         <td><b>notify()
         notifyAll()</b></td>
-        <td>동기화 블록 내에서 wait() 메소드에 의해 일시 정지 상태에 있는
+        <td>동기화 블록 내에서 wait() 메소드에 의해 일시 정지 상태에 있는<br>
         스레드를 실행 대기 상태로 만든다.</td>
     </tr>
     <tr>
         <td><b>resume()</b></td>
-        <td>suspend() 메소드에 의해 일시 정지 상태에 있는 스레드를 실행 대기 상태로 만든다.
+        <td>suspend() 메소드에 의해 일시 정지 상태에 있는 스레드를 실행 대기 상태로 만든다.<br>
         -Deprecated ( 대신 notify(), notifyAll() 사용 )</td>
     </tr>
     <tr>
         <td><b>sleep(long millis)
         sleep(long millis, int nanos)</b></td>
-        <td>주어진 시간 동안 스레드를 일시 정지 상태로 만든다. 
+        <td>주어진 시간 동안 스레드를 일시 정지 상태로 만든다. <br>
         주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.</td>
     </tr>
     <tr>
@@ -1067,20 +1067,20 @@ class Calculator2 {
         <td><b>wait()
         wait(long millis)
         wait(long millis, int nanos)</b></td>
-        <td>동기화(synchronized) 블록 내에서 스레드를 일시 정지 상태로 만든다. 
-        매개값으로 주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.
-        시간이 주어지지 않으면 notify(), notifyAll() 메소드에 의해
+        <td>동기화(synchronized) 블록 내에서 스레드를 일시 정지 상태로 만든다.<br> 
+        매개값으로 주어진 시간이 지나면 자동적으로 실행 대기 상태가 된다.<br>
+        시간이 주어지지 않으면 notify(), notifyAll() 메소드에 의해<br>
         실행 대기 상태로 갈 수 있다.</td>
     </tr>
     <tr>
         <td><b>suspend()</b></td>
-        <td>스레드를 일시 정지 상태로 만든다. 
-        resume() 메소드를 호출하면 다시 실행 대기 상태가 된다.
+        <td>스레드를 일시 정지 상태로 만든다. <br>
+        resume() 메소드를 호출하면 다시 실행 대기 상태가 된다.<br>
         -Deprecated ( 대신 wait() 사용 )</td>
     </tr>
     <tr>
         <td><b>yield()</b></td>
-        <td>실행 중에 우선순위가 동일한 다른 스레드에게 실행을 양보하고 
+        <td>실행 중에 우선순위가 동일한 다른 스레드에게 실행을 양보하고 <br>
         실행 대기 상태가 된다.</td>
     </tr>
     <tr>
@@ -1656,14 +1656,14 @@ class ThreadGroupExample {
     <tr>
         <td>void</td>
         <td>shutdown()</td>
-        <td>현재 처리 중인 작업뿐만 아니라 작업 큐에 대기하고 있는 
+        <td>현재 처리 중인 작업뿐만 아니라 작업 큐에 대기하고 있는<br>
         모든 작업을 처리한 뒤에 스레드풀을 종료시킨다.</td>
     </tr>
     <tr>
         <td>List&lt;Runnable&gt;</td>
         <td>shutdownNow()</td>
-        <td>현재 작업 처리 중인 스레드를 interrupt 해서 
-        작업 중지를 시도하고 스레드풀을 종료시킨다.
+        <td>현재 작업 처리 중인 스레드를 interrupt 해서<br>
+        작업 중지를 시도하고 스레드풀을 종료시킨다.<br>
         리턴값은 작업 큐에 있는 미처리된 작업(Runnable)의 목록이다.</td>
     </tr>
     <tr>
@@ -1703,7 +1703,8 @@ class ThreadGroupExample {
         <td>void</td>
         <td>execute(Runnable command)</td>
         <td>- Runnable 을 작업 큐에 저장<br>
-        - 작업 처리 결과를 받지 못함</td>
+        - 작업 처리 결과를 받지 못함<br>
+        - 예외 발생 시 스레드 종료, 스레드풀에서 제거</td>
     </tr>
     <tr>
         <td>Future&lt;?&gt;<br>
@@ -1713,6 +1714,449 @@ class ThreadGroupExample {
         submit(Runnable task, V result)<br>
         submit(Callable&lt;V&gt; task</td>
         <td>- Runnable 또는 Callable을 작업 큐에 저장<br>
-        - 리턴된 Future을 통해 작업 처리 결과를 얻을 수 있음</td>
+        - 리턴된 Future을 통해 작업 처리 결과를 얻을 수 있음<br>
+        - 예외 발생 시 스레드 종료되지 않고 스레드풀에서 재사용</td>
     </tr>
 </table>
+
+```java
+public class ExecuteExample {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        for (int i = 0; i < 10; i++) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executorService;
+                    int poolSize = threadPoolExecutor.getPoolSize();
+                    String threadName = Thread.currentThread().getName();
+                    System.out.println("[총 스레드 개수: " + poolSize + "] 작업 스레드 이름: " + threadName);
+
+                    //예외 발생
+                    int value = Integer.parseInt("쓰리");
+                }
+            };
+//            executorService.execute(runnable);
+            executorService.submit(runnable);
+            Thread.sleep(10);
+        }
+        executorService.shutdown();
+    }
+}
+```
+
+#### 블로킹 방식의 작업 완료 통보 ( ★ 다시 공부 )
+    ExecutorService의 submit() 메소드는 매개값으로 준 Runnable 또는 Callable 작업을 
+    스레드 풀의 작업 큐에 저장하고 즉시 Futrue 객체를 리턴
+    리턴된 Future 객체는 작업 결과가 아닌 작업이 완료될 때까지 기다렸다가( 지연했다가=블로킹되었다가 )
+    최종 결과를 얻는데 사용
+    
+    Future의 get() 메소드를 호출하면 스레드가 작업을 완료할 때까지 블로킹되었다가 작업을 완료하면
+    처리 결과를 리턴한다.
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>V</td>
+        <td>get()</td>
+        <td>작업이 완료될 때까지 블로킹되었다가 처리 결과 V를 리턴</td>
+    </tr>
+    <tr>
+        <td>V</td>
+        <td>get(long timeout, TimeUnit unit)</td>
+        <td>timeout 시간 전에 작업이 완료되면 결과 V를 리턴하지만, <br>
+        작업이 완료되지 않으면 TimeoutException 을 발생시킴</td>
+    </tr>
+</table>
+
+    블로킹 방식의 작업 완료 통보에서 주의할 점은 
+    작업을 처리하는 스레드가 작업을 완료할 때까지 get() 메소드가 블로킹 되므로
+    다른 코드를 실행할 수 없다.
+    따라서 get() 메소드를 실행하는 작업을 또 다른 스레드가 처리해야 한다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>cancel(boolean mayInterruptIfRunning)</td>
+        <td>작업 처리가 진행중일 경우 취소시킴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isCancelled()</td>
+        <td>작업이 취소되었는지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDone()</td>
+        <td>작업 처리가 완료되었는지 여부</td>
+    </tr>
+</table>
+
+#### 리턴값이 없는 작업 완료 통보
+    Runnable 객체 생성 후 submit(Runnable task) 메소드 사용
+    여기서 리턴되는 Future 객체는 스레드가 작업 처리를 정상적으로 완료했는지,
+    작업 처리 도중 예외가 발생했는지 확인을 위함
+
+```java
+public class NoResultExample {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        System.out.println("[ 작업 처리 요청 ]");
+        Runnable runnable = () -> {
+            int sum = 0;
+            for (int i = 0; i <= 10; i++) {
+                sum += i;
+            }
+            System.out.println("[ 처리 결과 ] " + sum);
+        };
+        Future future = executorService.submit(runnable);
+
+        try {
+            future.get();
+            System.out.println("[ 작업 처리 완료 ]");
+        } catch (Exception e) {
+            System.out.println("[ 실행 예외 발생 ] " + e.getMessage());
+        }
+        executorService.shutdown();
+    }
+}
+```
+#### 리턴값이 있는 작업 완료 통보
+    Callable 객체 생성 후 submit(Callable task) 메소드 사용
+    Callable 객체 생성 시 return 타입을 명시
+
+```java
+public class ResultByCallableExample {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        System.out.println("[ 작업 처리 요청 ]");
+        Callable<Integer> task = () -> {
+            int sum = 0;
+            for (int i = 0; i <= 10; i++) {
+                sum += i;
+            }
+            return sum;
+        };
+        Future<Integer> future = executorService.submit(task);
+
+        try {
+            int sum = future.get();
+            System.out.println("[ 작업 처리 완료 ] " + sum);
+        } catch (Exception e) {
+            System.out.println("[ 실행 예외 발생 ] " + e.getMessage());
+        }
+        executorService.shutdown();
+    }
+}
+```
+#### 작업 처리 결과를 외부 객체에 저장 ( ★ 다시 공부 )
+    두 개 이상 스레드가 내놓은 결과값을 한 객체에 저장
+    Runnable 객체 생성 후 submit(Runnable task, V result) 메소드 사용
+    result 객체가 공유 객체가 되어, 두개 이상의 스레드 작업을 취합 
+
+```java
+public class ResultByRunnableExample {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        System.out.println("[ 작업 처리 요청 ]");
+
+        Result result = new Result();
+        Runnable task1 = new Task(result);
+        Runnable task2 = new Task(result);
+
+        Future<Result> future1 = executorService.submit(task1, result);
+        Future<Result> future2 = executorService.submit(task2, result);
+
+        try {
+            result = future1.get();
+            result = future2.get();
+            System.out.println("[ 처리 결과 ] " + result.accumValue);
+            System.out.println("[ 작업 처리 완료 ]");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("[ 실행 예외 발생 ] " + e.getMessage());
+        }
+        executorService.shutdown();
+    }
+}
+
+class Task implements Runnable {
+    Result result;
+
+    Task(Result result) {
+        this.result = result;
+    }
+
+    @Override
+    public void run() {
+        int sum = 0;
+        for (int i = 0; i <= 10; i++) {
+            sum += i;
+        }
+        result.addValue(sum);
+    }
+}
+
+class Result {
+    int accumValue;
+
+    synchronized void addValue(int value) {
+        accumValue += value;
+    }
+}
+```
+
+#### 작업 완료 순으로 통보 ( ★ 다시 공부 )
+    스레드풀에서 작업 처리가 완료된 것만 통보받는 방법
+    
+    CompletionService를 이용
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Future&lt;V&gt;</td>
+        <td>poll()</td>
+        <td>완료된 작업의 Future 가져옴<br>
+        완료된 작업이 없다면 null 리턴</td>
+    </tr>
+    <tr>
+        <td>Future&lt;V&gt;</td>
+        <td>poll(long timeout,<br>
+        TimeUnit unit)</td>
+        <td>완료된 작업의 Future 가져옴<br>
+        완료된 작업이 없다면 timeout 까지 블로킹</td>
+    </tr>
+    <tr>
+        <td>Future&lt;V&gt;</td>
+        <td>take()</td>
+        <td>완료된 작업의 Future 가져옴<br>
+        완료된 작업이 없다면 있을 때까지 블로킹</td>
+    </tr>
+    <tr>
+        <td>Future&lt;V&gt;</td>
+        <td>submit(Callable&lt;V&gt; task)</td>
+        <td>스레드 풀에 Callable 작업 처리 요청</td>
+    </tr>
+    <tr>
+        <td>Future&lt;V&gt;</td>
+        <td>submit(Runnable task,<br>
+        V result)</td>
+        <td>스레드 풀에 Runnable 작업 처리 요청</td>
+    </tr>
+</table>
+
+```java
+public class CompletionServiceExample extends Thread {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        CompletionService<Integer> completionService =
+                new ExecutorCompletionService<>(executorService);
+
+        System.out.println("[ 작업 처리 요청 ]");
+        for (int i = 0; i < 3; i++) {
+            completionService.submit(() -> {
+                int sum = 0;
+                for (int i1 = 1; i1 <= 10; i1++) {
+                    sum += i1;
+                }
+                return sum;
+            });
+        }
+
+        System.out.println("[ 처리 완료된 작업 확인 ]");
+        executorService.submit(() -> {
+            while (true) {
+                try {
+                    Future<Integer> future = completionService.take();
+                    int value = future.get();
+                    System.out.println("[ 처리 결과 ] " + value);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        });
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
+
+        executorService.shutdown();
+    }
+}
+```
+
+#### 콜백 방식의 작업 완료 통보 ( ★ 다시 공부 )
+    콜백이란 스레드에게 작업 처리를 요청한 후, 
+    스레드가 작업을 완료하면 특정 메소드를 자동 실행하는 기법
+    
+    블로킹 방식은 작업 처리 이후 스레드 작업이 완료될때까지 기다려야 하지만
+    콜백 방식은 스레드 작업이 완료된 이후 자동으로 콜백 메소드를 실행하기 때문에
+    기다릴 필요없음.
+    
+```java
+public class CallbackExample {
+    private ExecutorService executorService;
+
+    public CallbackExample() {
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
+
+    private CompletionHandler<Integer, Void> callback =
+            new CompletionHandler<Integer, Void>() {
+                @Override
+                public void completed(Integer result, Void attachment) {
+                    System.out.println("completed() 실행: " + result);
+                }
+
+                @Override
+                public void failed(Throwable exc, Void attachment) {
+                    System.out.println("failed() 실행: " + exc.toString());
+                }
+            };
+
+    public void doWork(final String x, final String y) {
+        Runnable task = () -> {
+            try {
+                int intX = Integer.parseInt(x);
+                int intY = Integer.parseInt(y);
+                int result = intX + intY;
+                callback.completed(result, null);
+            } catch (Exception e) {
+                callback.failed(e, null);
+            }
+        };
+
+        executorService.submit(task);
+    }
+
+    public void finish(){
+        executorService.shutdown();
+    }
+
+    public static void main(String[] args) {
+        CallbackExample example = new CallbackExample();
+        example.doWork("3","2");
+        example.doWork("삼","이");
+        example.finish();
+    }
+}
+``` 
+
+### 53. 제네릭
+    컴파일시 강한 타입 체크 가능
+    타입 변환(casting)을 제거
+    
+```java
+public class GenericExample {
+    public static void main(String[] args) {
+        BoxObject box = new BoxObject();
+        box.set("물건");
+        String someStr = (String) box.get();
+        box.set(1);
+        Integer someInt = (Integer) box.get(); 
+
+        BoxGeneric<String> boxGeneric = new BoxGeneric();
+        boxGeneric.set("물건");
+        String someStr2 = boxGeneric.get();
+
+        BoxGeneric<Integer> boxGeneric2 = new BoxGeneric();
+        boxGeneric2.set(1);
+        Integer someInt2 = boxGeneric2.get();
+    }
+}
+
+class BoxObject {
+    private Object object;
+
+    public void set(Object object) {
+        this.object = object;
+    }
+
+    public Object get() {
+        return object;
+    }
+}
+
+class BoxGeneric<T> {
+    private T object;
+
+    public void set(T object) {
+        this.object = object;
+    }
+
+    public T get() {
+        return object;
+    }
+}
+```
+
+### 54. 제네릭 메소드
+    접근자 <타입파라미터> 리턴타입 메소드명(파라미터)
+    
+```java
+public class Util {
+    public static <K, V> boolean compare(Pair<K, V> p1, Pair<K, V> p2) {
+        boolean keyCompare = p1.getKey().equals(p2.getKey());
+        boolean valueCompare = p1.getValue().equals(p2.getValue());
+        return keyCompare && valueCompare;
+    }
+}
+
+class Pair<K, V> {
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public void setKey(K key) {
+        this.key = key;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
+    }
+}
+
+class CompareMethodExample {
+    public static void main(String[] args) {
+        Pair<Integer, String> p1 = new Pair<>(1, "사과");
+        Pair<Integer, String> p2 = new Pair<>(1, "사과");
+        boolean result1 = Util.<Integer,String>compare(p1, p2);
+
+        Pair<String, String> p3 = new Pair<>("user1", "홍길동");
+        Pair<String, String> p4 = new Pair<>("user2", "홍길동");
+        boolean result2 = Util.compare(p3, p4);
+    }
+}
+```
+
+### 55. 제한된 타입 파라미터 ( <T extends 최상위타입> )
+    타입 파라미터에 지정되는 구체적인 타입을 제한
+    
