@@ -1618,3 +1618,101 @@ class ThreadGroupExample {
     }
 }
 ```
+### 52. 스레드풀
+    스레드가 많이 생성되면 메모리사용량이 늘어나 어플리케이션 성능 저하
+    스레드풀은 스레드를 제한된 개수만큼 정해놓고 작업 큐에 들어오는 작업들을
+    하나씩 스레드가 맡아 처리, 작업 처리가 끝난 스레드는 다시 작업 큐에서 
+    새로운 작업을 가져와 처리
+    메인스레드의 데몬스레드가 아니기 때문에 메인스레드 종료에 영향받지 않음. 
+    
+#### 생성
+    JAVA 에서 제공하는 ExecutorService 인터페이스, Executors 클래스 사용
+    
+    ExecutorService threadPool = ExecutorService.newCachedThreadPool();
+    초기스레드 수 0, 코어스레드 수 0, 최대스레드 수 Integer.MAX_VALUE 
+    작업이 생길때마다 새로운 스레드를 생성하여 작업 실행( 최대스레드 수 까지만 )
+    사용하지 않는 스레드는 풀에서 제거
+    
+    ExecutorService threadPool = ExecutorService.newFixedThreadPool(nThreads);
+    초기스레드 수 0, 코어스레드 수 nThreads, 최대스레드 수 nThreads
+    작업이 생길때마다 새로운 스레드를 생성하여 작업 실행( 최대스레드 수 까지만 )
+    사용하지 않는 스레드는 제거되지 않음.
+    
+    ExecutorService threadPool = new ThreadPoolExecutor(
+        3,      // 코어 스레드 개수
+        100,    // 최대 스레드 개수
+        120L,   // 놀고 있는 시간
+        TimeUnit.SECONDS,   // 놀고 있는 시간 단위
+        new SynchronousQueue<Runnable>() // 작업 큐
+    );
+
+#### 종료
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>shutdown()</td>
+        <td>현재 처리 중인 작업뿐만 아니라 작업 큐에 대기하고 있는 
+        모든 작업을 처리한 뒤에 스레드풀을 종료시킨다.</td>
+    </tr>
+    <tr>
+        <td>List&lt;Runnable&gt;</td>
+        <td>shutdownNow()</td>
+        <td>현재 작업 처리 중인 스레드를 interrupt 해서 
+        작업 중지를 시도하고 스레드풀을 종료시킨다.
+        리턴값은 작업 큐에 있는 미처리된 작업(Runnable)의 목록이다.</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>awaitTermination(long timeout, TimeUnit unit)</td>
+        <td>showdown() 메소드 호출 이후, 모든 작업 처리를 timeout 시간 내에<br>
+        완료하면 true 를 리턴하고, 완료하지 못하면 작업 처리 중인 스레드를<br>
+        interrupt 하고 false 를 리턴한다.</td>
+    </tr>
+</table>
+
+#### 작업 생성
+    Runnable, Callable
+    
+    Runnable task = new Runnable(){
+        public void run(){
+            // 작업 내용
+        }    
+    }
+
+    // 리턴값이 있음.    
+    Callable<T> task = new Callable<T>(){
+        public T call() throws Exception{
+            // 작업 내용
+            return T;
+        }    
+    }
+    
+#### 작업 처리 요청
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>execute(Runnable command)</td>
+        <td>- Runnable 을 작업 큐에 저장<br>
+        - 작업 처리 결과를 받지 못함</td>
+    </tr>
+    <tr>
+        <td>Future&lt;?&gt;<br>
+        Future&lt;V&gt;<br>
+        Future&lt;V&gt;</td>
+        <td>submit(Runnable task)<br>
+        submit(Runnable task, V result)<br>
+        submit(Callable&lt;V&gt; task</td>
+        <td>- Runnable 또는 Callable을 작업 큐에 저장<br>
+        - 리턴된 Future을 통해 작업 처리 결과를 얻을 수 있음</td>
+    </tr>
+</table>
