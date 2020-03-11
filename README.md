@@ -2160,3 +2160,220 @@ class CompareMethodExample {
 ### 55. 제한된 타입 파라미터 ( <T extends 최상위타입> )
     타입 파라미터에 지정되는 구체적인 타입을 제한
     
+```java
+public class Util2 {
+    public static <T extends Number> int compare(T t1, T t2) {
+        double v1 = t1.doubleValue();
+        double v2 = t2.doubleValue();
+        return Double.compare(v1, v2);
+    }
+}
+
+class BoundedTypeParameterExample {
+    public static void main(String[] args) {
+//        int result1 = Util2.compare("a","b"); // Number 타입이 아니어서 에러
+
+        int result1 = Util2.compare(10, 20);
+        System.out.println(result1);
+
+        int result2 = Util2.compare(4.5, 3);
+        System.out.println(result2);
+    }
+}
+```
+
+### 56. 와일드카드 타입 ( <?>, <? extends ...>, <? super ...>)
+    코드에서 ?를 일반적으로 와일드 카드라고 부름
+    
+- 제네릭타입 <?> : Unbounded Wildcards ( 제한 없음 )
+    - 타입 파라미터를 대치하는 구체적인 타입으로 모든 클래스나 인터페이스 타입이 올 수 있다.
+
+- 제네릭타입 <? extends 상위타입> : Upper Bounded Wildcards ( 상위 클래스 제한 )
+    - 타입 파라미터를 대치하는 구체적인 타입으로 상위 타입이나 하위 타입만 올 수 있다.
+
+- 제네릭타입 <? super 하위타입> : Lower Bounded Wildcards ( 하위 클래스 제한 )
+    - 타입 파라미터를 대치하는 구체적인 타입으로 하위 탕비이나 상위 타입이 올 수 있다.
+    
+```java
+public class Course<T> {
+    private String name;
+    private T[] students;
+
+    public Course(String name, int capacity) {
+        this.name = name;
+        students = (T[]) new Object[capacity]; // T[] 형태로 생성 못함
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public T[] getStudents() {
+        return students;
+    }
+
+    public void add(T t) {
+        for (int i = 0; i < students.length; i++) {
+            if (students[i] == null) {
+                students[i] = t;
+                break;
+            }
+        }
+    }
+}
+
+class Person {
+    String name;
+
+    public Person(String name) {
+        this.name = name;
+    }
+}
+
+class Worker extends Person {
+
+    public Worker(String name) {
+        super(name);
+    }
+}
+
+class Student extends Person {
+
+    public Student(String name) {
+        super(name);
+    }
+}
+
+class HighStudent extends Student {
+
+    public HighStudent(String name) {
+        super(name);
+    }
+}
+
+class WildCardExample {
+    public static void registerCourse(Course<?> course) {
+        System.out.println(course.getName() + " 수강생: " + Arrays.toString(course.getStudents()));
+    }
+
+    public static void registerCourseStudent(Course<? extends Student> course) {
+        System.out.println(course.getName() + " 수강생: " + Arrays.toString(course.getStudents()));
+    }
+
+    public static void registerCourseWorker(Course<? super Worker> course) {
+        System.out.println(course.getName() + " 수강생: " + Arrays.toString(course.getStudents()));
+    }
+
+    public static void main(String[] args) {
+        Course<Person> personCourse = new Course<>("일반인과정", 5);
+        personCourse.add(new Person("일반인"));
+        personCourse.add(new Worker("직장인"));
+        personCourse.add(new Student("학생"));
+        personCourse.add(new HighStudent("고등학생"));
+
+        Course<Worker> workerCourse = new Course<>("직장인과정",5);
+        workerCourse.add(new Worker("직장인"));
+
+        Course<Student> studentCourse = new Course<>("학생과정",5);
+        studentCourse.add(new Student("학생"));
+        studentCourse.add(new HighStudent("고등학생"));
+
+        Course<HighStudent> highStudentCourse = new Course<>("고등학생과정",5);
+        highStudentCourse.add(new HighStudent("고등학생"));
+
+        registerCourse(personCourse);
+        registerCourse(workerCourse);
+        registerCourse(studentCourse);
+        registerCourse(highStudentCourse);
+        System.out.println();
+
+//        registerCourseStudent(personCourse); // 불가
+//        registerCourseStudent(workerCourse); // 불가
+        registerCourseStudent(studentCourse);
+        registerCourseStudent(highStudentCourse);
+
+        registerCourseWorker(personCourse);
+        registerCourseWorker(workerCourse);
+//        registerCourseWorker(studentCourse); // 불가
+//        registerCourseWorker(highStudentCourse); // 불가
+    }
+}
+```
+
+### 57. 제네릭 타입의 상속과 구현
+#### class
+```java
+class ParentProduct<T, M> {
+    private T kind;
+    private M model;
+
+    public T getKind() {
+        return kind;
+    }
+
+    public M getModel() {
+        return model;
+    }
+
+    public void setKind(T kind) {
+        this.kind = kind;
+    }
+
+    public void setModel(M model) {
+        this.model = model;
+    }
+}
+
+class ChildProduct<T, M, C> extends ParentProduct<T, M> {
+    private C company;
+
+    public C getCompany() {
+        return company;
+    }
+
+    public void setCompany(C company) {
+        this.company = company;
+    }
+}
+```
+#### interface
+```java
+interface Storage<T> {
+    public void add(T item, int index);
+
+    public T get(int index);
+}
+
+class StorageImpl<T> implements Storage<T> {
+    private T[] array;
+
+    public StorageImpl(int capacity) {
+        this.array = (T[]) new Object[capacity];
+    }
+
+    @Override
+    public void add(T item, int index) {
+        array[index] = item;
+    }
+
+    @Override
+    public T get(int index) {
+        return array[index];
+    }
+} 
+```
+#### use
+```java
+public class ChildProductAndStorageExample {
+    public static void main(String[] args) {
+        ChildProduct<Tv, String, String> product = new ChildProduct<>();
+        product.setKind(new Tv());
+        product.setModel("SmartTv");
+        product.setCompany("SAMSUNG");
+
+        Storage<Tv> storage = new StorageImpl<>(100);
+        storage.add(new Tv(), 0);
+        Tv tv = storage.get(0);
+    }
+}
+```
