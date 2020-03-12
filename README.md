@@ -1,5 +1,6 @@
 # 몰랐던거 정리
-#### 1. JVM (운영체제 위에서(종속되어) 실행되는 자바 Java 가상 Virtual 머신 Machine)
+### 1. JVM 
+운영체제 위에서(종속되어) 실행되는 자바 Java 가상 Virtual 머신 Machine<br>
 
 자바 언어를 컴파일하여 바이트 코드를 번역한 후 JVM에서 실행하면<br>
 다른 운영체제에서도 같은 결과를 얻을 수 있다
@@ -10,7 +11,7 @@ java -> byte code -> JVM(번역) -> OS
 
 JVM 만 해당 OS 타입에 맞게 번역 해주면 됨
 
-#### 2. 타입
+### 2. 타입
 int(4byte) 보다 작은 타입의 정수 계산은 int 타입을 기본으로 한다.<br>
 연산자의 크기가 4byte 기 때문
 
@@ -23,7 +24,7 @@ class CompileError{
 }
 ```
 
-#### 3. 쓰레기값 생성
+### 3. 쓰레기값 생성
 가수를 사용하는 부동소수점 타입 (float, double) 은 0.1을 정확하게 표현할 수 없어 근사치로 처리함<br>
 만약 정확하게 표현하고 싶으면 int 형으로 변경후 계산 
 ```java
@@ -48,7 +49,7 @@ class Bit{
 }
 ```
 
-#### 4. 비트 논리 연산자
+### 4. 비트 논리 연산자
 2진법으로 바꾼 후 같은 자리수를 연산하여 나타냄
 ```java
 class Bit{
@@ -61,7 +62,7 @@ class Bit{
 }
 ```
 
-#### 5. 비트 이동 연산자
+### 5. 비트 이동 연산자
 2진법으로 바꾼 후 옆으로 밈 빈 공간은 0으로 채움<br>
 a << b  : 정수 a를 b만큼 왼쪽으로 이동 (빈칸은 0으로 채움)<br>
 a >> b  : 정수 a를 b만큼 오른쪽으로 이동 (빈칸은 부호비트로 채움 -일때는 1 +일때는 0)<br>
@@ -76,24 +77,24 @@ class Bit{
 }
 ```
 
-#### 6. 메모리 사용 영역
+### 6. 메모리 사용 영역
 JVM이 실행되면 운영체제에서 메모리 영역을 할당 받는다
-###### 메소드 영역
+#### 메소드 영역
     클래스( ~.class )들을 클래스 로더로 읽어 클래스별로
     런타임 상수풀, 필드데이터, 메소드 데이터, 메소드 코드, 생성자 코드 등을
     분류하여 저장, JVM이 시작할 때 생성되고 모든 스레드가 공유
-###### 힙 영역
+#### 힙 영역
     객체와 배열이 생성되는 영역
     스택영역에서 변수에 할당하는 주소값이 이 힙 영역의 주소값이다.
     참조하는 변수나 필드가 없다면 JVM은 Garbage Collector 를 실행시켜 제거함
-###### 스택 영역
+#### 스택 영역
     스택 영역은 각 스레드마다 하나씩 존재하며 스레드가 시작될 때 할당됨
     스레드를 생성하지 않으면 main 스레드 한개임
     메소드를 호출할 때마다 프레임을 추가(push) 메소드가 종료되면 해당 프레임을 제거(pop)
     프레임 안에는 로컬 변수 스택이 있는데, 기본타입, 참조 타입 변수가 추가(push) 제거(pop) 된다
     정리 : 1스레드 안 1JVMStack 안 n개프레임 안 n개변수스택
     
-#### 7. main() 메소드
+### 7. main() 메소드
 ```java
 class MainStringArrayArgument {
     public static void main(String[] args) {
@@ -120,11 +121,11 @@ class MainStringArrayArgument {
         java Foo 111 222 333 444
         -> main 함수의 String[] args = {"111","222","333","444"} 로 입력되어 실행
         
-#### 8. 다차원 배열
+### 8. 다차원 배열
 배열 안의 배열, 맨 안쪽 배열 힙 영역에 생성, 안쪽배열의 주소값 '도' 힙영역에 생성
 가장 바깥쪽 배열의 주소값만 스택영역에 저장 
 
-#### 9. ENUM
+### 9. ENUM
 ```java
 public enum Week {
     MONDAY,
@@ -157,7 +158,7 @@ class EnumWeekExample{
 }
 ```
 
-###### ENUM method
+#### ENUM method
 ```java
 class enumMethod{
     public static void main(String[] args) {
@@ -174,7 +175,7 @@ class enumMethod{
 }
 ```
 
-#### 10. 다른생성자 호출 this()
+### 10. 다른생성자 호출 this()
 ```java
 public class Car {
     String model;
@@ -197,7 +198,7 @@ public class Car {
 }
 ```
 
-#### 11. 메소드 선언 시 매개변수의 수를 모를 경우
+### 11. 메소드 선언 시 매개변수의 수를 모를 경우
 ```java
 public class Dontknow {
     public static void main(String[] args) {
@@ -224,7 +225,7 @@ public class Dontknow {
 ```
     배열 변수 또는 ... 매개 변수를 통해 수를 예상 하지 못하는 상황에 대비할 수 있다.
 
-#### 12. 정적 멤버 ( 메소드 ) 선언
+### 12. 정적 멤버 ( 메소드 ) 선언
     메소드의 경우, 인스턴스 메소드르 선언할 것인가, 아니면 정적 메소드로 선언할 것인가의 판단 기준은
     '인스턴스 필드' 를 이용해서 실행해야 한다면 인스턴스 메소드,
     '인스턴스 필드' 를 이용하지 않는다면 정적 메소드로 선언
@@ -237,7 +238,7 @@ public class Calculator{
 }
 ```
 
-#### 13. 정적 블록
+### 13. 정적 블록
     정적 필드 선언 할 때 계산이 필요한 경우
 ```java
 class Television {
@@ -257,7 +258,7 @@ class Television {
 }
 ```
 
-#### 14. 어노테이션 타입 정의와 적용 ( ★ 다시 공부 )
+### 14. 어노테이션 타입 정의와 적용 ( ★ 다시 공부 )
     어노테이션 타입의 엘리먼트는 기본 데이터 타입, 열거 타입, Class 타입, 이들의 배열 타입을 사용
     엘리먼트의 default 값이 없을 경우 선언 시 반드시 기술
     기본 엘리먼트는 value
@@ -268,7 +269,7 @@ public @interface Annotation {
     int elementName2() default 5;
 }
 ```
-#### 15. 어노테이션 적용 대상 ( ★ 다시 공부 )
+### 15. 어노테이션 적용 대상 ( ★ 다시 공부 )
     ElementType 열거 상수에 따른 적용 대상
     TYPE                :       클래스, 인터페이스, 열거 타입
     ANNOTATION_TYPE     :       어노테이션
@@ -302,7 +303,7 @@ class testAnnotation2 {
 }
 ```
     위의 예시처럼 어노테이션이 적용될 대상을 한정할때는 @Target 어노테이션을 사용하여 정의
-#### 16. 어노테이션 유지 정책 ( ★ 다시 공부 )
+### 16. 어노테이션 유지 정책 ( ★ 다시 공부 )
     어노테이션 정의 시 사용 용도에 따라 어느 범위까지 유지할 것인지 지정해야함
     java.lang.annotation.RetentionPolicy 의 열거상수로 정의
     
@@ -319,7 +320,7 @@ class testAnnotation2 {
 }
 ```
 
-#### 17. 런타임 시 어노테이션 정보 사용하기 ( ★ 다시 공부 )
+### 17. 런타임 시 어노테이션 정보 사용하기 ( ★ 다시 공부 )
     리플렉션을 이용해 어노테이션의 적용여부와 엘리먼트값을 읽을 수 있음.
     Field[]         getFields()             필드 정보를 Field 배열로 리턴
     Constructor[]   getConstuctors()        생성자 정보를 Constructor 배열로 리턴
@@ -392,7 +393,7 @@ class PrintAnnotationExample {
 }
 ```
 
-#### 18. 상속 ( 오버라이딩 )
+### 18. 상속 ( 오버라이딩 )
     규칙
         1. 부모의 메소드와 동일한 시그너처( 리턴 타입, 메소드 이름, 매개 변수 리스트 ) 를 가져야 한다.
         2. 접근 제한을 더 강하게 오버라이딩할 수 없다.
@@ -2377,3 +2378,598 @@ public class ChildProductAndStorageExample {
     }
 }
 ```
+### 58. 람다식
+    함수형 프로그래밍의 사용
+    형태는 매개 변수를 가진 코드 블록이지만, 런타임 시에는 익명 구현 객체를 생성한다.
+    람다식은 단순히 메소드를 선언하는 것이 아니라 이 메소드를 가지고 있는 객체를 생성해 낸다.
+    인터페이스의 익명 구현 객체를 생성한다.
+    람다식은 대입될 인터페이스의 종류에 따라 작성 방법이 달라지기 때문에
+    람다식이 대입될 인터페이스를 람다식의 "타겟타입" 이라고 한다.
+    
+    해석 : 람다식을 사용하면 대입되는 인터페이스 타입을 구현하는 객체를 익명으로 생성하고
+          override 되는 메소드를 구현하는 내용을 담는다. ?
+    
+    따라서 하나의 추상 메소드를 포함하는 인터페이스만 람다식으로 구현할 수 있다.
+    매개값이 없는 람다식은 소괄호 포함해야 함
+    
+```java
+public class MyFunctionalInterfaceExample {
+    public static void main(String[] args) {
+        MyFunctionalInterface fi;
+        fi = () ->{
+            String str = "method call";
+            System.out.println(str);
+        };
+        fi.method();
+        
+        fi = ()-> {System.out.println("method call2");};
+        fi.method();
+        
+        fi =() -> System.out.println("method call3");
+        fi.method();
+    }
+}
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+    public void method();
+}
+```
+```java
+public class MyFunctionalInterfaceExample {
+    public static void main(String[] args) {
+        MyFunctionalInterface fi;
+        fi = (x) -> {
+            int result = x * 5;
+            System.out.println(result);
+        };
+        fi.method(5);
+
+        fi = (x) -> {
+            System.out.println(x * 5);
+        };
+        fi.method(5);
+
+        fi = x -> System.out.println(x * 5);
+        fi.method(5);
+    }
+}
+
+@FunctionalInterface
+interface MyFunctionalInterface {
+    public void method(int x);
+}
+```
+
+#### 람다식 this
+    람다식에서 this는 람다식을 실행한 객체 참조
+
+```java
+@FunctionalInterface
+public interface MyFunctionalInterface2 {
+    public void method();
+}
+
+class UsingThis {
+    public int outterField = 10;
+
+    class Inner {
+        int innerField = 20;
+
+        void method() {
+            MyFunctionalInterface2 fi = () -> {
+                System.out.println("outField: " + outterField);
+                System.out.println("outField: " + UsingThis.this.outterField + "\n");
+
+                System.out.println("innerField: " + innerField);
+                System.out.println("innerField: " + this.innerField + "\n");
+            };
+            fi.method();
+        }
+    }
+}
+
+class UsingThisExample{
+    public static void main(String[] args) {
+        UsingThis usingThis = new UsingThis();
+        UsingThis.Inner inner = usingThis.new Inner();
+        inner.method();
+    }
+}
+```
+
+#### 람다식 로컬변수 사용
+    익명 객체의 로컬 변수 사용시 변수는 final 특성을 가져야 한다.
+```java
+@FunctionalInterface
+public interface MyFunctionInterface3 {
+    public void method();
+}
+
+class UsingLocalVariable {
+    void method(int arg) {
+        int localVar = 40;
+        arg = 31;
+        localVar = 41;
+        MyFunctionInterface3 fi = () -> {
+            System.out.println("arg: " + arg); // error
+            System.out.println("localVar: " + localVar); // error
+        };
+        fi.method();
+    }
+}
+```
+#### 람다식 표준 API
+<table>
+    <tr>
+        <th>종류</th>
+        <th>특징</th>
+    </tr>
+    <tr>
+        <td>Consumer</td>
+        <td>- 매개값은 있고, 리턴값은 없음</td>
+    </tr>
+    <tr>
+        <td>Supplier</td>
+        <td>- 매개값은 없고, 리턴값은 있음</td>
+    </tr>
+    <tr>
+        <td>Function</td>
+        <td>- 매개값도 있고, 리턴값도 있음<br>
+        - 주로 매개값을 리턴값으로 매핑( 타입 변환 )</td>
+    </tr>
+    <tr>
+        <td>Operator</td>
+        <td>- 매개값도 있고, 리턴값도 있음<br>
+        - 주로 매개값을 연산하고 결과를 리턴</td>
+    </tr>
+    <tr>
+        <td>Predicate</td>
+        <td>- 매개값은 있고, 리턴 타입은 boolean<br>
+        - 매개값을 조사해서 true/false를 리턴</td>
+    </tr>
+</table>
+
+##### Consumer ( accept() )
+<table>
+    <tr>
+        <th>인터페이스명</th>
+        <th>추상 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Consumer&lt;T&gt;</td>
+        <td>void accept(T t)</td>
+        <td>객체 T를 받아 소비</td>
+    </tr>
+    <tr>
+        <td>BiConsumer&lt;T, U&gt;</td>
+        <td>void accept(T t, U u)</td>
+        <td>객체 T와 U를 받아 소비</td>
+    </tr>
+    <tr>
+        <td>DoubleConsumer</td>
+        <td>void accept(double value)</td>
+        <td>double 값을 받아 소비</td>
+    </tr>
+    <tr>
+        <td>IntConsumer</td>
+        <td>void accept(int value)</td>
+        <td>int 값을 받아 소비</td>
+    </tr>
+    <tr>
+        <td>LongConsumer</td>
+        <td>void accept(long value)</td>
+        <td>long 값을 받아 소비</td>
+    </tr>
+    <tr>
+        <td>ObjDoubleConsumer&lt;T&gt;</td>
+        <td>void accept(T, t, double value)</td>
+        <td>객체 T와 double 값을 받아 소비</td>
+    </tr>
+    <tr>
+        <td>ObjIntConsumer&lt;T&gt;</td>
+        <td>void accept(T, t, int value)</td>
+        <td>객체 T와 int 값을 받아 소비</td>
+    </tr>
+    <tr>
+        <td>ObjLongConsumer&lt;T&gt;</td>
+        <td>void accept(T, t, long value)</td>
+        <td>객체 T와 long 값을 받아 소비</td>
+    </tr>
+</table>
+
+```java
+public class ConsumerExample {
+    public static void main(String[] args) {
+        Consumer<String> consumer = t -> System.out.println(t + "8");
+        consumer.accept("java");
+
+        BiConsumer<String, String> biConsumer = (t, u) -> System.out.println(t + u);
+        biConsumer.accept("Java", "8");
+
+        DoubleConsumer doubleConsumer = (d) -> System.out.println("Java" + d);
+        doubleConsumer.accept(8.0);
+
+        ObjIntConsumer<String> objIntConsumer = (t, i) -> System.out.println(t + i);
+        objIntConsumer.accept("Java", 8);
+    }
+}
+```
+##### Supplier ( get() )
+<table>
+    <tr>
+        <th>인터페이스명</th>
+        <th>추상 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Supplier&lt;T&gt;</td>
+        <td>T get()</td>
+        <td>T 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>BooleanSupplier</td>
+        <td>boolean getAsBoolean()</td>
+        <td>boolean 값을 리턴</td>
+    </tr>
+    <tr>
+        <td>DoubleSupplier</td>
+        <td>double getAsDouble()</td>
+        <td>double 값을 리턴</td>
+    </tr>
+    <tr>
+        <td>IntSupplier</td>
+        <td>int getAsInt()</td>
+        <td>int 값을 리턴</td>
+    </tr>
+    <tr>
+        <td>LongSupplier</td>
+        <td>long getAsLong()</td>
+        <td>long 값을 리턴</td>
+    </tr>
+</table>
+
+```java
+public class SupplierExample {
+    public static void main(String[] args) {
+        IntSupplier intSupplier = () -> {
+            int num = (int) (Math.random() * 6) + 1;
+            return num;
+        };
+        System.out.println(intSupplier.getAsInt());
+    }
+}
+```
+
+##### Function ( apply() )
+<table>
+    <tr>
+        <th>인터페이스명</th>
+        <th>추상 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Function&lt;T, R&gt;</td>
+        <td>R apply(T t)</td>
+        <td>객체 T를 객체 R로 매핑</td>
+    </tr>
+    <tr>
+        <td>Function&lt;T, U, R&gt;</td>
+        <td>R apply(T t, U u)</td>
+        <td>객체 T와 U를 객체 R로 매핑</td>
+    </tr>
+    <tr>
+        <td>DoubleFunction&lt;R&gt;</td>
+        <td>R apply(double value)</td>
+        <td>double 을 객체 R로 매핑</td>
+    </tr>
+    <tr>
+        <td>IntFunction&lt;R&gt;</td>
+        <td>R apply(int value)</td>
+        <td>int 를 객체 R로 매핑</td>
+    </tr>
+    <tr>
+        <td>IntToLongFunction</td>
+        <td>long applyAsLong(int value)</td>
+        <td>int 를 long 으로 매핑</td>
+    </tr>
+    <tr>
+        <td>LongToDoubleFunction</td>
+        <td>double applyAsDouble(long value)</td>
+        <td>long 을 double 로 매핑</td>
+    </tr>
+    <tr>
+        <td>LongToIntFunction</td>
+        <td>int applyAsInt(long value)</td>
+        <td>long 을 int 로 매핑</td>
+    </tr>
+    <tr>
+        <td>ToDoubleBiFunction</td>
+        <td>double applyAsDouble(int value)</td>
+        <td>int 를 double 로 매핑</td>
+    </tr>
+    <tr>
+        <td>IntToDoubleFunction</td>
+        <td>double applyAsDouble(int value)</td>
+        <td>int 를 double 로 매핑</td>
+    </tr>
+    <tr>
+        <td>ToDoubleBiFunction&lt;T, U&gt;</td>
+        <td>double applyAsDouble(T t, U u)</td>
+        <td>객체 T와 U를 double 로 매핑</td>
+    </tr>    
+    <tr>
+        <td>ToDoubleFunction&lt;T&gt;</td>
+        <td>double applyAsDouble(T t)</td>
+        <td>객체 T를 double로 매핑</td>
+    </tr> 
+    <tr>
+        <td>ToIntBiFunction&lt;T, U&gt;</td>
+        <td>int applyAsInt(T t, U u)</td>
+        <td>객체 T와 U를 int 로 매핑</td>
+    </tr>    
+    <tr>
+        <td>ToIntFunction&lt;T&gt;</td>
+        <td>int applyAsInt(T t)</td>
+        <td>객체 T를 int 로 매핑</td>
+    </tr> 
+    <tr>
+        <td>ToLongBiFunction&lt;T, U&gt;</td>
+        <td>long applyAsLong(T t, U u)</td>
+        <td>객체 T와 U를 long 으로 매핑</td>
+    </tr>    
+    <tr>
+        <td>ToLongFunction&lt;T&gt;</td>
+        <td>long applyAsLong(T t)</td>
+        <td>객체 T를 long 으로 매핑</td>
+    </tr>
+</table>
+
+```java
+public class FunctionExample {
+    private static List<Student3> list = Arrays.asList(
+            new Student3("홍길동", 90, 96),
+            new Student3("놀부", 99, 98)
+    );
+
+    public static void printString(Function<Student3, String> function) {
+        for (Student3 student3 : list) {
+            System.out.print(function.apply(student3) + " ");
+        }
+        System.out.println();
+    }
+
+    public static void printInt(ToIntFunction<Student3> function) {
+        for (Student3 student3 : list) {
+            System.out.print(function.applyAsInt(student3) + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        System.out.println("[ 학생 이름 ]");
+        printString(t -> t.getName());
+
+        System.out.println("[ 영어 점수 ]");
+        printInt(t -> t.getEnglishScore());
+
+        System.out.println("[ 수학 점수 ]");
+        printInt(t -> t.getMathScore());
+    }
+}
+
+class Student3 {
+    private String name;
+    private int englishScore;
+    private int mathScore;
+
+    public Student3(String name, int englishScore, int mathScore) {
+        this.name = name;
+        this.englishScore = englishScore;
+        this.mathScore = mathScore;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getEnglishScore() {
+        return englishScore;
+    }
+
+    public int getMathScore() {
+        return mathScore;
+    }
+}
+```
+```java
+public class FunctionExample2 {
+    private static List<Student3> list = Arrays.asList(
+            new Student3("홍길동", 90, 96),
+            new Student3("놀부", 99, 98)
+    );
+
+    public static double avg(ToIntFunction<Student3> function) {
+        int sum = 0;
+        for (Student3 student3 : list) {
+            sum += function.applyAsInt(student3);
+        }
+        return sum / list.size();
+    }
+
+    public static void main(String[] args) {
+        double englishAvg = avg(s -> s.getEnglishScore());
+        System.out.println("영어 평균 점수: " + englishAvg);
+        double mathAvg = avg(s -> s.getMathScore());
+        System.out.println("수학 평균 점수: " + mathAvg);
+    }
+}
+```
+
+##### Operating ( apply() )
+<table>
+    <tr>
+        <th>인터페이스명</th>
+        <th>추상 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>BinaryOperator&lt;T&gt;</td>
+        <td>T apply(T t, T t)</td>
+        <td>T와 T를 연산한 후 T를 리턴</td>
+    </tr>
+    <tr>
+        <td>UnaryOperator&lt;T&gt;</td>
+        <td>T apply(T t)</td>
+        <td>T를 연산한 후 T 리턴</td>
+    </tr>
+    <tr>
+        <td>DoubleBinaryOperator</td>
+        <td>double applyAsDouble(double, double)</td>
+        <td>두 개의 double 연산</td>
+    </tr>
+    <tr>
+        <td>DoubleUnaryOperator</td>
+        <td>double applyAsDouble(double)</td>
+        <td>한 개의 double 연산</td>
+    </tr>
+    <tr>
+        <td>IntBinaryOperator</td>
+        <td>int applyAsInt(int, int)</td>
+        <td>두 개의 int 연산</td>
+    </tr>
+    <tr>
+        <td>IntUnaryOperator</td>
+        <td>int applyAsInt(int)</td>
+        <td>한 개의 int 연산</td>
+    </tr>
+    <tr>
+        <td>LongBinaryOperator</td>
+        <td>long applyAsLong(long, long)</td>
+        <td>두 개의 long 연산</td>
+    </tr>
+    <tr>
+        <td>LongUnaryOperator</td>
+        <td>long applyAsLong(long)</td>
+        <td>한 개의 long 연산</td>
+    </tr>
+</table>
+
+```java
+public class OperatorExample {
+    private static int[] scores = {92, 95, 87};
+
+    public static int maxOrMin(IntBinaryOperator operator) {
+        int result = scores[0];
+        for (int score : scores) {
+            result = operator.applyAsInt(result, score);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int max = maxOrMin((a, b) -> {
+            if (a >= b) {
+                return a;
+            } else {
+                return b;
+            }
+        });
+        System.out.println("최대값: " + max);
+
+        int min = maxOrMin((a, b) -> {
+            if (a <= b) {
+                return a;
+            } else {
+                return b;
+            }
+        });
+        System.out.println("최소값: " + min);
+    }
+}
+```
+##### Predicate ( test() )
+<table>
+    <tr>
+        <th>인터페이스명</th>
+        <th>추상 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Predicate&lt;T&gt;</td>
+        <td>boolean test(T t)</td>
+        <td>객체 T를 조사</td>
+    </tr>
+    <tr>
+        <td>BiPredicate&lt;T, U&gt;</td>
+        <td>boolean test(T t, U u)</td>
+        <td>객체 T와 객체 U를 조사</td>
+    </tr>
+    <tr>
+        <td>DoublePredicate</td>
+        <td>boolean test(double)</td>
+        <td>double 값을 조사</td>
+    </tr>
+    <tr>
+        <td>IntPredicate</td>
+        <td>boolean test(int)</td>
+        <td>int 값을 조사</td>
+    </tr>
+    <tr>
+        <td>LongPredicate</td>
+        <td>boolean test(long)</td>
+        <td>long 값을 조사</td>
+    </tr>
+</table>
+
+```java
+public class PredicateExample {
+    private static List<Student4> list = Arrays.asList(
+            new Student4("홍길동", "남자", 90),
+            new Student4("김순희", "여자", 90),
+            new Student4("감자바", "남자", 95),
+            new Student4("박한나", "여자", 92)
+    );
+
+    public static double avg(Predicate<Student4> predicate) {
+        int count = 0, sum = 0;
+        for (Student4 student4 : list) {
+            if (predicate.test(student4)) {
+                count++;
+                sum += student4.getScore();
+            }
+        }
+        return (double) sum / count;
+    }
+
+    public static void main(String[] args) {
+        double maleAvg = avg(t -> t.getSex().equals("남자"));
+        System.out.println("남자 평균 점수: " + maleAvg);
+
+        double femaleAvg = avg(t -> t.getSex().equals("여자"));
+        System.out.println("여자 평균 점수: " + femaleAvg);
+    }
+}
+
+class Student4 {
+    private String name;
+    private String sex;
+    private int score;
+
+    public Student4(String name, String sex, int score) {
+        this.name = name;
+        this.sex = sex;
+        this.score = score;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public int getScore() {
+        return score;
+    }
+}
+```
+    
