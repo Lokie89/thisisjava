@@ -2972,4 +2972,761 @@ class Student4 {
     }
 }
 ```
+
+##### andThen(), compose()
+    인터페이스AB = 인터페이스A.andThen(인터페이스B);
+    인터페이스 A를 처리하고 결과를 인터페이스 B의 매개값으로 제공 인터페이스 B를 처리하고 결과 리턴
     
+    인터페이스AB = 인터페이스A.compose(인터페이스B);
+    인터페이스 B를 처리하고 결과를 인터페이스 A의 매개값으로 제공 인터페이스 A를 처리하고 결과 리턴
+
+<table>
+    <tr>
+        <th>종류</th>
+        <th>함수적 인터페이스</th>
+        <th>andThen()</th>
+        <th>compose()</th>
+    </tr>
+    <tr>
+        <td rowspan="5">Consumer</td>
+        <td>Consumer&lt;T&gt;</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>BiConsumer&lt;T, U&gt;</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>DoubleConsumer</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>IntConsumer</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>LongConsumer</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="2">Function</td>
+        <td>Function&lt;T, R&gt;</td>
+        <td>O</td>
+        <td>O</td>
+    </tr>
+    <tr>
+        <td>BiFunction&lt;T, U, R&gt;</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="4">Operator</td>
+        <td>BinaryOperator&lt;T&gt;</td>
+        <td>O</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>DoubleUnaryOperator</td>
+        <td>O</td>
+        <td>O</td>
+    </tr>
+    <tr>
+        <td>IntUnaryOperator</td>
+        <td>O</td>
+        <td>O</td>
+    </tr>
+    <tr>
+        <td>LongUnaryOperator</td>
+        <td>O</td>
+        <td>O</td>
+    </tr>
+</table>
+
+###### Consumer andThen()
+```java
+public class ConsumerAndThenExample {
+    public static void main(String[] args) {
+        Consumer<Member2> consumerA = member2 -> System.out.println("consumerA: " + member2.getName());
+        Consumer<Member2> consumerB = member2 -> System.out.println("consumerB: " + member2.getId());
+        
+        Consumer<Member2> consumerAB = consumerA.andThen(consumerB);
+        consumerAB.accept(new Member2("홍길동","hong",null));
+    }
+    
+}
+
+class Member2 {
+    private String name;
+    private String id;
+    private Address address;
+
+    public Member2(String name, String id, Address address) {
+        this.name = name;
+        this.id = id;
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+}
+
+class Address {
+    private String country;
+    private String city;
+
+    public Address(String country, String city) {
+        this.country = country;
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+}
+```
+###### Function 의 andThen() compose()
+    위의 Consumer는 소비형태로 리턴값이 없으므로 넘겨줄 매개값이 없지만
+    Function과 Opertor는 넘겨줄 매개값을 다음 실행할 인터페이스에 넘겨줌
+    밑의 예제에서 function A 에서 B로 넘겨줄 매개값은 Address 타입,
+    B에서 Address 타입을 넘겨받아 String 으로 리턴하는 함수를 실행
+```java
+public class FunctionAndThenComposeExample {
+    public static void main(String[] args) {
+        Function<Member2, Address> functionA;
+        Function<Address, String> functionB;
+        Function<Member2, String> functionAB;
+        String city;
+        functionA = (m) -> m.getAddress();
+        functionB = (a) -> a.getCity();
+
+        functionAB = functionA.andThen(functionB);
+        city = functionAB.apply(new Member2("홍길동", "hong", new Address("한국", "서울")));
+        System.out.println("거주 도시: " + city);
+
+        functionAB = functionB.compose(functionA);
+        city = functionAB.apply(new Member2("홍길동", "hong", new Address("한국", "서울")));
+        System.out.println("거주 도시: " + city);
+    }
+}
+```
+
+###### Predicate and(), or(), negate()
+```java
+public class PredicateAndOrNegateExample {
+    public static void main(String[] args) {
+
+        // 2의 배수
+        IntPredicate predicateA = a -> a % 2 == 0;
+
+        // 3의 배수
+        IntPredicate predicateB = a -> a % 3 == 0;
+
+        IntPredicate predicateAB;
+        boolean result;
+
+        // and()
+        predicateAB = predicateA.and(predicateB);
+        result = predicateAB.test(9);
+        System.out.println("9는 2와 3의 배수입니까? " + result);
+
+        // or()
+        predicateAB = predicateA.or(predicateB);
+        result = predicateAB.test(9);
+        System.out.println("9는 2 또는 3의 배수입니까? " + result);
+
+        // negate()
+        predicateAB = predicateA.negate();
+        result = predicateAB.test(9);
+        System.out.println("9는 는 홀수입니까? " + result);
+    }
+}
+```
+###### Predicate isEqual()
+    isEqual() 정적 메소드는 Objects.equals(sourceObject, targetObject)의 리턴값을
+    얻어 새로운 Predicate<T>를 생성한다.
+    이 생성된 Predicate 의 test는 Objecs 클래스의 equals() 메소드가 구현되어있음.? 
+    
+    구현되어있는 isEqual()메소드
+    
+    static <T> Predicate<T> isEqual(Object targetRef) {
+        return null == targetRef ? Objects::isNull : (object) -> {
+            return targetRef.equals(object);
+        };
+    }
+```java
+public class PredicateIsEqualExample {
+    public static void main(String[] args) {
+        Predicate<String> predicate;
+
+        predicate = Predicate.isEqual(null); // predicate 의 test()는 null의 값과 equals 한지 확인하는 Predicate
+        System.out.println("null, null: " + predicate.test(null));
+
+        predicate = Predicate.isEqual("Java8");
+        System.out.println("null, Java8: " + predicate.test(null));
+
+        predicate = Predicate.isEqual("null");
+        System.out.println("Java8, null: " + predicate.test("Java8"));
+
+        predicate = Predicate.isEqual("Java8");
+        System.out.println("Java8, Java8: " + predicate.test("Java8"));
+
+        predicate = Predicate.isEqual("Java8");
+        System.out.println("Java7, Java8: " + predicate.test("Java7"));
+
+    }
+}
+```
+
+###### BinaryOperator<T> minBy(), maxBy()
+```java
+public class OperatorMinByMaxByExample {
+    public static void main(String[] args) {
+        BinaryOperator<Fruit> binaryOperator;
+        Fruit fruit;
+
+        binaryOperator = BinaryOperator.minBy((f1, f2) -> Integer.compare(f1.price, f2.price));
+        fruit = binaryOperator.apply(new Fruit("딸기", 6000), new Fruit("수박", 10000));
+        System.out.println(fruit.name);
+
+        binaryOperator = BinaryOperator.maxBy((f1, f2) -> Integer.compare(f1.price, f2.price));
+        fruit = binaryOperator.apply(new Fruit("딸기", 6000), new Fruit("수박", 10000));
+        System.out.println(fruit.name);
+    }
+}
+
+class Fruit {
+    public String name;
+    public int price;
+
+    public Fruit(String name, int price) {
+        this.name = name;
+        this.price = price;
+    }
+}
+```
+
+#### 람다식 메소드 참조
+    기존 메소드를 호출만 할 경우 메소드 참조를 이용하여 코드를 줄일 수 있음
+    (left, right) -> Math.max(left, right);
+    Math :: max;
+    
+    e.g ) IntBinaryOperator operator = Math :: max;
+    
+    정적 메소드일 경우
+    클래스 :: 메소드
+    
+    인스턴스 메소드일 경우
+    참조변수 :: 메소드
+    
+```java
+public class MethodReferencesExample {
+    public static void main(String[] args) {
+        IntBinaryOperator operator;
+
+        operator = (x, y) -> Calculator3.staticMethod(x, y);
+        System.out.println("결과1: " + operator.applyAsInt(1, 2));
+
+        operator = Calculator3 :: staticMethod;
+        System.out.println("결과2: " + operator.applyAsInt(1, 2));
+
+        Calculator3 calculator3 = new Calculator3();
+
+        operator = (x, y) -> calculator3.instanceMethod(x, y);
+        System.out.println("결과3: " + operator.applyAsInt(1, 2));
+
+        operator = calculator3::instanceMethod;
+        System.out.println("결과4: " + operator.applyAsInt(1, 2));
+    }
+
+}
+
+class Calculator3 {
+    public static int staticMethod(int x, int y) {
+        return x + y;
+    }
+
+    public int instanceMethod(int x, int y) {
+        return x + y;
+    }
+}
+```
+#### 람다식 매개변수의 메소드 참조
+    람다식에서 제공되는 a 매개 변수의 메소드(instanceMethod) 에 b 매개 변수를 매개값으로 사용하여 실행
+    (a, b) -> { a.instanceMethod(b) }
+    클래스 :: instanceMethod
+    
+```java
+public class ArgumentMethodReferenceExample {
+    public static void main(String[] args) {
+        ToIntBiFunction<String, String> function;
+
+        function = (a, b) -> a.compareToIgnoreCase(b);
+        print(function.applyAsInt("Java8", "JAVA8"));
+
+        function = String::compareToIgnoreCase;
+        print(function.applyAsInt("Java8", "JAVA8"));
+    }
+
+    static void print(int order) {
+        if (order < 0) {
+            System.out.println("사전순으로 먼저 옵니다.");
+            return;
+        }
+        if (order == 0) {
+            System.out.println("동일한 문자열");
+            return;
+        }
+        System.out.println("사전순으로 나중에 옵니다.");
+    }
+}
+```
+#### 람다식 생성자 참조
+    (a, b) -> { return new 클래스(a, b) }
+    클래스 :: new
+
+```java
+public class ConstructorReferencesExample {
+    public static void main(String[] args) {
+        Function<String, Member3> function1 = Member3::new;
+        Member3 member1 = function1.apply("angel");
+
+        BiFunction<String, String, Member3> function2 = Member3::new;
+        Member3 member2 = function2.apply("신천사", "angel");
+
+        Supplier<Member3> supplier1 = Member3::new;
+        Member3 member3 = supplier1.get();
+    }
+}
+
+class Member3 {
+    String name;
+    String id;
+
+    public Member3() {
+        System.out.println("Member() 실행");
+    }
+
+    public Member3(String id) {
+        this.id = id;
+        System.out.println("Member(String id) 실행");
+    }
+
+
+    public Member3(String name, String id) {
+        this.name = name;
+        this.id = id;
+        System.out.println("Member(String name, String id) 실행");
+    }
+
+    public String getId() {
+        return id;
+    }
+}
+```
+### 59. 컬렉션
+    List, Set, Map : 인터페이스
+    List - ArrayList 클래스
+         - Vector 클래스
+         - LinkedList 클래스
+    Set - HashSet 클래스
+        - TreeSet 클래스
+    Map - HashMap 클래스
+        - Hashtable 클래스
+        - TreeMap 클래스
+        - Properties 클래스
+        
+    Collection 인터페이스는 List, Set 의 객체를 추가 삭제 검색하는 방법의 공통점을 정의
+
+#### List
+<table>
+    <tr>
+        <th>기능</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td rowspan="3">객체 추가</td>
+        <td>boolean add(E e)</td>
+        <td>주어진 객체를 맨 끝에 추가</td>
+    </tr>
+    <tr>
+        <td>void add(int index, E e)</td>
+        <td>주어진 인덱스에 객체를 추가</td>
+    </tr>
+    <tr>
+        <td>E set(E e)</td>
+        <td>주어진 인덱스에 저장된 객체를 바꿈</td>
+    </tr>
+    <tr>
+        <td rowspan="4">객체 검색</td>
+        <td>boolean contains(Object o)</td>
+        <td>주어진 객체가 저장되어 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>E get(int index)</td>
+        <td>주어진 인덱스에 저장된 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean isEmpty()</td>
+        <td>컬렉션이 비어 있는지 조사</td>
+    </tr>
+    <tr>
+        <td>int size()</td>
+        <td>저장되어 있는 전체 객체 수를 리턴</td>
+    </tr>
+    <tr>
+        <td rowspan="3">객체 삭제</td>
+        <td>void clear()</td>
+        <td>저장된 모든 객체를 삭제</td>
+    </tr>
+    <tr>
+        <td>E remove(int index)</td>
+        <td>주어진 인덱스에 저장된 객체를 삭제</td>
+    </tr>
+    <tr>
+        <td>boolean remove(Object o)</td>
+        <td>주어진 객체를 삭제</td>
+    </tr>
+</table>
+
+###### ArrayList Vector LinkedList
+    
+    Vector 와 ArrayList 다른 점
+    동기화된 메소드로 구성되어 있어서 멀티 스레드가 동시에 실행할 수 없음.
+    멀티 스레드 환경에서 안전하게 객체를 추가, 삭제할 수 있음
+    
+    LinkedList 와 ArrayList 다른 점
+    ArrayList는 내부 배열에 객체를 저장해서 인덱스로 관리하지만, 
+    LinkedList는 인접 참조를 링크해서 체인처럼 관리
+    따라서 빈번한 객체 삭제와 삽입이 일어나는 곳에서는 ArrayList 보다 LinkedList가
+    더 좋은 성능을 발휘한다.
+
+<table>
+    <tr>
+        <th>구분</th>
+        <th>순차적으로 추가/삭제</th>
+        <th>중간에 추가/삭제</th>
+        <th>검색</th>
+    </tr>
+    <tr>
+        <td>ArrayList</td>
+        <td>빠르다</td>
+        <td>느리다</td>
+        <td>빠르다</td>
+    </tr>
+    <tr>
+        <td>LinkedList</td>
+        <td>느리다</td>
+        <td>빠르다</td>
+        <td>느리다</td>
+    </tr>
+</table>
+
+```java
+public class LinkedListExample {
+    public static void main(String[] args) {
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new LinkedList<>();
+
+        long startTime;
+        long endTime;
+
+        startTime = System.nanoTime();
+        for (int i = 0; i < 10000; i++) {
+            // 0인데스에 해당값 넣음
+            list1.add(0, String.valueOf(i));
+        }
+        endTime = System.nanoTime();
+        System.out.println("ArrayList: "+(endTime-startTime)); // ArrayList: 39861200
+
+        startTime = System.nanoTime();
+        for (int i = 0; i < 10000; i++) {
+            // 0인데스에 해당값 넣음
+            list2.add(0, String.valueOf(i));
+        }
+        endTime = System.nanoTime();
+        System.out.println("LinkedList: "+(endTime-startTime)); // LinkedList: 9541800
+    }
+}
+```
+
+#### Set
+<table>
+    <tr>
+        <th>기능</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>객체 추가</td>
+        <td>boolean add(E e)</td>
+        <td>주어진 객체를 저장, 객체가 성공적으로 저장되면 true<br>
+        중복 객체면 false 리턴</td>
+    </tr>
+    <tr>
+        <td rowspan="4">객체 검색</td>
+        <td>boolean contains(Object o)</td>
+        <td>주어진 객체가 저장되어 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean isEmpty()</td>
+        <td>컬렉션이 비어 있는지 조사</td>
+    </tr>
+    <tr>
+        <td>Iterator&lt;E&gt;</td>
+        <td>저장된 객체를 한 번씩 가져오는 반복자 리턴</td>
+    </tr>
+    <tr>
+        <td>int size()</td>
+        <td>저장되어 있는 전체 객체 수를 리턴</td>
+    </tr>
+    <tr>
+        <td rowspan="2">객체 삭제</td>
+        <td>void clear()</td>
+        <td>저장된 모든 객체를 삭제</td>
+    </tr>
+    <tr>
+        <td>boolean remove(Object o)</td>
+        <td>주어진 객체를 삭제</td>
+    </tr>
+</table>
+
+    Set 에는 인덱스로 객체를 검색하는 메소드가 없음. 따라서 Iterator를 제공
+    반복자는 Iterator 인터페이스를 구현한 객체를 말하는데, iterator() 메소드로 호출
+    Set<String> set = ...;
+    Iterator<String> iterator = set.iterator();
+    
+###### Iterator 인터페이스 메소드
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드명</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>hasNext()</td>
+        <td>가져올 객체가 있으면 true 를 리턴하고 없으면 false 를 리턴한다</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>next()</td>
+        <td>컬렉션에서 하나의 객체를 가져온다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>remove()</td>
+        <td>Set 컬렉션에서 객체를 제거한다.</td>
+    </tr>
+</table>
+
+###### HashSet
+    HashSet이 판단하는 동일한 객체란 hashCode() 메소드의 값이 같고 equals() 메소드의
+    값이 모두 같을 때 같은 객체로 판단하고 중복 저장하지 않는다.
+    
+    동일한 필드값이면 중복없이 저장하는 HashSet
+    
+```java
+public class HashSetExample2 {
+    public static void main(String[] args) {
+        Set<Member4> set = new HashSet<>();
+        set.add(new Member4("홍길동",30));
+        set.add(new Member4("홍길동",30));
+        System.out.println("총 객체 수: "+set.size());
+    }
+}
+
+class Member4 {
+    public String name;
+    public int age;
+
+    public Member4(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Member4) {
+            Member4 member4 = (Member4) obj;
+            return member4.name.equals(name) && member4.age == age;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + age;
+    }
+}
+```
+
+#### Map
+    
+<table>
+    <tr>
+        <th>기능</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>객체 추가</td>
+        <td>V put(K key, V value)</td>
+        <td>주어진 키로 값을 저장, 새로운 키일 경우 null 을 리턴하고<br>
+        동일한 키가 있을 경우 값을 대체하고 이전 값을 리턴</td>
+    </tr>
+    <tr>
+        <td rowspan="8">객체 검색</td>
+        <td>boolean containsKey(Object key)</td>
+        <td>주어진 키가 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean containValue(Object value)</td>
+        <td>주어진 값이 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>Set&lt;Map.Entry&lt;K, V&gt;&gt; entrySet()</td>
+        <td>저장된 객체를 한 번씩 가져오는 반복자 리턴</td>
+    </tr>
+    <tr>
+        <td>V get(Object key)</td>
+        <td>주어진 키가 있는 값을 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean isEmpty()</td>
+        <td>컬렉션이 비어 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>Set&lt;K&gt; keySet()</td>
+        <td>모든 키를 Set 객체에 담아 리턴</td>
+    </tr>
+    <tr>
+        <td>int size()</td>
+        <td>저장된 키의 총 수를 리턴</td>
+    </tr>
+    <tr>
+        <td>Collection&lt;V&gt; values()</td>
+        <td>저장된 모든 값을 Collection에 담아서 리턴</td>
+    </tr>
+    <tr>
+        <td rowspan="2">객체 삭제</td>
+        <td>void clear()</td>
+        <td>모든 Map.Entry( 키와 값 )를 삭제</td>
+    </tr>
+    <tr>
+        <td>V remove(Object key)</td>
+        <td>주어진 키와 일치하는 Map.Entry 를 삭제하고 값을 리턴</td>
+    </tr>
+</table>
+
+###### HashMap
+    HashMap 의 키로 사용할 객체는 hashCode() 메소드의 값과
+    equals() 메소드의 값이 같을 때 사용 가능하다.
+
+```java
+public class HashMapExample {
+    public static void main(String[] args) {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("A", 85);
+        map.put("B", 90);
+        map.put("C", 80);
+        map.put("A", 95);
+        System.out.println("총 Entry 수: " + map.size());
+
+        System.out.println("\tA : " + map.get("A"));
+        System.out.println();
+
+        Set<String> keySet = map.keySet();
+        Iterator<String> keyIterator = keySet.iterator();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            Integer value = map.get(key);
+            System.out.println("\t" + key + ": " + value);
+        }
+        System.out.println();
+
+        map.remove("A");
+        System.out.println("총 Entry 수: " + map.size());
+
+        Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+        Iterator<Map.Entry<String, Integer>> entryIterator = entrySet.iterator();
+        while (entryIterator.hasNext()) {
+            Map.Entry<String, Integer> entry = entryIterator.next();
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            System.out.println("\t" + key + " : " + value);
+        }
+        System.out.println();
+
+        map.clear();
+        System.out.println("Entry 수: " + map.size());
+    }
+}
+```
+
+###### Hashtable
+    HashMap 과 다른점은 동기화된 메소드로 구성되어 있기 때문에
+    멀티 스레드가 동시에 이 메소드들을 실행할 수 없다.
+    
+###### Properties
+    Hashtable 의 하위 클래스
+    Hashtable 과 차이점은 키와 값을 String 으로 제한
+    .properties 파일에서 주로 사용되며
+    Properties 파일은 애플리케이션의 정보, 데이터베이스 정보, 국제화 정보가 저장된다.
+    Property 파일을 읽기 위해서는 Properties 객체를 생성하고 load를 호출하면됨
+    Properties properties = new Properties();
+    properties.load(new FileReader("C:/~/database.properties"));
+    
+    주로 클래스와 함께 저장( 같은 패키지 ) 된 프로퍼티 파일의 경로를 알아낼 때는
+    Class 의 getResource() 메소드를 통해 알아낸다.
+    
+    String path = 클래스.class.getResource("database.properties").getPath();
+    path = URLDecoder.decode(path, "utf-8");
+    Properties properties = new Properties();
+    properties.load(new FileReader(path));
+    
+```java
+public class PropertiesExample {
+    public static void main(String[] args) throws Exception{
+        Properties properties = new Properties();
+        String path = PropertiesExample.class.getResource("database.properties").getPath();
+        path = URLDecoder.decode(path,"utf-8");
+        properties.load(new FileReader(path));
+
+        String driver = properties.getProperty("driver");
+        String url = properties.getProperty("url");
+        String username = properties.getProperty("username");
+        String password = properties.getProperty("password");
+
+        System.out.println(driver);
+        System.out.println(url);
+        System.out.println(username);
+        System.out.println(password);
+    }
+}
+```
+
+#### 검색 기능을 강화시킨 컬렉션
+
+###### TreeSet
+
+###### TreeMap
