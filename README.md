@@ -4837,3 +4837,65 @@ class Member5 {
         <td>공통</td>
     </tr>
 </table>
+
+#### 필터링 (distinct(), filter())
+    중간 처리 기능으로 요소를 걸러내는 역할
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td rowspan="5">Stream<br>
+        IntStream<br>
+        LongStream<br>
+        DoubleStream</td>
+        <td>distinct()</td>
+        <td>중복제거</td>
+    </tr>
+    <tr>
+        <td>filter(Predicate)</td>
+        <td rowspan="4">조건 필터링</td>
+    </tr>
+    <tr>
+        <td>filter(IntPredicate)</td>
+    </tr>
+    <tr>
+        <td>filter(LongPredicate)</td>
+    </tr>
+    <tr>
+        <td>filter(DoublePredicate)</td>
+    </tr>
+</table>
+
+    distinct() 메소드는 중복을 제거하는데,
+    Stream 의 경우 Object.equals(Object) true 이면 동일한 객체로 판단
+    
+    filter() 메소드는 매개값을 ㅗ주어진 Predicate가 true를 리턴하는 요소만 필터링
+
+```java
+public class FilteringExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("홍길동", "신용권", "김자바", "신용권", "신민철");
+        names.stream()
+                .distinct()
+                .forEach(System.out::println);
+        System.out.println();
+        names.stream()
+                .filter(n->n.startsWith("신"))
+                .forEach(System.out::println);
+        System.out.println();
+        names.stream()
+                .distinct()
+                .filter(n->n.startsWith("신"))
+                .forEach(System.out::println);
+    }
+}
+```
+
+#### 매핑 (flatMapXXX(), mapXXX(), asXXXStream(), boxed())
+    중간 처리 기능으로 스트림의 요소를 다른 요소로 대체하는 작업
+    
+###### flatMapXXX() 메소드
+    요소를 대체하는 복수 개의 요소들로 구성되
