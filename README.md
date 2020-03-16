@@ -3728,5 +3728,1112 @@ public class PropertiesExample {
 #### 검색 기능을 강화시킨 컬렉션
 
 ###### TreeSet
+    이진 트리를 기반으로 한 Set 컬렉션,
+    하나의 노드는 노드값인 value 와 왼ㅉ족과 오른쪽 자식 노드를 참조하기 위한 두개의 변수로 구성
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>first()</td>
+        <td>제일 낮은 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>last()</td>
+        <td>제일 높은 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>lower(E e)</td>
+        <td>주어진 객체 보다 바로 아래 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>higher(E e)</td>
+        <td>주어진 객체보다 바로 위 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>floor(E e)</td>
+        <td>주어진 객체와 동등한 객체가 있으면 리턴,<br>
+        만약 없다면 주어진 객체의 바로 아래의 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>ceiling(E e)</td>
+        <td>주어진 객체와 동등한 객체가 있으면 리턴,<br>
+        만약 없다면 주어진 객체의 바로 위의 객체를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>pollFirst()</td>
+        <td>제일 낮은 객체를 꺼내오고 컬렉션에서 제거함</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>pollLast()</td>
+        <td>제일 높은 객체를 꺼내오고 컬렉션에서 제거함</td>
+    </tr>
+</table>
+
+```java
+public class TreeSetExample {
+    public static void main(String[] args) {
+        TreeSet<Integer> scores = new TreeSet<>();
+        scores.add(new Integer(87));
+        scores.add(new Integer(98));
+        scores.add(new Integer(75));
+        scores.add(new Integer(95));
+        scores.add(new Integer(80));
+        Integer score = null;
+
+        score = scores.first();
+        System.out.println("가장 낮은 점수: " + score);
+
+        score = scores.last();
+        System.out.println("가장 높은 점수: " + score);
+
+        score = scores.lower(new Integer(95));
+        System.out.println("95점 아래 점수: " + score);
+
+        score = scores.higher(new Integer(95));
+        System.out.println("95점 위 점수: " + score);
+
+        score = scores.floor(new Integer(95));
+        System.out.println("95점 이거나 아래 점수: " + score);
+
+        score = scores.ceiling(new Integer(85));
+        System.out.println("85점 이거나 위 점수: " + score);
+
+
+        while (!scores.isEmpty()) {
+            score = scores.pollFirst();
+            System.out.println(score + " (남은 객체 수: " + scores.size() + ")");
+        }
+    }
+}
+```
+<table>
+    <tr>
+        <th>리턴타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Iterator&lt;E&gt;</td>
+        <td>descendingIterator()</td>
+        <td>내림차순으로 정렬된 Iterator 를 리턴</td>
+    </tr>
+    <tr>
+        <td>NavigableSet&lt;E&gt;</td>
+        <td>descendingSet()</td>
+        <td>내림자순으로 정렬된 NavigableSet 을 반환</td>
+    </tr>
+</table>
+
+```java
+public class TreeSetExample2 {
+    public static void main(String[] args) {
+        TreeSet<Integer> scores = new TreeSet<>();
+        scores.add(new Integer(87));
+        scores.add(new Integer(98));
+        scores.add(new Integer(75));
+        scores.add(new Integer(95));
+        scores.add(new Integer(80));
+
+        NavigableSet<Integer> descendingSet = scores.descendingSet();
+        for (Integer score : descendingSet) {
+            System.out.print(score + " ");
+        }
+        System.out.println();
+
+        NavigableSet<Integer> ascendingSet = descendingSet.descendingSet();
+        for (Integer score : ascendingSet) {
+            System.out.print(score + " ");
+        }
+        System.out.println();
+    }
+}
+```
+<table>
+    <tr>
+        <th>리턴타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>NavigableSet&lt;E&gt;</td>
+        <td>headSet(E toElement,<br>
+         boolean inclusive)</td>
+        <td>주어진 객체보다 낮은 객체들을 NavigableSet 으로 리턴,<br>
+        주어진 객체 포함 여부는 두 번째 매개값에 따라 달라짐</td>
+    </tr>
+    <tr>
+        <td>NavigableSet&lt;E&gt;</td>
+        <td>tailSet(E fromElement,<br>
+        boolean inclusive)</td>
+        <td>주어진 객체보다 높은 객체들을 NavigableSet 으로 리턴,<br>
+        주어진 객체 포함 여부는 두 번째 매개값에 따라 달라짐</td>
+    </tr>
+    <tr>
+        <td>NavigableSet&lt;E&gt;</td>
+        <td>subSet(E fromElement,<br>
+        boolean fromInclusive,<br>
+        E toElement,<br>
+        boolean toInclusive)</td>
+        <td>시작과 끝으로 주어진 객체 사이의 객체들을 NavigableSet 으로 리턴,<br>
+        시작과 끝 객체의 포함 여부는 두 번째, 네 번째 매개값에 따라 달라짐</td>
+    </tr>
+</table>
+
+```java
+public class TreeSetExample3 {
+    public static void main(String[] args) {
+        TreeSet<String> treeSet = new TreeSet<>();
+        treeSet.add("apple");
+        treeSet.add("forever");
+        treeSet.add("description");
+        treeSet.add("ever");
+        treeSet.add("zoo");
+        treeSet.add("base");
+        treeSet.add("guess");
+        treeSet.add("cherry");
+
+        System.out.println("[ c ~ f 사이의 단어 검색 ]");
+        NavigableSet<String> rangeSet = treeSet.subSet("c", true, "f", true);
+        for (String word : rangeSet) {
+            System.out.println(word);
+        }
+    }
+}
+```
 
 ###### TreeMap
+    이진 트리를 기반으로 한 Map 컬렉션,
+    TreeSet 과의 차이점은 value에 Map.Entry 를 저장한다는 점
+    정렬은 키값을 기준으로 함
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>firstEntry()</td>
+        <td>제일 낮은 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>lastEntry()</td>
+        <td>제일 높은 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>lowerEntry(K key)</td>
+        <td>주어진 키보다 바로 아래 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>higherEntry(K key)</td>
+        <td>주어진 키보다 바로 위 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>floorEntry(K key)</td>
+        <td>주어진 키와 동등한 키가 있으면 해당 Map.Entry 를 리턴,<br>
+        만약 없다면 주어진 키의 바로 아래의 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>ceilingEntry(K key)</td>
+        <td>주어진 키와 동등한 키가 있으면 해당 Map.Entry 리턴,<br>
+        만약 없다면 주어진 키의 바로 위의 Map.Entry 를 리턴</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>pollFirstEntry()</td>
+        <td>제일 낮은 Map.Entry 를 꺼내오고 컬렉션에서 제거함</td>
+    </tr>
+    <tr>
+        <td>Map.Entry&lt;K, V&gt;</td>
+        <td>pollLastEntry()</td>
+        <td>제일 높은 Map.Entry 를 꺼내오고 컬렉션에서 제거함</td>
+    </tr>
+</table>
+
+```java
+public class TreeMapExample {
+    public static void main(String[] args) {
+        TreeMap<Integer, String> scores = new TreeMap<>();
+        scores.put(new Integer(87), "홍길동");
+        scores.put(new Integer(98), "이동수");
+        scores.put(new Integer(75), "박길순");
+        scores.put(new Integer(95), "신용권");
+        scores.put(new Integer(80), "김자바");
+
+        Map.Entry<Integer, String> entry = null;
+
+        entry = scores.firstEntry();
+        System.out.println("가장 낮은 점수: " + entry.getKey() + "-" + entry.getValue());
+
+        entry = scores.lastEntry();
+        System.out.println("가장 높은 점수: " + entry.getKey() + "-" + entry.getValue());
+
+        entry = scores.lowerEntry(new Integer(95));
+        System.out.println("95점 아래 점수: " + entry.getKey() + "-" + entry.getValue());
+
+        entry = scores.higherEntry(new Integer(95));
+        System.out.println("95점 위 점수: " + entry.getKey() + "-" + entry.getValue());
+
+        entry = scores.floorEntry(new Integer(95));
+        System.out.println("95점 이거나 아래 점수: " + entry.getKey() + "-" + entry.getValue());
+
+        entry = scores.ceilingEntry(new Integer(85));
+        System.out.println("85점 이거나 위 점수: " + entry.getKey() + "-" + entry.getValue());
+
+
+        while (!scores.isEmpty()) {
+            entry = scores.pollFirstEntry();
+            System.out.println(entry.getKey() + "-" + entry.getValue() + " (남은 객체 수: " + scores.size() + ")");
+        }
+    }
+}
+```
+<table>
+    <tr>
+        <th>리턴타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>NavigableSet&lt;K&gt;</td>
+        <td>descendingKeySet()</td>
+        <td>내림차순으로 정렬된 키의 NavigableSet 을 리턴</td>
+    </tr>
+    <tr>
+        <td>NavigableMap&lt;K, V&gt;</td>
+        <td>descendingMap()</td>
+        <td>내림차순으로 정렬된 Map.Entry 의 NavigableMap 을 리턴</td>
+    </tr>
+</table>
+
+```java
+public class TreeMapExample2 {
+    public static void main(String[] args) {
+        TreeMap<Integer, String> scores = new TreeMap<>();
+        scores.put(new Integer(87), "홍길동");
+        scores.put(new Integer(98), "이동수");
+        scores.put(new Integer(75), "박길순");
+        scores.put(new Integer(95), "신용권");
+        scores.put(new Integer(80), "김자바");
+
+        NavigableMap<Integer, String> descendingMap = scores.descendingMap();
+        Set<Map.Entry<Integer, String>> descendingEntrySet = descendingMap.entrySet();
+        for (Map.Entry<Integer, String> entry : descendingEntrySet) {
+            System.out.print(entry.getKey() + "-" + entry.getValue() + " ");
+        }
+        System.out.println();
+
+        NavigableMap<Integer, String> ascendingMap = descendingMap.descendingMap();
+        Set<Map.Entry<Integer, String>> ascendingEntryMap = ascendingMap.entrySet();
+        for (Map.Entry<Integer, String> entry : ascendingEntryMap) {
+            System.out.print(entry.getKey() + "-" + entry.getValue() + " ");
+        }
+        System.out.println();
+    }
+}
+```
+<table>
+    <tr>
+        <th>리턴타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>NavigableMap&lt;K, V&gt;</td>
+        <td>headMap(K toKey,<br>
+        boolean inclusive)</td>
+        <td>주어진 키보다 낮은 Map.Entry 들을 NavigableMap 으로 리턴,<br>
+        주어진 키의 Map.Entry 포함 여부는 두 번째 매개값에 따라 달라짐</td>
+    </tr>
+    <tr>
+        <td>NavigableMap&lt;K, V&gt;</td>
+        <td>tailMap(K fromKey,<br>
+        boolean inclusive)</td>
+        <td>주어진 키보다 높은 Map.Entry 들을 NavigableMap 으로 리턴,<br>
+        주어진 키의 Map.Entry 포함 여부는 두 번째 매개값에 따라 달라짐</td>
+    </tr>
+    <tr>
+        <td>NavigableMap&lt;K, V&gt;</td>
+        <td>subMap(K fromKey,<br>
+        boolean inclusive,<br>
+        K toKey,<br>
+        boolean inclusive)</td>
+        <td>시작과 끝으로 주어진 키 사이의 Map.Entry 들을 NavigableMap 컬렉션으로 리턴,<br>
+        시작과 끝 키의 Map.Entry 포함 여부는 두 번째, 네 번째 매개값에 따라 달라짐</td>
+    </tr>
+</table>
+
+```java
+public class TreeMapExample3 {
+    public static void main(String[] args) {
+        TreeMap<String, Integer> treeMap = new TreeMap<>();
+        treeMap.put("apple", new Integer(10));
+        treeMap.put("forever", new Integer(60));
+        treeMap.put("description", new Integer(40));
+        treeMap.put("ever", new Integer(50));
+        treeMap.put("zoo", new Integer(10));
+        treeMap.put("base", new Integer(20));
+        treeMap.put("guess", new Integer(70));
+        treeMap.put("cherry", new Integer(70));
+
+        System.out.println("[ c ~ f 사이의 단어 검색 ]");
+        NavigableMap<String, Integer> rangeMap = treeMap.subMap("c", true, "f", true);
+        for (Map.Entry<String, Integer> entry : rangeMap.entrySet()) {
+            System.out.println(entry.getKey() + "-" + entry.getValue() + "페이지");
+        }
+    }
+}
+```
+###### TreeSet, TreeMap 의 정렬 기준 (Comparable, Comparator)
+    TreeSet, TreeMap 은 숫자 타입일 경우 값으로 자동 오름차순, 문자열일 경우 유니코드로 정렬
+    사용자 정의 클래스로 정렬할 때 Comparable 을 구현,
+    compareTo() 메소드를 오버라이딩하여 원하는 정렬을 구현해 낼 수 있다.
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>compareTo(T o)</td>
+        <td>주어진 객체와 같으면 0을 리턴,<br>
+        주어진 객체보다 적으면 음수를 리턴,<br>
+        주어진 객체보다 크면 양수를 리턴</td>
+    </tr>
+</table>
+
+```java
+public class ComparableExample {
+    public static void main(String[] args) {
+        TreeSet<Person2> treeSet = new TreeSet<>();
+        treeSet.add(new Person2("홍길동", 45));
+        treeSet.add(new Person2("김자바", 25));
+        treeSet.add(new Person2("박지원", 31));
+        Iterator<Person2> iterator = treeSet.iterator();
+        while (iterator.hasNext()) {
+            Person2 person2 = iterator.next();
+            System.out.println(person2.name + ":" + person2.age);
+        }
+    }
+
+
+}
+
+class Person2 implements Comparable<Person2> {
+    String name;
+    int age;
+
+    public Person2(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public int compareTo(Person2 person2) {
+        if (age < person2.age) {
+            return -1;
+        } else if (age == person2.age) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+```
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>compare(T o1, T o2)</td>
+        <td>o1과 o2가 같으면 0을 리턴,<br>
+        o1이 o2보다 앞에 오게 하려면 음수를 리턴,<br>
+        o1이 o2보다 뒤에 오게 하려면 양수를 리턴</td>
+    </tr>
+</table>
+
+```java
+public class DescendingComparator implements Comparator<Fruit2> {
+    @Override
+    public int compare(Fruit2 t1, Fruit2 t2) {
+        if (t1.price < t2.price) {
+            return 1;
+        } else if (t1.price == t2.price) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+}
+
+class Fruit2 {
+    String name;
+    int price;
+
+    public Fruit2(String name, int price) {
+        this.name = name;
+        this.price = price;
+    }
+}
+
+class ComparatorExample {
+    public static void main(String[] args) {
+//        TreeSet<Fruit2> treeSet = new TreeSet<>();
+//        treeSet.add(new Fruit2("포도", 3000)); // Fruit2 가 Comparable 을 구현하지 않아서 예외 발생
+//        treeSet.add(new Fruit2("수박", 10000));
+//        treeSet.add(new Fruit2("딸기", 6000));
+
+        TreeSet<Fruit2> treeSet = new TreeSet<>(new DescendingComparator());
+        treeSet.add(new Fruit2("포도", 3000));
+        treeSet.add(new Fruit2("수박", 10000));
+        treeSet.add(new Fruit2("딸기", 6000));
+
+        Iterator<Fruit2> iterator = treeSet.iterator();
+        while (iterator.hasNext()) {
+            Fruit2 fruit2 = iterator.next();
+            System.out.println(fruit2.name + ": " + fruit2.price);
+        }
+    }
+}
+```
+#### Stack
+    LIFO ( Last In First Out ) 후입 선출 자료구조를 구현한 클래스
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>push(E item)</td>
+        <td>주어진 객체를 스택에 넣는다.</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>peek()</td>
+        <td>스택의 맨 위 객체를 가져온다.<br>
+        객체를 스택에서 제거하지 않는다.</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>pop()</td>
+        <td>스택의 맨 위 객체를 가져온다.<br>
+        객체를 스택에서 제거한다.</td>
+    </tr>
+</table>
+
+```java
+public class StackExample {
+    public static void main(String[] args) {
+        Stack<Coin> coinBox = new Stack<>();
+        coinBox.push(new Coin(100));
+        coinBox.push(new Coin(50));
+        coinBox.push(new Coin(500));
+        coinBox.push(new Coin(10));
+
+        while (!coinBox.isEmpty()) {
+            Coin coin = coinBox.pop();
+            System.out.println("꺼내온 동전 : " + coin.getValue() + "원");
+        }
+    }
+}
+
+class Coin {
+    private int value;
+
+    public Coin(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+}
+```
+
+#### Queue
+    FIFO ( First In First Out ) 선입 선출 자료구조를 구현한 인터페이스
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>offer(E e)</td>
+        <td>주어진 객체를 큐에 넣는다.</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>peek()</td>
+        <td>큐의 맨 위 객체를 가져온다.<br>
+        객체를 큐에서 제거하지 않는다.</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>poll()</td>
+        <td>큐의 맨 위 객체를 가져온다.<br>
+        객체를 큐에서 제거한다.</td>
+    </tr>
+</table>
+
+```java
+public class QueueExample {
+    public static void main(String[] args) {
+        Queue<Message> messageQueue = new LinkedList<>();
+        messageQueue.offer(new Message("sendMail", "홍길동"));
+        messageQueue.offer(new Message("sendSMS", "신용권"));
+        messageQueue.offer(new Message("sendKakaoTalk", "홍두께"));
+        while (!messageQueue.isEmpty()) {
+            Message message = messageQueue.poll();
+            System.out.println(message.command + " : " + message.to);
+        }
+    }
+}
+
+class Message {
+    String command;
+    String to;
+
+    public Message(String command, String to) {
+        this.command = command;
+        this.to = to;
+    }
+}
+```
+
+#### 동기화된 컬렉션
+    Vector와 Hashtable을 제외한 컬렉션들은 동기화된 메소드로 구성되어 있지 않아
+    멀티 스레드 환경에서 안전하지 않다.
+    따라서 ArrayList, HashSet, HashMap 을 멀티 스레드 환경에서 사용할 경우
+    비동기화된 메소드를 동기화된 메소드로 래핑하는 Collections의
+    synchronizedXXX() 메소드를 제공
+    
+ <table>
+     <tr>
+         <th>리턴 타입</th>
+         <th>메소드</th>
+         <th>설명</th>
+     </tr>
+     <tr>
+         <td>List&lt;T&gt;</td>
+         <td>synchronizedList(List&lt;T&gt; list)</td>
+         <td>List 를 동기화된 List 로 리턴</td>
+     </tr>
+     <tr>
+         <td>Map&lt;K, V&gt;</td>
+         <td>synchronizedMap(Map&lt;K, V&gt; map)</td>
+         <td>Map 을 동기화된 Map 으로 리턴</td>
+     </tr>
+     <tr>
+         <td>Set&lt;T&gt;</td>
+         <td>synchronizedSet(List&lt;T&gt; set)</td>
+         <td>Set 을 동기화된 Set 으로 리턴</td>
+     </tr>
+ </table>
+ 
+    List<T> list = Collections.synchronizedList(new ArrayList<T>());
+    Set<T> set = Collections.synchronizedSet(new HashSet<T>());
+    Map<K, V> map = Collections.synchronizedMap(new HashMap<K, V>());
+    
+#### 병렬 처리를 위한 컬렉션 ( ★ 다시 공부 )
+    동기화된 컬렉션은 멀티 스레드 환경에서 하나의 스레드가 요소를 안전하게 처리하도록 도와주지만,
+    전체 요소를 빠르게 처리하지는 못한다. 하나의 스레드가 요소를 처리할 때 전체 잠금이 발생하여
+    다른 스레드는 대기 상태가 된다. 자바는 멀티 스레드가 컬렉션의 요소를 병렬적으로 처리 할 수
+    있도록 특별한 컬렉션을 제공하고 있다.
+    
+    ConcurrentHashMap, ConcurrentLinkedQueue
+     
+    ConcurrentHashMap : 부분(Segment) 잠금 사용
+                        부분 잠금을 사용하여 처리하는 요소가 포함된 부분만 잠금하고 
+                        나머지 부분은 다른 스레드가 변경할 수 있도록 하는 것
+    Map<K, V> map = new ConcurrentHashMap<K, V>();
+    
+    ConcurrentLinkedQueue : 락-프리(Lock-Free) 알고리즘 사용
+                            여러개의 스레드가 동시에 접근할 경우, 잠금을 사용하지 않고도 최소한
+                            하나의 스레드가 안전하게 요소를 저장하거나 얻도록 해줌.
+    Queue<E> queue = new ConcurrentLinkedQueue<E>();
+
+### 60. 스트림
+    컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자이다.
+
+```java
+public class IteratorVsStreamExample {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("홍길동", "신용권", "김자바");
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            String name = iterator.next();
+            System.out.println(name);
+        }
+        System.out.println();
+
+        Stream<String> stream = list.stream();
+        stream.forEach(name -> System.out.println(name));
+    }
+}
+
+```
+    특징
+    1. 람다식으로 요소 처리 코드를 제공하는 점
+    2. 내부 반복자를 사용하므로 병렬 처리가 쉽다는 점
+    3. 중간 처리와 최종 처리 작업을 수행하는 점
+
+###### 람다식으로 요소 처리 코드를 제공하는 점
+    Stream 이 제공하는 대부분의 요소 처리 메소드는 함수적 인터페이스 매개 타입을
+    갖기 때문에 람다식 또는 메소드 참조를 이용해서 요소 처리 내용을 매개값을로 전달 할 수 있다.
+
+```java
+public class LambdaExpressionsExample {
+    public static void main(String[] args) {
+        List<Student2> list = Arrays.asList(new Student2("홍길동", 90),
+                new Student2("신용권", 92));
+
+        Stream<Student2> stream = list.stream();
+        stream.forEach(student -> {
+            String name = student.name;
+            int score = student.score;
+            System.out.println(name + "-" + score);
+        });
+    }
+}
+class Student2 {
+    String name;
+    int score;
+
+    public Student2(String name, int score) {
+        this.name = name;
+        this.score = score;
+
+    }
+}
+```    
+
+###### 내부 반복자를 사용하므로 병렬 처리가 쉽다는 점
+    외부 반복자란 개발자가 코드로 직접 컬렉션의 요소를 반복해서 가져오는 코드 패턴
+    index를 이용하는 for문, iterator를 이용하는 while문 등
+    
+    내부 반복자는 컬렉션 내부에서 요소들을 반복시키고, 
+    개발자는 요소당 처리해야 할 코드만 제공하는 코드 패턴
+    
+    코드도 간결해 지고, 요소의 병렬 처리가 컬렉션 내부에서 처리
+    
+    병렬 (parallel) 처리
+        한 가지 작업을 서브 작업으로 나누고, 서브 작업들을 분리된 스레드에서
+        병렬적으로 처리하는 것.
+        런타임 시 하나의 작업을 서브 작업으로 자동으로 나누고, 서브 작업의 결과를
+        자동으로 결합해서 최종 결과물을 생성
+        
+        ForkJoinPool 스레드풀 사용
+
+```java
+public class ParallelExample {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList(
+                "홍길동", "신용권", "김자바", "람다식", "박병렬"
+        );
+        Stream<String> stream = list.stream();
+        stream.forEach(ParallelExample::print);
+
+        System.out.println();
+
+        Stream<String> parallelStream = list.parallelStream();
+        parallelStream.forEach(ParallelExample::print);
+    }
+
+    public static void print(String str) {
+        System.out.println(str + " " + Thread.currentThread().getName());
+    }
+}
+```
+
+###### 중간 처리와 최종 처리 작업을 수행하는 점
+    중간 처리에서는 매핑, 필터링, 정렬을 수행
+    최종 처리에서는 반복, 카운팅, 평균, 총합 등의 집계 처리를 수행
+    
+```java
+public class MapAndReduceExample {
+    public static void main(String[] args) {
+        List<Student5> list = Arrays.asList(
+                new Student5("홍길동", 10),
+                new Student5("신용권", 20),
+                new Student5("유미선", 30)
+        );
+        double avg = list.stream()
+                // 중간 처리( 학생 객체를 점수로 매핑 )
+                .mapToInt(Student5::getScore)
+                // 최종 처리( 평균 점수 )
+                .average()
+                .getAsDouble()
+                ;
+        System.out.println("평균 점수: " + avg);
+    }
+}
+
+class Student5 {
+    String name;
+    int score;
+
+    public Student5(String name, int score) {
+        this.name = name;
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
+    }
+}
+```
+
+#### 스트림 종류
+
+<table>
+     <tr>
+         <th>리턴 타입</th>
+         <th>메소드</th>
+         <th>소스</th>
+     </tr>
+     <tr>
+         <td>Stream&lt;T&gt;</td>
+         <td>java.util.Collection.stream()<br>
+         java.util.Collection.parallelStream()</td>
+         <td>컬렉션</td>
+     </tr>
+     <tr>
+         <td>Stream&lt;T&gt;<br>
+         IntStream<br>
+         LongStream<br>
+         DoubleStream</td>
+         <td>Arrays.stream(T[]), Stream.of(T[])<br>
+         Arrays.stream(int[]), IntStream.of(int[])<br>
+         Arrays.stream(long[]), LongStream.of(long[])<br>
+         Arrays.stream(double[]), DoubleStream.of(double[])</td>
+         <td>배열</td>
+     </tr>
+     <tr>
+         <td>IntStream</td>
+         <td>IntStream.rang(int, int)<br>
+         IntStream.rangeClosed(int, int)</td>
+         <td>int 범위</td>
+     </tr>
+     <tr>
+         <td>LongStream</td>
+         <td>LongStream.range(long, long)<br>
+         LongStream.rangeClosed(long, long)</td>
+         <td>long 범위</td>
+     </tr>
+     <tr>
+         <td>Stream&lt;Path&gt;</td>
+         <td>Files.find(Path, int, BiPredicate, FileVisitOption)<br>
+         Files.list(Path)</td>
+         <td>디렉토리</td>
+     </tr>
+     <tr>
+         <td>Stream&lt;String&gt;</td>
+         <td>Files.lines(Path, Charset)<br>
+         BufferedReader.lines()</td>
+         <td>파일</td>
+     </tr>
+     <tr>
+         <td>DoubleStream<br>
+         IntStream<br>
+         LongStream</td>
+         <td>Random.doubles(...)<br>
+         Random.ints()<br>
+         Random.longs()</td>
+         <td>랜덤 수</td>
+     </tr>
+</table>
+
+###### 컬렉션으로부터 스트림 얻기
+```java
+public class FromCollectionExample {
+    public static void main(String[] args) {
+        List<Student5> list = Arrays.asList(
+                new Student5("홍길동", 10),
+                new Student5("신용권", 20),
+                new Student5("유미선", 30)
+        );
+        Stream<Student5> stream = list.stream();
+        stream.forEach(s -> System.out.println(s.name));
+    }
+}
+```
+###### 배열로부터 스트림 얻기
+```java
+public class FromArrayExample {
+    public static void main(String[] args) {
+        String[] strArray = {"홍길동", "신용권", "김미나"};
+        Stream<String> stream = Arrays.stream(strArray);
+        stream.forEach(s -> System.out.print(s + ","));
+        System.out.println();
+        
+        int[] intArray = {1, 2, 3, 4, 5};
+        IntStream intStream = Arrays.stream(intArray);
+        intStream.forEach(i -> System.out.print(i + ","));
+    }
+}
+```
+
+###### 파일로부터 스트림 얻기
+```java
+public class FromFileContentExample {
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("src/examples/test.txt");
+        Stream<String> stream;
+
+        // Files.line() 메소드 이용
+        stream = Files.lines(path, Charset.defaultCharset());
+        stream.forEach(System.out::println);
+        System.out.println();
+
+        //BufferedReader 의 lines() 메소드 이용
+        File file = path.toFile();
+        FileReader fileReader = new FileReader(file);
+        BufferedReader br = new BufferedReader(fileReader);
+        stream = br.lines();
+        stream.forEach(System.out::println);
+    }
+}
+```
+
+###### 디렉토리로부터 스트림 얻기
+```java
+public class FromDirectoryExample {
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("src/examples");
+        Stream<Path> stream = Files.list(path);
+        stream.forEach(p-> System.out.println(p.getFileName()));
+    }
+}
+```
+#### 스트림 파이프라인
+    파이프라인 : 여러 개의 스트림이 연결되어 있는 구조
+    
+    리덕션 : 대량의 데이터를 가공해서 축소하는 것
+            합계, 평균값, 카운팅, 최대값, 최소값 등
+    컬렉션의 요소를 리덕션의 결과물로 바로 집계할 수 없을 경우
+    필터링, 매핑, 정렬, 그룹핑 등의 중간 처리가 필요
+    
+    중간 스트림이 생성될 때 요소들이 바로 중간 처리 되는 것이 아니라
+    최종 처리가 시작되기 전까지 중간 처리는 지연된다.
+    최종 처리가 시작되면 비로소 컬렉션의 요소가 하나씩 
+    중간 스트림에서 처리되고 최종 처리까지 오게 된다.
+    
+```java
+public class StreamPipelinesExample {
+    public static void main(String[] args) {
+        List<Member5> list = Arrays.asList(
+                new Member5("홍길동", Member5.MALE, 30),
+                new Member5("김나리", Member5.FEMALE, 20),
+                new Member5("신용권", Member5.MALE, 45),
+                new Member5("박수미", Member5.FEMALE, 27)
+        );
+        double ageAvg = list.stream()
+                .filter(member5 -> member5.getSex() == Member5.MALE)
+                .mapToInt(member5 -> member5.getAge())
+                .average()
+                .getAsDouble()
+                ;
+        System.out.println("남자 평균 나이: " + ageAvg);
+    }
+}
+
+class Member5 {
+    static int MALE = 0;
+    static int FEMALE = 1;
+
+    private String name;
+    private int sex;
+    private int age;
+
+    public Member5(String name, int sex, int age) {
+        this.name = name;
+        this.sex = sex;
+        this.age = age;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+    
+<table>
+    <tr>
+        <th colspan="2">종류</th>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>소속된 인터페이스</th>
+    </tr>
+    <tr>
+        <td rowspan="16">중간<br>처리</td>
+        <td rowspan="2">필터링</td>
+        <td rowspan="16">Stream<br>
+        IntStream<br>
+        LongStream<br>
+        DoubleStream</td>
+        <td>distinct()</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>filter(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td rowspan="12">매핑</td>
+        <td>flatMap(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>flatMapToDouble(...)</td>
+        <td>Stream</td>
+    </tr>
+    <tr>
+        <td>flatMapToInt(...)</td>
+        <td>Stream</td>
+    </tr>
+    <tr>
+        <td>flatMapToLong(...)</td>
+        <td>Stream</td>
+    </tr>
+    <tr>
+        <td>map(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>mapToDouble(...)</td>
+        <td>Stream, IntStream, LongStream</td>
+    </tr>
+    <tr>
+        <td>mapToInt(...)</td>
+        <td>Stream, LongStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>mapToLong(...)</td>
+        <td>Stream, IntStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>mapToObj(...)</td>
+        <td>IntStream, LongStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>asDoubleStream()</td>
+        <td>IntStream, LongStream</td>
+    </tr>
+    <tr>
+        <td>asLongStream()</td>
+        <td>IntStream</td>
+    </tr>
+    <tr>
+        <td>boxed()</td>
+        <td>IntStream, LongStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>정렬</td>
+        <td>sorted(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>루핑</td>
+        <td>peek(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td rowspan="12">최종<br>처리</td>
+        <td rowspan="3">매칭</td>
+        <td>boolean</td>
+        <td>allMatch(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>anyMatch(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>nonMatch(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td rowspan="7">집계</td>
+        <td>long</td>
+        <td>count()</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>OptionalXXX</td>
+        <td>findFirst()</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>OptionalXXX</td>
+        <td>max(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>OptionalXXX</td>
+        <td>min(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>OptionalDouble</td>
+        <td>average()</td>
+        <td>IntStream, LongStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>OptionalXXX</td>
+        <td>reduce(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>int, long, double</td>
+        <td>sum()</td>
+        <td>IntStream, LongStream, DoubleStream</td>
+    </tr>
+    <tr>
+        <td>루핑</td>
+        <td>void</td>
+        <td>forEach(...)</td>
+        <td>공통</td>
+    </tr>
+    <tr>
+        <td>수집</td>
+        <td>R</td>
+        <td>collect(...)</td>
+        <td>공통</td>
+    </tr>
+</table>
