@@ -4898,4 +4898,484 @@ public class FilteringExample {
     중간 처리 기능으로 스트림의 요소를 다른 요소로 대체하는 작업
     
 ###### flatMapXXX() 메소드
-    요소를 대체하는 복수 개의 요소들로 구성되
+    요소를 대체하는 복수 개의 요소들로 구성된 새로운 스트림을 리턴한다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>요소 -> 대체 요소</th>
+    </tr>
+    <tr>
+        <td>Stream&lt;R&gt;</td>
+        <td>flatMap(Function&lt;T, Stream&lt;R&gt;&gt;)</td>
+        <td>T -> Stream&lt;R&gt;</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>flatMap(DoubleFunction&lt;DoubleStream&gt;)</td>
+        <td>double -> DoubleFunction</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>flatMap(IntFunction&lt;IntStream&gt;)</td>
+        <td>int -> IntStream</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>flatMap(LongFunction&lt;LongStream&gt;)</td>
+        <td>long -> LongStream</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>flatMapToDouble(Function&lt;T, DoubleStream&lt;R&gt;&gt;)</td>
+        <td>T -> DoubleStream&lt;R&gt;</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>flatMapToInt(Function&lt;T, IntStream&lt;R&gt;&gt;)</td>
+        <td>T -> DoubleStream&lt;R&gt;</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>flatMapToLong(Function&lt;T, LongStream&lt;R&gt;&gt;)</td>
+        <td>T -> LongStream&lt;R&gt;</td>
+    </tr>
+</table>
+
+```java
+public class FlatMapExample {
+    public static void main(String[] args) {
+        List<String> inputList1 = Arrays.asList("java8 lambda", "stream mapping");
+        inputList1
+                .stream()
+                .flatMap(data -> Arrays.stream(data.split(" ")))
+                .forEach(System.out::println);
+
+        System.out.println();
+
+        List<String> inputList2 = Arrays.asList("10, 20, 30", "40, 50, 60");
+        inputList2
+                .stream()
+                .flatMapToInt(data -> {
+                    String[] strArr = data.split(",");
+                    int[] intArr = new int[strArr.length];
+                    for (int i = 0; i < strArr.length; i++) {
+                        intArr[i] = Integer.parseInt(strArr[i].trim());
+                    }
+                    return Arrays.stream(intArr);
+                })
+                .forEach(System.out::println);
+    }
+}
+```
+
+###### mapXXX() 메소드
+    요소를 대체하는 요소로 구성된 새로운 스트림을 리턴한다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>요소 -> 대체 요소</th>
+    </tr>
+    <tr>
+        <td>Stream&lt;R&gt;</td>
+        <td>map(Function&lt;T, R&gt;)</td>
+        <td>T -> R</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>mapToDouble(ToDoubleFunction&lt;T&gt;)</td>
+        <td>T -> double</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>mapToInt(ToIntFunction&lt;T&gt;)</td>
+        <td>T -> int</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>mapToLong(ToLongFunction&lt;T&gt;)</td>
+        <td>T -> long</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>map(DoubleUnaryOperator)</td>
+        <td>double -> double</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>mapToInt(DoubleToIntFunction)</td>
+        <td>double -> int</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>mapToLong(DoubleToLongFunction)</td>
+        <td>double -> long</td>
+    </tr>
+    <tr>
+        <td>Stream&lt;U&gt;</td>
+        <td>mapToObj(DoubleFunction&lt;U&gt;)</td>
+        <td>double -> U</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>map(IntUnaryOperator)</td>
+        <td>int -> int</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>mapToDouble(IntToDoubleFunction)</td>
+        <td>int -> double</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>mapToLong(IntToLongFunction)</td>
+        <td>int -> long</td>
+    </tr>
+    <tr>
+        <td>Stream&lt;U&gt;</td>
+        <td>mapToObj(IntFunction&lt;U&gt;)</td>
+        <td>int -> U</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>map(LongUnaryOperator)</td>
+        <td>long -> long</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>mapToDouble(LongToDoubleFunction)</td>
+        <td>long -> double</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>mapToInt(LongToIntFunction)</td>
+        <td>long -> int</td>
+    </tr>
+    <tr>
+        <td>Stream&lt;U&gt;</td>
+        <td>mapToObj(LongFunction&lt;U&gt;)</td>
+        <td>long -> U</td>
+    </tr>
+</table>
+
+```java
+public class MapExample {
+    public static void main(String[] args) {
+        List<Student2> studentList = Arrays.asList(
+                new Student2("홍길동", 10),
+                new Student2("신용권", 20),
+                new Student2("유미선", 30)
+        );
+        studentList
+                .stream()
+                .mapToInt(Student2::getScore)
+                .forEach(System.out::println);
+    }
+}
+```
+
+###### asDoubleStream(), asLongStream(), boxed() 메소드
+    asDoubleStream() 메소드는 IntStream의 int 요소 또는 LongStream의 long 요소를
+    double 요소로 타입 변환해서 DoubleStream을 생성한다.
+    
+    asLongStream() 메소드는 IntStream의 int 요소를
+    long 요소로 타입 변환해서 LongStream을 생성한다.
+    
+    boxed() 메소드는 int, long, double 요소를 Integer, Long, Double 요소로 박싱해서
+    Stream을 생성한다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>asDoubleStream()</td>
+        <td>int -> double<br>
+        long -> double</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>asLongStream()</td>
+        <td>int -> long</td>
+    </tr>
+    <tr>
+        <td>Stream&lt;Integer&gt;<br>
+        Stream&lt;Long&gt;<br>
+        Stream&lt;Double&gt;</td>
+        <td>boxed()</td>
+        <td>int -> Integer<br>
+        long -> Long<br>
+        double -> Double</td>
+    </tr>
+</table>
+
+```java
+public class AsDoubleStreamAndBoxedExample {
+    public static void main(String[] args) {
+        int[] intArray = {1, 2, 3, 4, 5};
+        IntStream intStream = Arrays.stream(intArray);
+
+        intStream
+                .asDoubleStream()
+                .forEach(System.out::println);
+
+        System.out.println();
+
+        intStream = Arrays.stream(intArray);
+
+        intStream
+                .boxed()
+                .forEach(obj -> System.out.println(obj.intValue()));
+    }
+}
+```
+#### 정렬 (sorted())
+    요소가 최종 처리되기 전에 중간 단계에서 요소를 정렬해서 최종 처리 순서를 변경할 수 있다.
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Stream&lt;T&gt;</td>
+        <td>sorted()</td>
+        <td>객체를 Comparable 구현 방법에 따라 결정</td>
+    </tr>
+    <tr>
+        <td>Stream&lt;T&gt;</td>
+        <td>sorted(Comparator&lt;T&gt;)</td>
+        <td>객체를 주어진 Comparator 에 따라 정렬</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>sorted()</td>
+        <td>double 요소를 오름차순으로 정렬</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>sorted()</td>
+        <td>int 요소를 오름차순으로 정렬</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>sorted()</td>
+        <td>long 요소를 오름차순으로 정렬</td>
+    </tr>
+</table>
+
+```java
+public class SortingExample {
+    public static void main(String[] args) {
+        IntStream intStream = Arrays.stream(new int[]{5, 3, 2, 1, 4});
+        intStream
+                .sorted()
+                .forEach(System.out::println);
+        System.out.println();
+        List<Student6> list = Arrays.asList(
+                new Student6("홍길동", 30),
+                new Student6("신용권", 10),
+                new Student6("김자바", 20)
+        );
+        list
+                .stream()
+                .sorted()
+                .forEach(s -> System.out.println(s.getScore()));
+        System.out.println();
+
+        list
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .forEach(s -> System.out.println(s.getScore()));
+        System.out.println();
+
+    }
+}
+```
+
+#### 루핑(peek(), forEach())
+    루핑은 요소 전체를 반복하는 것
+    peek() : 중간 처리 단계에서 전체 요소를 루핑하면서 추가적인 작업을 위함
+             중간 처리 메소드 이기 때문에 최종 처리 메소드가 호출 되어야만 동작한다.
+```java
+public class LoopingExample {
+    public static void main(String[] args) {
+        int[] intArr = {1, 2, 3, 4, 5};
+        System.out.println("[ peek()를 마지막에 호출한 경우 ]");
+
+        Arrays.stream(intArr)
+                .filter(a -> a % 2 == 0)
+                .peek(n -> System.out.println(n)); // 동작안함
+
+        System.out.println("[ 최종 처리 메소드를 마지막에 호출한 경우 ]");
+        int total = Arrays.stream(intArr)
+                .filter(a -> a % 2 == 0)
+                .peek(System.out::println) // 동작함
+                .sum();                    // 최종메소드
+        System.out.println("총합: " + total);
+
+        System.out.println("[ forEach()를 마지막에 호출한 경우]");
+        Arrays.stream(intArr)
+                .filter(a -> a % 2 == 0)
+                .forEach(System.out::println); // 최종 메소드로 동작
+    }
+}
+```
+
+#### 매칭(allMatch(), anyMatch(), nonMatch())
+    최종 처리 단계에서 요소들이 특정 조건에 만족하는지 조사할 수 있도록 세가지 매칭 메소드 제공
+    allMatch() : 모든 요소들이 매개값으로 주어진 Predicate의 조건에 만족하는지 조사
+    anyMatch() : 최소한 한 개의 요소가 매개값으로 주어진 Predicate의 조건에 만족하는지 조사
+    nonMatch() : 모든 요소들이 매개값으로 주어진 Predicate의 조건에 만족하지 않는지 조사
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>제공 인터페이스</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>allMatch(Predicate&lt;T&gt; predicate)<br>
+        anyMatch(Predicate&lt;T&gt; predicate)<br>
+        noneMatch(Predicate&lt;T&gt; predicate)</td>
+        <td>Stream</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>allMatch(IntPredicate predicate)<br>
+        anyMatch(IntPredicate predicate)<br>
+        noneMatch(IntPredicate predicate)</td>
+        <td>IntStream</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>allMatch(LongPredicate predicate)<br>
+        anyMatch(LongPredicate predicate)<br>
+        noneMatch(LongPredicate predicate)</td>
+        <td>LongStream</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>allMatch(DoublePredicate predicate)<br>
+        anyMatch(DoublePredicate predicate)<br>
+        noneMatch(DoublePredicate predicate)</td>
+        <td>DoubleStream</td>
+    </tr>
+</table>
+
+```java
+public class MatchExample {
+    public static void main(String[] args) {
+        int[] intArr = {2, 4, 6};
+        boolean result = Arrays.stream(intArr)
+                .allMatch(a -> a % 2 == 0);
+        System.out.println("모두 2의 배수인가? " + result);
+
+        boolean result2 = Arrays.stream(intArr)
+                .anyMatch(a -> a % 3 == 0);
+        System.out.println("하나라도 3의 배수가 있는가? " + result2);
+
+        boolean result3 = Arrays.stream(intArr)
+                .noneMatch(a -> a % 3 == 0);
+        System.out.println("3의 배수가 없는가? " + result3);
+    }
+}
+```
+
+#### 기본 집계(sum(), count(), average(), max(), min())
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>count()</td>
+        <td>요소 개수</td>
+    </tr>
+    <tr>
+        <td>OptionalXXX</td>
+        <td>findFirst()</td>
+        <td>첫 번째 요소</td>
+    </tr>
+    <tr>
+        <td>Optional&lt;T&gt;<br>
+        OptionalXXX</td>
+        <td>max(Comparator&lt;T&gt;)<br>
+        max()</td>
+        <td>최대 요소</td>
+    </tr>
+    <tr>
+        <td>Optional&lt;T&gt;<br>
+        OptionalXXX</td>
+        <td>min(Comparator&lt;T&gt;)<br>
+        min()</td>
+        <td>최소 요소</td>
+    </tr>
+    <tr>
+        <td>OptionalDouble</td>
+        <td>average()</td>
+        <td>요소 평균</td>
+    </tr>
+    <tr>
+        <td>int, long, double</td>
+        <td>sum()</td>
+        <td>요소 총합</td>
+    </tr>
+</table>
+
+```java
+public class AggregateExample {
+    public static void main(String[] args) {
+        long count = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .count();
+        System.out.println("2의 배수 개수: " + count);
+
+        long sum = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .sum();
+        System.out.println("2의 배수 합계: " + sum);
+
+        double avg = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .average()
+                .getAsDouble();
+        System.out.println("2의 배수 평균: " +  avg);
+
+        int max = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .max()
+                .getAsInt();
+        System.out.println("2의 배수 최대값: " + max);
+
+        int min = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .min()
+                .getAsInt();
+        System.out.println("2의 배수 최소값: " + min);
+
+        int first = Arrays
+                .stream(new int[]{1, 2, 3, 4, 5})
+                .filter(n -> n % 2 == 0)
+                .findFirst()
+                .getAsInt();
+        System.out.println("2의 배수 첫번째: " + first);
+    }
+}
+```

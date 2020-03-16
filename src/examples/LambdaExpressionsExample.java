@@ -25,6 +25,9 @@ class Student2 {
     public Student2(String name, int score) {
         this.name = name;
         this.score = score;
+    }
 
+    public int getScore() {
+        return score;
     }
 }
