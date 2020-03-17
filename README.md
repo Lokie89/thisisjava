@@ -4382,7 +4382,7 @@ class Message {
                             하나의 스레드가 안전하게 요소를 저장하거나 얻도록 해줌.
     Queue<E> queue = new ConcurrentLinkedQueue<E>();
 
-### 60. 스트림
+### 60. 스트림 ( ★ 다시 공부 많이 공부 )
     컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자이다.
 
 ```java
@@ -5379,3 +5379,848 @@ public class AggregateExample {
     }
 }
 ```
+
+###### Optional 클래스
+    Optional 클래스는 단순히 집계 값만 저장하는 것이 아니라,
+    집계 값이 없을 경우 디폴트 값을 설정할 수 있고,
+    집계 값을 처리하는 Consumer도 등록할 수 있다.
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isPresent()</td>
+        <td>값이 저장되어 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>T<br>
+        double<br>
+        int<br>
+        long</td>
+        <td>orElse(T)<br>
+        orElse(double)<br>
+        orElse(int)<br>
+        orElse(long)</td>
+        <td>값이 저장되어 있지 않을 경우 디폴트 값 지정</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>ifPresent(Consumer)<br>
+        ifPresent(DoubleConsumer)<br>
+        ifPresent(IntConsumer)<br>
+        ifPresent(LongConsumer)</td>
+        <td>값이 저장되어 있을 경우 Consumer 에서 처리</td>
+    </tr>
+</table>
+
+    컬렉션의 요소가 없을 경우 ( size == 0 )
+    stream 사용시
+    1. Optional 객체 사용
+    2. orElse() 메소드로 default 값 설정
+    3. ifPresent() 메소드로 값이 존재할 경우만 실행
+    
+```java
+public class OptionalExample {
+    public static void main(String[] args) {
+        List<Integer> list = new LinkedList<>();
+
+//        double avg = list
+//                .stream()
+//                .mapToInt(Integer::intValue)
+//                .average()
+//                .getAsDouble()
+//                ; // 예외발생 NoSuchElementException
+        // 방법 1.
+        OptionalDouble optionalDouble = list
+                .stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                ;
+        if (optionalDouble.isPresent()) {
+            System.out.println("평균: " + optionalDouble);
+        } else {
+            System.out.println("평균: 0.0");
+        }
+
+        // 방법 2.
+        double avg2 = list
+                .stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0)
+                ;
+        System.out.println("평균: " + avg2);
+
+        // 방법 3.
+        list
+                .stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .ifPresent(a -> System.out.println("평균: " + a))
+        ;
+    }
+}
+```
+
+#### 커스텀 집계 (reduce())
+
+<table>
+    <tr>
+        <th>인터페이스</th>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+    </tr>
+    <tr>
+        <td rowspan="2">Stream</td>
+        <td>Optional&lt;T&gt;</td>
+        <td>reduce(BinaryOperator&lt;T&gt; accumulator)</td>
+    </tr>
+    <tr>
+        <td>T</td>
+        <td>reduce(T identity, BinaryOperator&lt;T&gt; accumulator)</td>
+    </tr>
+    <tr>
+        <td rowspan="2">IntStream</td>
+        <td>OptionalInt</td>
+        <td>reduce(IntBinaryOperator accumulator)</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>reduce(int identity, IntBinaryOperator accumulator)</td>
+    </tr>
+    <tr>
+        <td rowspan="2">LongStream</td>
+        <td>OptionalLong</td>
+        <td>reduce(LongBinaryOperator accumulator)</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>reduce(long identity, LongBinaryOperator accumulator)</td>
+    </tr>
+    <tr>
+        <td rowspan="2">DoubleStream</td>
+        <td>OptionalDouble</td>
+        <td>reduce(DoubleBinaryOperator accumulator)</td>
+    </tr>
+    <tr>
+        <td>double</td>
+        <td>reduce(double identity, DoubleBinaryOperator accumulator)</td>
+    </tr>
+</table>
+
+```java
+public class ReductionExample {
+    public static void main(String[] args) {
+        List<Student6> student6List = Arrays.asList(
+                new Student6("홍길동", 92),
+                new Student6("김자바", 95),
+                new Student6("신용권", 88)
+        );
+
+        int sum1 = student6List
+                .stream()
+                .mapToInt(Student6::getScore)
+                .sum()
+                ;
+
+        int sum2 = student6List
+                .stream()
+                .map(Student6::getScore)
+                .reduce((a, b) -> a + b)
+                .get()
+                ;
+
+        int sum3 = student6List
+                .stream()
+                .map(Student6::getScore)
+                .reduce(0, (a, b) -> a + b)
+                ;
+        System.out.println(sum1);
+        System.out.println(sum2);
+        System.out.println(sum3);
+    }
+}
+```
+#### 수집 (collect())
+    요소들을 필터링 또는 매핑한 후 요소들을 수집하는 최종 처리 메소드인 collect()를 제공
+    이 메소드를 이용하면 필요한 요소만 컬렉션으로 담을 수 있고, 
+    요소들을 그룹핑한 후 집계(리덕선) 할 수 있다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>인터페이스</th>
+    </tr>
+    <tr>
+        <td>R</td>
+        <td>collect(Collector&lt;T, A, R&gt; collector)</td>
+        <td>Stream</td>
+    </tr>
+</table>
+    
+    매개값인 Collector 는 어떤 요소를 어떤 컬렉션에 수집할 것인지 결정
+    타입 파라미터 T, 누적기 A, 저장될 컬렉션 R
+    T를 A누적기가 R에 저장
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>Collectors 의 정적 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, List&lt;T&gt;&gt;</td>
+        <td>toList()</td>
+        <td>T 를 List 에 저장</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Set&lt;T&gt;&gt;</td>
+        <td>toSet()</td>
+        <td>T 를 Set 에 저장</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Collection&lt;T&gt;&gt;</td>
+        <td>toCollection(<br>Supplier&lt;Collection&lt;T&gt;&gt;<br>)</td>
+        <td>T 를 Supplier 가 제공한<br>
+        Collection 에 저장</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Map&lt;T&gt;&gt;</td>
+        <td>toMap(<br>Function&lt;T, K&gt; keyMapper,<br>
+        Function&lt;T, U&gt; valueMapper<br>)</td>
+        <td>T를 K와 U로 매핑시켜 K를 키로, U를 값으로 Map 에 저장</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, <br>
+        ConcurrentMap&lt;K, U&gt;&gt;</td>
+        <td>toConcurrentMap(<br>Function&lt;T, K&gt; keyMapper,<br>
+        Function&lt;T, U&gt; valueMapper<br>)</td>
+        <td>T를 K와 U로 매핑시켜 K를 키로, U를 값으로 ConcurrentMap 에 저장</td>
+    </tr>
+</table>
+
+
+```java
+public class ToListExample {
+    public static void main(String[] args) {
+        List<Student7> totalList = Arrays.asList(
+                new Student7("홍길동", 10, Student7.Sex.MALE),
+                new Student7("김수애", 6, Student7.Sex.FEMALE),
+                new Student7("신용권", 10, Student7.Sex.MALE),
+                new Student7("박수미", 6, Student7.Sex.FEMALE)
+        );
+
+        // 남학생 List 생성
+        List<Student7> maleList = totalList
+                .stream()
+                .filter(s -> s.getSex() == Student7.Sex.MALE)
+                .collect(Collectors.toList())
+                ;
+        maleList
+                .stream()
+                .forEach(s -> System.out.println(s.getName()))
+        ;
+
+        System.out.println();
+
+        // 여학생 HashSet 생성
+        Set<Student7> femaleSet = totalList
+                .stream()
+                .filter(s -> s.getSex() == Student7.Sex.FEMALE)
+                .collect(Collectors.toCollection(HashSet::new))
+                ;
+        femaleSet
+                .stream()
+                .forEach(s -> System.out.println(s.getName()))
+        ;
+    }
+}
+
+class Student7 {
+    public enum Sex {
+        MALE,
+        FEMALE,
+        ;
+    }
+
+    public enum City {
+        SEOUL,
+        PUSAN,
+        ;
+    }
+
+    private String name;
+    private int score;
+    private Sex sex;
+    private City city;
+
+    public Student7(String name, int score, Sex sex) {
+        this.name = name;
+        this.score = score;
+        this.sex = sex;
+    }
+
+    public Student7(String name, int score, Sex sex, City city) {
+        this(name, score, sex);
+        this.city = city;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public Sex getSex() {
+        return sex;
+    }
+
+    public City getCity() {
+        return city;
+    }
+}
+```
+
+##### 사용자 정의 컨테이너에 수집하기
+
+<table>
+    <tr>
+        <th>인터페이스</th>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+    </tr>
+    <tr>
+        <td>Stream</td>
+        <td>R</td>
+        <td>collect(Supplier&lt;R&gt;, BiConsumer&lt;R, ? super T&gt;, BiConsumer&lt;R, R&gt;)</td>
+    </tr>
+    <tr>
+        <td>IntStream</td>
+        <td>R</td>
+        <td>collect(Supplier&lt;R&gt;, ObjIntConsumer&lt;R&gt;, BiConsumer&lt;R, R&gt;)</td>
+    </tr>
+    <tr>
+        <td>LongStream</td>
+        <td>R</td>
+        <td>collect(Supplier&lt;R&gt;, ObjLongConsumer&lt;R&gt;, BiConsumer&lt;R, R&gt;)</td>
+    </tr>
+    <tr>
+        <td>DoubleStream</td>
+        <td>R</td>
+        <td>collect(Supplier&lt;R&gt;, ObjDoubleConsumer&lt;R&gt;, BiConsumer&lt;R, R&gt;)</td>
+    </tr>
+</table>
+
+    첫 번째 Supplier 는 요소들이 수집될 컨테이너 객체(R)를 생성하는 역할
+    순차 처리(싱글 스레드) 스트림에서는 단 한번 Supplier가 실행되고 하나의 컨테이너 객체 생성
+    병렬 처리(멀티 스레드) 스트림에서는 여러 번 Supplier가 실행되고 여러 컨테이너 객체 생성
+    하지만 최종적으로 하나의 컨테이너 객체로 결합 (세 번째 항목)
+    
+    두 번째 XXXConsumer는 컨테이너 객체(R)에 요소(T)를 수집하는 역할
+    스트림에서 요소를 컨테이너에 수집할 때마다 XXXConsumer 가 실행된다.
+    
+    세 번째 BiConsumer 는 컨테이너 객체(R)를 결합하는 역할
+    순차 처리 스트림에서는 호출되지 않고,
+    병렬 처리 스트림에서만 호출되어 스레드별로 생성된
+    컨테이너 객체를 결합해서 최종 컨테이너 객체를 완성
+    
+```java
+public class MaleStudent {
+    private List<Student7> list;
+
+    public MaleStudent() {
+        list = new ArrayList<>();
+        System.out.println("[" + Thread.currentThread().getName() + "] MaleStudent()");
+    }
+
+    public void accumulate(Student7 student7) {
+        list.add(student7);
+        System.out.println("[" + Thread.currentThread().getName() + "] accumulate()");
+    }
+
+    public void combine(MaleStudent other) {
+        list.addAll(other.getList());
+        System.out.println("[" + Thread.currentThread().getName() + "] combine()");
+    }
+
+    public List<Student7> getList() {
+        return list;
+    }
+}
+
+class MaleStudentExample {
+    public static void main(String[] args) {
+        List<Student7> totalList = Arrays.asList(
+                new Student7("홍길동", 10, Student7.Sex.MALE),
+                new Student7("김수애", 6, Student7.Sex.FEMALE),
+                new Student7("신용권", 10, Student7.Sex.MALE),
+                new Student7("박수미", 6, Student7.Sex.FEMALE)
+        );
+
+        MaleStudent maleStudent = totalList
+                .stream()
+                .filter(s -> s.getSex() == Student7.Sex.MALE)
+                .collect(MaleStudent::new, MaleStudent::accumulate, MaleStudent::combine)
+                ;
+
+        maleStudent.getList()
+                .stream()
+                .forEach(s -> System.out.println(s.getName()))
+        ;
+
+    }
+}
+```
+
+###### 요소를 그룹핑해서 수집
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>Collectors 의 정적 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Map&lt;K, List&lt;T&gt;&gt;&gt;</td>
+        <td>groupingBy(Function&lt;T, K&gt; classifier)</td>
+        <td rowspan="2">T 를 K 로 매핑하고 K 키에 저장된 List 에 T를 저장한 Map 생성</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?,<br>
+        ConcurrentMap&lt;K, List&lt;T&gt;&gt;&gt;</td>
+        <td>groupingByConcurrent(<br>
+        Function&lt;T, K&gt; classifier)</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Map&lt;K, D&gt;&gt;</td>
+        <td>groupingBy(Function&lt;T, K&gt; classifier,<br>
+        Collector&lt;T, A, D&gt; collector)</td>
+        <td rowspan="2">T 를 K 로 매핑하고 K 키에 저장된 D 객체에 T를 누적한 Map 생성</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?,<br>
+        ConcurrentMap&lt;K, D&gt;&gt;</td>
+        <td>groupingByConcurrent(<br>
+        Function&lt;T, K&gt; classifier,<br>
+        Collector&lt;T, A, D&gt; collector)</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Map&lt;K, D&gt;&gt;</td>
+        <td>groupingBy(<br>
+        Function&lt;T, K&gt; classifier,<br>
+        Supplier&lt;Map&lt;K, D&gt;&gt; mapFactory,<br>
+        Collector&lt;T, A, D&gt; collector)</td>
+        <td rowspan="2">T 를 K 로 매핑하고 Supplier 가 제공하는 Map 에서 K 키에 저장된 D 객체에 T를 누적</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?,<br>
+        ConcurrentMap&lt;K, D&gt;&gt;</td>
+        <td>groupingByConcurrent(<br>
+        Function&lt;T, K&gt; classifier,<br>
+        Supplier&lt;Map&lt;K, D&gt;&gt; mapFactory,<br>
+        Collector&lt;T, A, D&gt; collector)</td>
+    </tr>
+</table>
+
+```java
+public class GroupingByExample {
+    public static void main(String[] args) {
+        List<Student7> totalList = Arrays.asList(
+                new Student7("홍길동", 10, Student7.Sex.MALE, Student7.City.SEOUL),
+                new Student7("김수애", 6, Student7.Sex.FEMALE, Student7.City.SEOUL),
+                new Student7("신용권", 10, Student7.Sex.MALE, Student7.City.PUSAN),
+                new Student7("박수미", 6, Student7.Sex.FEMALE, Student7.City.PUSAN)
+        );
+
+        Map<Student7.Sex, List<Student7>> mapBySex = totalList
+                .stream()
+                .collect(Collectors.groupingBy(Student7::getSex));
+
+        System.out.println("[ 남학생 ]");
+        mapBySex
+                .get(Student7.Sex.MALE)
+                .stream()
+                .forEach(s -> System.out.print(s.getName() + " "));
+
+        System.out.println("\n[ 여학생 ]");
+        mapBySex
+                .get(Student7.Sex.FEMALE)
+                .stream()
+                .forEach(s -> System.out.print(s.getName() + " "));
+
+        System.out.println();
+
+        Map<Student7.City, List<String>> mapByCity = totalList
+                .stream()
+                .collect(Collectors.groupingBy(Student7::getCity,
+                        Collectors.mapping(Student7::getName, Collectors.toList())));
+
+        System.out.println("\n[ 서울 ]");
+        mapByCity
+                .get(Student7.City.SEOUL)
+                .stream()
+                .forEach(n -> System.out.print(n + " "));
+
+        System.out.println("\n[ 부산 ]");
+        mapByCity
+                .get(Student7.City.PUSAN)
+                .stream()
+                .forEach(n -> System.out.print(n + " "));
+    }
+}
+```
+    성별로 매핑
+    1. Stream<Student7> totalStream = totalList.stream();
+    2. Function<Student7, Student7.Sex> classifier = Student7::getSex;
+    3. Collector<Student7, ?, Map<Student7.Sex, List<Student7>>> collector =
+        Collectors.groupingBy(classifier);
+    4. Map<Student7.Sex, List<Student7>> mapBySex = totalStrea.collect(collector);
+    
+    도시로 매핑
+    1. Stream<Student7> totalStream = totalList.stream();
+    2. Function<Student7, Student7.City> classifier = Student7::getCity;
+    3. Function<Student7, String> mapper = Student::getName;
+    4. Collector<String, ?, List<String>> collector1 = Collectors.toList();
+    5. Collector<Student7, ?, List<String>> collector2 = Collectors.mapping(mapper, collector1);
+    6. Collector<Student7, ?, Map<Student7.City, List<String>>> collector3 =
+        Collectors.groupingBy(classifier, collector2);
+    7. Map<Student7.City, List<String>> mapByCity = totalStream.collect(collector3);
+
+###### 그룹핑 후 매핑 및 집계
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, R&gt;</td>
+        <td>mapping(<br>
+        Function&lt;T, U&gt; mapper,<br>
+        Collector&lt;U, A, R&gt; collector)</td>
+        <td>T 를 U 로 매핑한 후, U 를 R 에 수집</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Double&gt;</td>
+        <td>averagingDouble(<br>
+        ToDoubleFunction&lt;T&gt; mapper)</td>
+        <td>T 를 Double 로 매핑한 후, Double 의 평균값을 산출</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Long&gt;</td>
+        <td>counting()</td>
+        <td>T 의 카운팅 수를 산출</td>
+    </tr>
+    <tr>
+        <td>Collector<br>
+        &lt;CharSequence, ?, String&gt;</td>
+        <td>joining(CharSequence delimiter)</td>
+        <td>CharSequence 를 구분자<br>
+        (delimiter)로 연결한 String 을 산출</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Optional&lt;T&gt;&gt;</td>
+        <td>maxBy(<br>
+        Comparator&lt;T&gt; comparator)</td>
+        <td>Comparator 를 이용해서 최대 T 를 산출</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Optional&lt;T&gt;&gt;</td>
+        <td>minBy(<br>
+        Comparator&lt;T&gt; comparator)</td>
+        <td>Comparator 를 이용해서 최소 T 를 산출</td>
+    </tr>
+    <tr>
+        <td>Collector&lt;T, ?, Integer&gt;</td>
+        <td>summingInt(ToIntFunction)<br>
+        summingLong(ToLongFunction)<br>
+        summingDouble(ToDoubleFunction)</td>
+        <td>Int, Long, Double 타입의 합계 산출</td>
+    </tr>
+</table>
+
+```java
+public class GroupingAndReductionExample {
+    public static void main(String[] args) {
+        List<Student7> totalList = Arrays.asList(
+                new Student7("홍길동", 10, Student7.Sex.MALE),
+                new Student7("김수애", 6, Student7.Sex.FEMALE),
+                new Student7("신용권", 10, Student7.Sex.MALE),
+                new Student7("박수미", 6, Student7.Sex.FEMALE)
+        );
+
+        // 성별로 평균 점수를 저장하는 Map 얻기
+        Map<Student7.Sex, Double> mapBySex = totalList
+                .stream()
+                .collect(
+                        Collectors.groupingBy(
+                                Student7::getSex,
+                                Collectors.averagingDouble(Student7::getScore)
+                        )
+                );
+        System.out.println("남학생 평균 점수: " + mapBySex.get(Student7.Sex.MALE));
+        System.out.println("여학생 평균 점수: " + mapBySex.get(Student7.Sex.FEMALE));
+
+        // 성별을 쉼표로 구분한 이름을 저장하는 Map 얻기
+        Map<Student7.Sex, String> mapByName = totalList
+                .stream()
+                .collect(
+                        Collectors.groupingBy(
+                                Student7::getSex,
+                                Collectors.mapping(
+                                        Student7::getName,
+                                        Collectors.joining(",")
+                                )
+                        )
+                );
+
+        System.out.println("남학생 전체 이름: " + mapByName.get(Student7.Sex.MALE));
+        System.out.println("여학생 전체 이름: " + mapByName.get(Student7.Sex.FEMALE));
+    }
+}
+```
+    // 성별로 평균점수 매핑
+    1. Stream<Student7> totalStream = totalList.stream();
+    2. Function<Student7, Student7.Sex> classifier = Student7::getSex;
+    3. ToDoubleFunction<Student7> mapper = Student::getScore;
+    4. Collector<Student7, ?, Double> collector1 = Collectors.averagingDouble(mapper);
+    5. Collector<Student7, ?, Map<Student7.Sex, Double>> collector2 = 
+        Collectors.groupingBy(classifier, collector1);
+    6. Map<Student7.Sex, Double> mapBySex = totalStream.collect(collector2);
+    
+#### 병렬 처리
+    데이터 병렬성
+        전체 데이터를 쪼개어 서브 데이터들로 만들고
+        이 데이터들을 병렬 처리해서 작업을 빨리 끝내는것
+    작업 병렬성
+        서로 다른 작업을 병렬 처리
+
+###### 포크조인 프레임워크
+    병렬 스트림을 이용하면 런타임 시에 포크조인 프레임워크가 동작
+    
+    포크 단계에서 전체 데이터를 서브 데이터로 분리한다.
+    서브 데이터를 병렬로 처리한다.
+    조인 단계에서 서브 결과를 결합해서 최종 결과를 만들어 낸다.
+    
+    포크조인 프레임워크는 포크와 조인 기능 이외에 스데르풀인 ForkJoinPool을 제공
+    
+###### 병렬 스트림 생성
+
+<table>
+    <tr>
+        <th>인터페이스</th>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+    </tr>
+    <tr>
+        <td>java.util.Collection</td>
+        <td>Stream</td>
+        <td>parallelStream()</td>
+    </tr>
+    <tr>
+        <td>java.util.Stream.Stream<br>
+        java.util.Stream.IntStream<br>
+        java.util.Stream.LongStream<br>
+        java.util.Stream.DoubleStream<br></td>
+        <td>Stream<br>
+        IntStream<br>
+        LongStream<br>
+        DoubleStream<br></td>
+        <td>parallel()</td>
+    </tr>
+</table>
+
+```java
+public class MaleStudentExample2 {
+    public static void main(String[] args) {
+        List<Student7> totalList = Arrays.asList(
+                new Student7("홍길동", 10, Student7.Sex.MALE),
+                new Student7("김수애", 6, Student7.Sex.FEMALE),
+                new Student7("신용권", 10, Student7.Sex.MALE),
+                new Student7("박수미", 6, Student7.Sex.FEMALE)
+        );
+        MaleStudent maleStudent = totalList
+                .parallelStream()
+                .filter(s->s.getSex()== Student7.Sex.MALE)
+                .collect(MaleStudent::new, MaleStudent::accumulate, MaleStudent::combine)
+                ;
+
+        maleStudent.getList()
+                .stream()
+                .forEach(s-> System.out.println(s.getName()));
+    }
+}
+```
+
+    실행 결과 main 스레드와 ForkJoinPool 에서 3개의 스레드 사용
+    각 스레드는 남학생을 누적시킬 MaleStudent 객체를 각각 생성 ( 생성자 4번 )
+    남학생은 2명밖에 없으므로 accumulate()는 2번 실행
+    누적이 완료된 4개의 MaleStudent는 첫번째 결합에서 2개를 1개씩으로 ( combine() 2번 )
+    두번째 결합에서 2개를 1개로 ( combine() 1번 ) 실행 으로 총 3번 실행
+
+###### 병렬 처리 성능
+    병렬처리에 영향을 미치는 3가지
+    
+    1. 요소의 수와 요소당 처리 시간
+    컬렉션의 요소의 수가 적고 요소당 처리 시간이 짧으면 
+    순차 처리가 병렬 처리보다 빠를 수 있다.
+    
+    2. 스트림 소스의 종류
+    ArrayList, Array( 배열 )은 인덱스로 요소를 관리하기 때문에
+    포크 단계에서 요소를 쉽게 분리할 수 있어 병렬 처리 시간이 절약
+    그러나 HashSet, TreeSet, LinkedList 는 요소 분리가 쉽지않아
+    ArrayList, Array 보다는 상대적으로 병렬 처리가 늦다.
+    
+    3. 코어 수
+    싱글 코어 CPU 일 경우에는 순차 철기가 빠르다.
+    
+###### 순차적처리와 병렬처리
+```java
+public class SequencialVsParallelExample {
+    public static void work(int value) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public static long testSequencial(List<Integer> list) {
+        long start = System.nanoTime();
+        list.stream().forEach(a -> work(a));
+        long end = System.nanoTime();
+        return end - start;
+    }
+
+    public static long testParallel(List<Integer> list) {
+        long start = System.nanoTime();
+        list.parallelStream().forEach(a -> work(a));
+        long end = System.nanoTime();
+        return end - start;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        long timeSequencial = testSequencial(list);
+        long timeParallel = testParallel(list);
+        System.out.println(timeSequencial);
+        System.out.println(timeParallel);
+    }
+}
+```
+###### ArrayList, LinkedList 병렬처리
+```java
+public class ArrayListVsLinkedListExample {
+    public static void work(int value) {
+    }
+
+    public static long testParallel(List<Integer> list) {
+        long start = System.nanoTime();
+        list.parallelStream().forEach(a -> work(a));
+        long end = System.nanoTime();
+        return end - start;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> arrayList = new ArrayList<>();
+        List<Integer> linkedList = new LinkedList<>();
+        for (int i = 0; i < 1000000; i++) {
+            arrayList.add(i);
+            linkedList.add(i);
+        }
+        long arrayListParallel = testParallel(arrayList);
+        long linkedListParallel = testParallel(linkedList);
+
+        arrayListParallel = testParallel(arrayList);
+        linkedListParallel = testParallel(linkedList);
+
+        System.out.println(arrayListParallel);
+        System.out.println(linkedListParallel);
+    }
+}
+```
+    
+### 61. IO 패키지
+
+<table>
+    <tr>
+        <th>java.io 패키지의 주요 클래스</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>File</td>
+        <td>파일 시스템의 파일 정보를 얻기 위한 클래스</td>
+    </tr>
+    <tr>
+        <td>Console</td>
+        <td>콘솔로부터 문자를 입출력하기 위한 클래스</td>
+    </tr>
+    <tr>
+        <td>InputStream / OutputStream</td>
+        <td>바이트 단위 입출력을 위한 최상위 입출력 스트림 클래스</td>
+    </tr>
+    <tr>
+        <td>FileInputStream / FileOutputStream<br>
+        DataInputStream / DataOutputStream<br>
+        ObjectInputStream / ObjectOutputStream<br>
+        PrintStream<br>
+        BufferedInputStream / BufferedOutputStream</td>
+        <td>바이트 단위 입출력을 위한 하위 스트림 클래스</td>
+    </tr>
+    <tr>
+        <td>Reader / Writer</td>
+        <td>문자 단위 입출력을 위한 최상위 입출력 스트림 클래스</td>
+    </tr>
+    <tr>
+        <td>FileReader / FileWriter<br>
+        InputStreamReader / OutputStreamWriter<br>
+        PrintWriter<br>
+        BufferedReader / BufferedWriter</td>
+        <td>문자 단위 입출력을 위한 하위 스트림 클래스</td>
+    </tr>
+</table>
+
+    스트림클래스는 크게 바이트 기반 스트림 클래스와 문자 기반 스트림 클래스로 나뉜다.
+
+<table>
+    <tr>
+        <th rowspan="2">구분</th>
+        <th colspan="2">바이트 기반 스트림</th>
+        <th colspan="2">문자 기반 스트림</th>
+    </tr>
+    <tr>
+        <th>입력 스트림</th>
+        <th>출력 스트림</th>
+        <th>입력 스트림</th>
+        <th>출력 스트림</th>
+    </tr>
+    <tr>
+        <td>최상위 클래스</td>
+        <td>InputStream</td>
+        <td>OutputStream</td>
+        <td>Reader</td>
+        <td>Writer</td>
+    </tr>
+    <tr>
+        <td>하위 클래스</td>
+        <td>XXXInputStream</td>
+        <td>XXXOutputStream</td>
+        <td>XXXReader</td>
+        <td>XXXWriter</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+</table>
