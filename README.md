@@ -6217,10 +6217,233 @@ public class ArrayListVsLinkedListExample {
     </tr>
 </table>
 
+###### InputStream
+
 <table>
     <tr>
         <th>리턴 타입</th>
         <th>메소드</th>
         <th>설명</th>
     </tr>
+    <tr>
+        <td>int</td>
+        <td>read()</td>
+        <td>입력 스트림으로부터 1바이트를 읽고 읽은 바이트를 리턴한다.</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>read(byte[] b)</td>
+        <td>입력 스트림으로부터 읽은 바이트들을 매개값으로 주어진 바이트 배열<br>
+        b에 저장하고 실제로 읽은 바이트 수를 리턴한다.</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>read(byte[] b, int off, int len)</td>
+        <td>입력 스트림으로부터 len 개의 바이트만큼 읽고 매개값으로 주어진<br>
+        바이트 배열 b[off] 부터 len 개까지 저장한다. 그리고 실제로 읽은<br>
+        바이트 수인 len 개를 리턴한다. 만약 len 개를 모두 읽지 못하면 실제로<br>
+        읽은 바이트 수를 리턴한다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>close()</td>
+        <td>사용한 시스템 자원을 반납하고 입력 스트림을 닫는다.</td>
+    </tr>
 </table>
+
+    read() 메소드는 1바이트를 읽고 4바이트 int 타입으로 리턴함.
+    따라서 리턴된 4바이트 끝의 1바이트에만 데이터가 들어있음.
+    더 이상 입력 스트림으로부터 바이트를 읽을 수 없다면 -1을 리턴
+
+###### OutputStream
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(int b)</td>
+        <td>출력 스트림으로 1바이트를 보낸다( b의 끝 1바이트 )</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(byte[] b)</td>
+        <td>출력 스트림으로 주어진 바이트 배열 b의 모든 바이트를 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(byte[] b, int off, int len)</td>
+        <td>출력 스트림으로 주어진 바이트 배열 b[off] 부터 len 개까지의 바이트를 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>flush()</td>
+        <td>버퍼에 잔류하는 모든 바이트를 출력한다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>close()</td>
+        <td>사용한 시스템 자원을 반납하고 출력 스트림을 닫는다.</td>
+    </tr>
+</table>
+
+    write(int b) 메소드는 매개 변수로 주어진 int 값에서 끝에 있는 
+    1바이트만 출력 스트림으로 보낸다.
+    
+###### Reader
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>read()</td>
+        <td>입력 스트림으로부터 한 개의 문자를 읽고 리턴한다</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>read(char[] cbuf)</td>
+        <td>입력 스트림으로부터 읽은 문자들을 매개값으로 주어진 문자 배열 cbuf에 저장하고<br>
+        실제로 읽은 문자 수를 리턴한다</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>read(char[] cbuf, int off, int len)</td>
+        <td>입력 스트림으로부터 len 개의 문자를 읽고 매개값으로 주어진<br>
+        문자 배열 cbuf[off] 부터 len 개까지 저장한다. 그리고 실제로 읽은<br>
+        문자 수인 len 개를 리턴한다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>close()</td>
+        <td>사용한 시스템 자원을 반납하고 입력 스트림을 닫는다.</td>
+    </tr>
+</table>
+
+    read() 메소드는 입력 스트림으로부터 한 개의 문자( 2바이트 )를 읽고 
+    4바이트 int 타입으로 리턴
+    따라서 리턴된4바이트 중 끝에 있는 2바이트에 문자 데이터가 들어 있다.
+    더이상 입력 스트림으로부터 문자를 읽을 수 없다면 -1을 리턴
+    
+###### Writer
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(int c)</td>
+        <td>출력 스트림으로 1바이트를 보낸다( c의 끝 2바이트 )</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(char[] cbuf)</td>
+        <td>출력 스트림으로 주어진 바이트 배열 cbuf의 모든 바이트를 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(char[] cbuf, int off, int len)</td>
+        <td>출력 스트림으로 주어진 바이트 배열 cbuf[off] 부터 len 개까지의 바이트를 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(String str)</td>
+        <td>출력 스트림으로 주어진 문자열을 전부 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>write(String str, int off, int len)</td>
+        <td>출력 스트림으로 주어진 문자열 off 순번부터 len 개까지의 문자를 보낸다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>flush()</td>
+        <td>버퍼에 잔류하는 모든 문자열을 출력한다.</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>close()</td>
+        <td>사용한 시스템 자원을 반납하고 출력 스트림을 닫는다.</td>
+    </tr>
+</table>
+
+        write(int c) 메소드는 매개 변수로 주어진 int 값에서 끝에 있는 
+        2바이트만 출력 스트림으로 보낸다.
+
+#### 콘솔 입출력
+    콘솔로부터 데이터를 입력 받을 때 System.in
+    콘솔로부터 데이터를 출력 할 때 System.out
+    콘솔에 에러를 출력할 때 System.err
+    
+```java
+public class SystemInExample2 {
+    public static void main(String[] args) throws Exception {
+        InputStream in = System.in;
+        byte[] datas = new byte[100];
+        System.out.print("이름: ");
+        int nameBytes = in.read(datas);
+        // length 에서 -2 는 enter 키에 해당하는 캐리지 리턴(13)과 라인 피드(10)을 제외하기 위함
+        // 자동으로 제외?
+        String name = new String(datas, 0, nameBytes);
+        System.out.print("하고싶은말: ");
+        int commentBytes = in.read(datas);
+        String comment = new String(datas, 0, commentBytes);
+
+        System.out.println("입력한 이름: " + name);
+        System.out.println("입력한 하고싶은말:  " + comment);
+    }
+}
+```
+
+```java
+public class SystemOutExample {
+    public static void main(String[] args) throws Exception {
+        OutputStream os = System.out;
+        for (byte b = 48; b < 58; b++) {
+            os.write(b);
+        }
+        os.write(10);
+        for (byte b = 97; b < 123; b++) {
+            os.write(b);
+        }
+        os.write(10);
+
+        String korean = "가나다라마바사아자차";
+        byte[] koreanBytes = korean.getBytes();
+        os.write(koreanBytes);
+
+        os.flush();
+    }
+}
+```
+
+
+###### Console 클래스
+    콘솔에서 입력받은 문자열을 쉽게 읽을 수 있도록 java.io.Console 클래스를 제공
+    Console console = System.console();
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>readLine()</td>
+        <td>Enter 키를 입력하기 전의 모든 문자열을 읽음</td>
+    </tr>
+    <tr>
+        <td>char[]</td>
+        <td>readPassword()</td>
+        <td>키보드 입력 문자를 콘솔에 보여주지 않고 문자열을 읽음</td>
+    </tr>
+</table>
+    
