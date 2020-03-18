@@ -11,7 +11,7 @@ java -> byte code -> JVM(번역) -> OS
 
 JVM 만 해당 OS 타입에 맞게 번역 해주면 됨
 
-### 2. 타입
+### 2. 연산시 타입
 int(4byte) 보다 작은 타입의 정수 계산은 int 타입을 기본으로 한다.<br>
 연산자의 크기가 4byte 기 때문
 
@@ -6147,7 +6147,7 @@ public class ArrayListVsLinkedListExample {
 }
 ```
     
-### 61. IO 패키지
+### 61. IO 패키지 입력 스트림과 출력 스트림
 
 <table>
     <tr>
@@ -6378,7 +6378,7 @@ public class ArrayListVsLinkedListExample {
         write(int c) 메소드는 매개 변수로 주어진 int 값에서 끝에 있는 
         2바이트만 출력 스트림으로 보낸다.
 
-#### 콘솔 입출력
+### 62. 콘솔 입출력
     콘솔로부터 데이터를 입력 받을 때 System.in
     콘솔로부터 데이터를 출력 할 때 System.out
     콘솔에 에러를 출력할 때 System.err
@@ -6426,7 +6426,7 @@ public class SystemOutExample {
 ```
 
 
-###### Console 클래스
+#### Console 클래스
     콘솔에서 입력받은 문자열을 쉽게 읽을 수 있도록 java.io.Console 클래스를 제공
     Console console = System.console();
 <table>
@@ -6447,5 +6447,687 @@ public class SystemOutExample {
     </tr>
 </table>
 
-    d
+```java
+public class ConsoleExample {
+    public static void main(String[] args) {
+        Console console = System.console();
+        System.out.print("아이디: ");
+        String id = console.readLine();
+        System.out.print("패스워드: ");
+        char[] pwd = console.readPassword();
+        String strPwd = new String(pwd);
+
+        System.out.println("---------");
+        System.out.println(id);
+        System.out.println(strPwd);
+    }
+}
+```
+    ★ ConsoleExample.java Test
+        System.console() 메소드는 IDE (intellij) 에서 실행하면
+        NullPointerException 반환
+        windows command 창에서 실행시 출력가능
+        그러나 한글이 깨짐 ( java 파일에서 작성해놓은 )
+        chcp 949 한글 환경
+        명령어 : java -Dfile.encoding=UTF-8 [FileName].java
+        로 명령하면 한글깨짐없이 실행됨
+
+#### Scanner 클래스
+    Console 클래스는 콘솔로부터 문자열을 읽을 순 있지만 기본 타입은
+    바로 읽을 수 없다.( 형변환 필요함 )
+    Scanner scanner = new Scanner(System.in)
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>nextBoolean()</td>
+        <td>boolean 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>byte</td>
+        <td>nextByte()</td>
+        <td>byte 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>short</td>
+        <td>nextShort()</td>
+        <td>short 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>nextInt()</td>
+        <td>int 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>nextLong()</td>
+        <td>long 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>float</td>
+        <td>nextFloat()</td>
+        <td>float 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>double</td>
+        <td>nextDouble()</td>
+        <td>double 값을 읽는다</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>nextLine()</td>
+        <td>String 값을 읽는다</td>
+    </tr>    
+</table>
+
+```java
+public class ScannerExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("문자열 입력: ");
+        String inputString = scanner.nextLine();
+        System.out.println(inputString);
+        System.out.println();
+
+        System.out.print("정수 입력: ");
+        int inputInt = scanner.nextInt();
+        System.out.println(inputInt);
+        System.out.println();
+
+        System.out.print("실수 입력: ");
+        double inputDouble = scanner.nextDouble();
+        System.out.println(inputDouble);
+        System.out.println();
+    }
+}
+```
+
+#### File 클래스
+    File 클래스는 파일 크기, 파일 속성, 파일 이름 등의 정보를 얻어내는 기능과
+    파일 생성 및 삭제 기능을 제공, 
+    디렉토리를 생성하고 디렉토리에 존재하는 파일 리스트를 얻어내는 기능
+    File file = new File("C:\\Temp\\file.txt");
+    boolean exist = file.exists();
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>createNeweFile()</td>
+        <td>새로운 파일을 생성</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>mkdir()</td>
+        <td>새로운 디렉토리를 생성</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>mkdirs()</td>
+        <td>경로상에 없는 모든 디렉토리를 생성</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>delete()</td>
+        <td>파일 또는 디렉토리 삭제</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>canExecute()</td>
+        <td>실행할 수 있는 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>canRead()</td>
+        <td>읽을 수 있는 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>canWrite()</td>
+        <td>수정 및 저장할 수 있는 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getName()</td>
+        <td>파일의 이름을 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getParent()</td>
+        <td>부모 디렉토리를 리턴</td>
+    </tr>
+    <tr>
+        <td>File</td>
+        <td>getParentFile()</td>
+        <td>부모 디렉토리를 File 객체로 생성 후 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getPath()</td>
+        <td>전체 경로를 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDirectory()</td>
+        <td>디렉토리인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isFile()</td>
+        <td>파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isHidden()</td>
+        <td>숨김 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>lastModified()</td>
+        <td>마지막 수정 날짜 및 시간을 리턴</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>length()</td>
+        <td>파일 크기를 리턴</td>
+    </tr>
+    <tr>
+        <td>String[]</td>
+        <td>list()</td>
+        <td>디렉토리에 포함된 파일 및 서브디렉토리 목록 전부를 String 배열로 리턴</td>
+    </tr>
+    <tr>
+        <td>String[]</td>
+        <td>list(FilenameFilter filter)</td>
+        <td>디렉토리에 포함된 파일 및 서브디렉토리 목록 중에<br>
+        FilenameFilter 에 맞는 것만 String 배열로 리턴</td>
+    </tr>
+    <tr>
+        <td>File[]</td>
+        <td>listFiles()</td>
+        <td>디렉토리에 포함된 파일 및 서브디렉토리 목록 전부를 File 배열로 리턴</td>
+    </tr>
+    <tr>
+        <td>File[]</td>
+        <td>listFiles(FilenameFilter filter)</td>
+        <td>디렉토리에 포함된 파일 및 서브디렉토리 목록 중에<br>
+        FilenameFilter 에 맞는 것만 File 배열로 리턴</td>
+    </tr>
+</table>
+
+```java
+public class FileExample {
+    public static void main(String[] args) throws Exception {
+        File dir = new File("C:/Temp/Dir");
+        File file1 = new File("C:/Temp/file1.txt");
+        File file2 = new File("C:/Temp/file2.txt");
+
+        // 파일 경로를 URI 객체로 생성하서 매개값으로 제공
+        File file3 = new File(new URI("file:///C:/Temp/file3.txt"));
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        if (!file1.exists()) {
+            file1.createNewFile();
+        }
+        if (!file2.exists()) {
+            file2.createNewFile();
+        }
+        if (!file3.exists()) {
+            file3.createNewFile();
+        }
+
+        File temp = new File("C:/Temp");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd a HH:mm");
+        File[] contents = temp.listFiles();
+        System.out.println("\t날짜\t\t시간\t\t형태\t\t크기\t\t이름");
+        for (File file : contents) {
+            System.out.print(sdf.format(file.lastModified()));
+            if (file.isDirectory()) {
+                System.out.print("\t<DIR>\t\t\t" + file.getName());
+            } else {
+                System.out.print("\t\t\t" + file.length() + "\t" + file.getName());
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+#### FileInputStream
+    FileInputStream 클래스는 파일로부터 바이트 단위로 읽어들이 때 사용하는 바이트 기반 입력 스트림이다.
+    
+    FileInputStream fis = new FileInputStream("C:/Temp/image.gif");
+    
+    File file = new File("C:/Temp/image.gif"); 
+    FileInputStream fis = new FileInputStream(file);
+    
+    FileInputStream 객체가 생성 될때 파일과 직접 연결이 되는데,
+    만약 파일이 존재하지 않으면 FileNotFoundException 을 발생
+
+```java
+public class FileInputStreamExample {
+    public static void main(String[] args) throws Exception{
+        FileInputStream fis = new FileInputStream(
+                "D:\\_Project\\thisisjava\\src\\examples/FileInputStreamExample.java"
+        );
+        int data;
+        while((data=fis.read())!=-1){
+            System.out.write(data);
+        }
+        fis.close();
+    }
+}
+```
+
+#### FileOutputStream
+    FileOutputStream 클래스는 바이트 단위로 데이터를 파일에 저장할 때 사용하는 바이트 기반 출력 스트림이다.
+    
+    FileOutputStream fis = new FileOutputStream("C:/Temp/image.gif");
+    
+    File file = new File("C:/Temp/image.gif"); 
+    FileOutputStream fis = new FileOutputStream(file);
+    
+    주의할 점, 파일이 이미 존재할 경우 데이터를 출력하면 파일을 덮어쓰게 되므로
+    기존 파일 끝에 데이터를 추가 할 경우 생성자 두 번째 매개값으로 true를 주면 된다.
+    
+    FileOutputStream fis = new FileOutputStream("C:/Temp/image.gif", true);
+    FileOutputStream fis = new FileOutputStream(file, true);
+    
+    FileOutputStream 객체가 생성 될때 파일과 직접 연결이 되는데,
+    만약 파일이 존재하지 않으면 FileNotFoundException 을 발생
+
+```java
+public class FileOutputStreamExample {
+    public static void main(String[] args) throws Exception{
+        String originalFileName =
+                "D:\\_Project\\thisisjava\\src\\examples/goodPo.jpg";
+        String targetFileName = "C:/Temp/goodPosition.jpg";
+
+        File originalFile = new File(originalFileName);
+        System.out.println(originalFile.exists());
+        FileInputStream fis = new FileInputStream(originalFileName);
+        FileOutputStream fos = new FileOutputStream(targetFileName);
+        int readByteNo;
+        byte[] readBytes= new byte[100];
+        while((readByteNo=fis.read(readBytes))!=-1){
+            fos.write(readBytes,0,readByteNo);
+        }
+        fos.flush();
+        fos.close();
+        fis.close();
+
+        System.out.println("복사 완료");
+    }
+}
+```
+
+#### FileReader
+    FileReader 클래스는 텍스트 파일을 프로그램으로 읽어들일 때 사용하는 문자 기반 스트림이다.
+    텍스트가 아닌 파일은 읽을 수 없다.
+    
+    FileReader fr = new FileReader("C:/Temp/file.txt");
+    
+    File file = new File("C:/Temp/file.txt");
+    FileReader fr = new FileReader(file);
+    
+    FileReader 객체가 생성 될때 파일과 직접 연결이 되는데,
+    만약 파일이 존재하지 않으면 FileNotFoundException 을 발생
+    
+```java
+public class FileReaderExample {
+    public static void main(String[] args) throws Exception {
+        FileReader fr = new FileReader(
+                "D:\\_Project\\thisisjava\\src\\examples/FileReaderExample.java"
+        );
+        int readCharNo;
+        char[] cbuf = new char[100];
+        while ((readCharNo = fr.read(cbuf)) != -1) {
+            String data = new String(cbuf, 0, readCharNo);
+            System.out.print(data);
+        }
+        fr.close();
+    }
+}
+```
+
+#### FileWriter
+    FileWriter 클래스는 데이터를 파일에 저장할 때 사용하는 문자 기반 스트림이다.
+    텍스트가 아닌 파일은 저장할 수 없다.
+    
+    FileWriter fw = new FileWriter("C:/Temp/file.txt");
+    
+    File file = new File("C:/Temp/file.txt");
+    FileWriter fr = new FileWriter(file);
+    
+    주의할 점, 파일이 이미 존재할 경우 데이터를 출력하면 파일을 덮어쓰게 되므로
+    기존 파일 끝에 데이터를 추가 할 경우 생성자 두 번째 매개값으로 true를 주면 된다.
+    
+    FileWriter fr = new FileWriter("C:/Temp/file.txt", true);
+    FileWriter fr = new FileWriter(file, true);
+    
+    FileWriter 객체가 생성 될때 파일과 직접 연결이 되는데,
+    만약 파일이 존재하지 않으면 FileNotFoundException 을 발생
+    
+```java
+public class FileWriterExample {
+    public static void main(String[] args) throws Exception {
+        File file = new File("C:/Temp/file.txt");
+        FileWriter fw = new FileWriter(file, true);
+        fw.write("FileWriter는 한글로 된 " + "\r\n");
+        fw.write("문자열을 바로 출력할 수 있다." + "\r\n");
+        fw.flush();
+        fw.close();
+    }
+}
+```
+
+### 63. 보조 스트림
+    다른 스트림과 연결되어 여러 가지 편리한 기능을 제공해주는 스트림
+    필터(filter) 스트림이라고도 함
+    InputStream, FileInputStream, Reader, FileReader
+    OutputStream, FileOutputStream, Writer, FileWriter 등에 연결해서
+    입출력을 수행한다.
+    보조 스트림은 문자 변환, 입출력 성능 향상, 기본 데이터 타입 입출력, 객체 입출력
+    등의 기능을 제공한다.
+    
+    보조스트림 변수 = new 보조스트림( 연결스트림 );
+    e.g ) InputStream is = System.in;
+          InputStreamReader reader = new InputStreamReader(is);
+          BufferedReader br = new BufferedReader(reader);
+
+#### 문자 변환 보조 스트림
+    소스 스트림이 바이트 기반 스트림 (Input, Output, FileInput, FileOutput) 이면서
+    입출력 데이터가 문자라면 Reader 와 Writer로 변환해서 사용하는 것이 좋다.
+    문자단위로 입출력되며, 문자셋의 종류를 지정할 수 있기 때문에
+    
+###### InputStreamReader
+    바이트 입력 스트림에 연결되어 Reader로 변환시켜주는 보조스트림
+    
+```java
+public class InputStreamReaderExample {
+    public static void main(String[] args) throws Exception {
+        InputStream is = System.in;
+        Reader reader = new InputStreamReader(is);
+
+        int readCharNo;
+        char[] cbuf = new char[100];
+        while ((readCharNo = reader.read(cbuf)) != -1) {
+            String data = new String(cbuf, 0, readCharNo);
+            System.out.println(data);
+        }
+        reader.close();
+    }
+}
+```
+
+###### OutputStreamWriter
+    바이트 출력 스트림에 연결되어 Writer로 변환시켜주는 보조스트림
+    
+```java
+public class OutputWriterExample {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/file.txt");
+        Writer writer = new OutputStreamWriter(fos);
+        String data = "바이트 출력 스트림을 문자 출력 스트림을 변환";
+        writer.write(data);
+
+        writer.flush();
+        writer.close();
+        System.out.println("파일 저장이 끝났습니다.");
+    }
+}
+```
+
+#### 성능 향상 보조 스트림
+    프로그램이 입출력 소스와 직접 작업하지 않고 중간에 메모리 버퍼(buffer)와
+    작업함으로써 실행 성능을 향상시킬 수 있다.
+    버퍼는 데이터가 쌓이기를 기다렸다가 꽉차게 되면 데이터를 한꺼번에 보낸다.
+    
+    바이트 기반 스트림 BufferedInputStream, BufferedOutputStream
+    문자 기반 스트림 BufferedReader, BufferedWriter
+    
+###### BufferedInputStream, BufferedReader
+    BufferedInputStream 바이트 입력 스트림에 연결되어 버퍼를 제공해주는 보조 스트림
+    BufferedReader 문자 입력 스트림에 연결되어 버퍼를 제공해주는 보조 스트림
+    
+    BufferdInputStream bis = new BufferedInputStream( 바이트입력스트림 );
+    BufferedReader br = new BufferedReader( 문자입력스트림 );
+    
+```java
+public class BufferedInputStreamExample {
+    public static void main(String[] args) throws Exception {
+        long start = 0;
+        long end = 0;
+        FileInputStream fis1 = new FileInputStream(
+                "D:\\_Project\\thisisjava\\src\\examples/goodPo.jpg"
+        );
+        start = System.currentTimeMillis();
+        while (fis1.read() != -1) {
+
+        }
+        end = System.currentTimeMillis();
+        System.out.println("buffered 사용 전: " + (end - start) + "ms");
+        fis1.close();
+
+        FileInputStream fis2 = new FileInputStream(
+                "D:\\_Project\\thisisjava\\src\\examples/goodPo.jpg"
+        );
+
+        BufferedInputStream bis = new BufferedInputStream(fis2);
+        start = System.currentTimeMillis();
+        while (bis.read() != -1) {
+
+        }
+        end = System.currentTimeMillis();
+        System.out.println("buffered 사용 후: " + (end - start) + "ms");
+        bis.close();
+        fis2.close();
+    }
+}
+```
+
+```java
+public class BufferedReaderExample {
+    public static void main(String[] args) throws Exception {
+        InputStream is = System.in;
+        Reader reader = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(reader);
+        System.out.print("입력 : ");
+        String lineString = br.readLine();
+        System.out.println("출력 : " + lineString);
+    }
+}
+```
+
+###### BufferedOutputStream, BufferedWriter
+    BufferedOutputStream 바이트 출력 스트림에 연결되어 버퍼를 제공해주는 보조 스트림
+    BufferedWriter 문자 출력 스트림에 연결되어 버퍼를 제공해주는 보조 스트림
+    
+    BufferedOutputStream bos = new BufferedOutputStream( 바이트입력스트림 );
+    BufferedWriter bw = new BufferedWriter( 문자입력스트림 );
+    
+```java
+public class BufferedOutputStreamExample {
+    public static void main(String[] args) throws Exception {
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+
+        int data = -1;
+        long start = 0;
+        long end = 0;
+        fis = new FileInputStream(
+                "D:\\_Project\\thisisjava\\src\\examples/goodPo.jpg"
+        );
+        bis = new BufferedInputStream(fis);
+        fos = new FileOutputStream(
+                "C:/Temp/goodPosition.jpg"
+        );
+        start = System.currentTimeMillis();
+        while ((data = bis.read()) != -1) {
+            fos.write(data);
+        }
+        fos.flush();
+        end = System.currentTimeMillis();
+        fos.close();
+        bis.close();
+        fis.close();
+        System.out.println("사용하지 않았을 때 : " + (end - start) + "ms");
+
+        fis = new FileInputStream(
+                "D:\\_Project\\thisisjava\\src\\examples/goodPo.jpg"
+        );
+        bis = new BufferedInputStream(fis);
+        fos = new FileOutputStream(
+                "C:/Temp/goodPosition.jpg"
+        );
+        bos = new BufferedOutputStream(fos);
+        start = System.currentTimeMillis();
+        while ((data = bis.read()) != -1) {
+            bos.write(data);
+        }
+        bos.flush();
+        end = System.currentTimeMillis();
+        bos.close();
+        fos.close();
+        bis.close();
+        fis.close();
+        System.out.println("사용 했을 때 : " + (end - start) + "ms");
+    }
+}
+```
+
+#### 기본 타입 입출력 보조 스트림
+    바이트 스트림은 바이트 단위로 입출력하기 때문에 자바의 기본 데이터 타입인
+    boolean, char, short, int, long, float, double 단위로 입출력할 수 없다.
+    그러나 DataInputStream과 DataOutputStream 보조 스트림을 연결하면 
+    기본 데이터 타입으로 입출력이 가능하다.
+    
+    DataInputStream dis = new DataInputStream( 바이트입력스트림 );
+    DataOutputStream dos = new DataOutputStream( 바이트출력스트림 );
+    
+<table>
+    <tr>
+        <th colspan="2">DataInputStream</th>
+        <th colspan="2">DataOutputStream</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>readBoolean()</td>
+        <td>void</td>
+        <td>writeBoolean(boolean v)</td>
+    </tr>
+    <tr>
+        <td>byte</td>
+        <td>readByte()</td>
+        <td>void</td>
+        <td>writeByte(int v)</td>
+    </tr>
+    <tr>
+        <td>char</td>
+        <td>readChar()</td>
+        <td>void</td>
+        <td>writeChar(int v)</td>
+    </tr>
+    <tr>
+        <td>double</td>
+        <td>readDouble()</td>
+        <td>void</td>
+        <td>writeDouble(double v)</td>
+    </tr>
+    <tr>
+        <td>float</td>
+        <td>readFloat()</td>
+        <td>void</td>
+        <td>writeFloat(float v)</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>readInt()</td>
+        <td>void</td>
+        <td>writeInt(int v)</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>readLong()</td>
+        <td>void</td>
+        <td>writeLong(long v)</td>
+    </tr>
+    <tr>
+        <td>short</td>
+        <td>readShort()</td>
+        <td>void</td>
+        <td>writeShort(int v)</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>readUTF()</td>
+        <td>void</td>
+        <td>writeUTF(String v)</td>
+    </tr>                
+</table>    
+    
+    주의 점, 데이터 타입의 크기가 모두 다르므로 DataOutputStream으로 출력한
+    데이터를 다시 DataInputStream으로 읽어올 때는 출력한 순서와 동일한 순서로
+    읽어야 한다.
+    아니면 EOFException 에러
+    
+```java
+public class DataInputOutputStreamExample {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/primitive.dat");
+        DataOutputStream dos = new DataOutputStream(fos);
+        dos.writeUTF("홍길동");
+        dos.writeDouble(95.5);
+        dos.writeInt(1);
+
+        dos.writeUTF("감자바");
+        dos.writeDouble(90.3);
+        dos.writeInt(2);
+
+        dos.flush();
+        dos.close();
+        fos.close();
+
+        FileInputStream fis = new FileInputStream("C:/Temp/primitive.dat");
+        DataInputStream dis = new DataInputStream(fis);
+
+        for (int i = 0; i < 2; i++) {
+            String name = dis.readUTF();
+            double score = dis.readDouble();
+            int order = dis.readInt();
+            System.out.println(name + " " + score + " " + order);
+        }
+        dis.close();
+        fis.close();
+    }
+}
+```
+
+#### 프린터 보조 스트림
+    PrintStream 과 PrintWriter 프린터와 유사하게 출력하는 보조스트림
+     
+    
+    
     
