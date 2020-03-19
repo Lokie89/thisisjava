@@ -7127,7 +7127,1029 @@ public class DataInputOutputStreamExample {
 
 #### 프린터 보조 스트림
     PrintStream 과 PrintWriter 프린터와 유사하게 출력하는 보조스트림
-     
     
+<table>
+    <tr>
+        <th colspan="4">PrintStream / PrintWriter</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(boolean b)</td>
+        <td>void</td>
+        <td>println(boolean b)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(char c)</td>
+        <td>void</td>
+        <td>println(char c)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(double d)</td>
+        <td>void</td>
+        <td>println(double d)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(float f)</td>
+        <td>void</td>
+        <td>println(float f)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(int i)</td>
+        <td>void</td>
+        <td>println(int i)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(long l)</td>
+        <td>void</td>
+        <td>println(long l)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(Object obj)</td>
+        <td>void</td>
+        <td>println(Object obj)</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>print(String s)</td>
+        <td>void</td>
+        <td>println(String s)</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td>void</td>
+        <td>println()</td>
+    </tr>
+</table>
     
+```java
+public class PrintStreamExample {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/file.txt");
+        PrintStream ps = new PrintStream(fos);
+
+        ps.println("[ 프린터 보조 스트림 ]");
+        ps.print("마치 ");
+        ps.println("프린터가 출력하는 것처럼  ");
+        ps.println("데이터를 출력합니다.");
+
+        ps.flush();
+        ps.close();
+        fos.close();
+    }
+}
+```
+
+###### printf()
+    형식화된 문자열을 추렭할 수 있도록 하기 위해 자바 5부터 추가된 메소드
+    첫번째 매개값으로 형식화된 문자열을 지정, 
+    두번째 매개값부터는 형식화된 문자열에 들어갈 값을 나열
+    
+    printf(String format, Object... args)
+    format : %[argument_index$] [flags] [width] [.precision] conversion
+    format 에서 % 와 conversion 은 필수적으로 작성
+    argument_index$ : 적용할 매개값의 순번 1$는 첫 번째, 2$는 두 번째
+    flags : 빈공간을 채우는 방법
+    width : 전체 자릿수
+    .precision : 소수 자릿수
+    conversion : 변환문자로 정수(d), 실수(f), 문자열(s), 신간관련 문자 등 사용
+    
+<table>
+    <tr>
+        <th colspan="2">형식화된 문자</th>
+        <th>설명</th>
+        <th>출력 형태</th>
+    </tr>
+    <tr>
+        <td rowspan="4">정수</td>
+        <td>%d</td>
+        <td>정수</td>
+        <td>123</td>
+    </tr>
+    <tr>
+        <td>%6d</td>
+        <td>6자리 정수, 왼쪽 빈자리 공백</td>
+        <td>___123</td>
+    </tr>
+    <tr>
+        <td>%-6d</td>
+        <td>6자리 정수, 오른쪽 빈자리 공백</td>
+        <td>123___</td>
+    </tr>
+    <tr>
+        <td>%06d</td>
+        <td>6자리 정수, 왼쪽 빈자리 0 채움</td>
+        <td>000123</td>
+    </tr>
+    <tr>
+        <td rowspan="3">실수</td>
+        <td>%10.2f</td>
+        <td>소수점 이상 7자리, 소수점 이하 2자리. 왼쪽 빈자리 공백</td>
+        <td>___123.45</td>
+    </tr>
+    <tr>
+        <td>%-10.2f</td>
+        <td>소수점 이상 7자리, 소수점 이하 2자리. 오른쪽 빈자리 공백</td>
+        <td>123.45___</td>
+    </tr>
+    <tr>
+        <td>%010.2f</td>
+        <td>소수점 이상 7자리, 소수점 이하 2자리. 왼쪽 빈자리 0 채움</td>
+        <td>0000123.45</td>
+    </tr>
+    <tr>
+        <td rowspan="3">문자열</td>
+        <td>%s</td>
+        <td>문자열</td>
+        <td>abc</td>
+    </tr>
+    <tr>
+        <td>%6s</td>
+        <td>6자리 문자열. 왼쪽 빈자리 공백</td>
+        <td>___abc</td>
+    </tr>
+    <tr>
+        <td>%-6s</td>
+        <td>6자리 문자열. 오른쪽 빈자리 공백</td>
+        <td>abc___</td>
+    </tr>
+    <tr>
+        <td rowspan="9">날짜</td>
+        <td>%tF</td>
+        <td>%tY-%tm-%td</td>
+        <td>2010-01-06</td>
+    </tr>
+    <tr>
+        <td>%tY</td>
+        <td>4자리 년</td>
+        <td>2010</td>
+    </tr>
+    <tr>
+        <td>%ty</td>
+        <td>2자리 년</td>
+        <td>10</td>
+    </tr>
+    <tr>
+        <td>%tm</td>
+        <td>2자리 월</td>
+        <td>01</td>
+    </tr>
+    <tr>
+        <td>%td</td>
+        <td>2자리 일</td>
+        <td>06</td>
+    </tr>
+    <tr>
+        <td>%tH</td>
+        <td>2자리 시(0~23)</td>
+        <td>08</td>
+    </tr>
+    <tr>
+        <td>%tl</td>
+        <td>시(0~12)</td>
+        <td>8</td>
+    </tr>
+    <tr>
+        <td>%tM</td>
+        <td>2자리 분</td>
+        <td>06</td>
+    </tr>
+    <tr>
+        <td>%tS</td>
+        <td>2자리 초</td>
+        <td>24</td>
+    </tr>
+    <tr>
+        <td rowspan="3">특수 문자</td>
+        <td>/t</td>
+        <td>탭(tab)</td>
+        <td>    </td>
+    </tr>
+    <tr>
+        <td>/n</td>
+        <td>줄바꿈</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>%%</td>
+        <td>%</td>
+        <td>%</td>
+    </tr>
+</table>
+
+```java
+public class PrintfExample {
+    public static void main(String[] args) {
+        System.out.printf("상품의 가격:%d원\n", 123);
+        System.out.printf("상품의 가격:%6d원\n", 123);
+        System.out.printf("상품의 가격:%-6d원\n", 123);
+        System.out.printf("상품의 가격:%06d원\n", 123);
+
+        System.out.printf("반지름이 %d인 원의 넓이:%10.2f\n", 10, Math.PI * 10 * 10);
+
+        System.out.printf("%6d | %-10s | %10s\n", 1, "홍길동", "도적");
+
+        Date now = new Date();
+        System.out.printf("오늘은 %tY년 %tm월 %td일 입니다.\n", now, now, now);
+        System.out.printf("오늘은 %1$tY년 %1$tm월 %1$td일 입니다.\n", now);
+        System.out.printf("현재 %1$tH시 %1$tM분 %1$tS초 입니다.\n", now);
+    }
+}
+```
+
+#### 객체 입출력 보조 스트림
+    자바는 메모리에 생성된 객체를 파일 또는 네트워크로 출력할 수 있다.
+    객체는 문자가 아니기 때문에 바이트 기반 스트림으로 출력
+    객체를 출력하기 위해서는 객체의 데이터를 일렬로 늘어선 연속적인 바이트로 
+    변경 해야 하는데 이것을 객체 직렬화(serialization) 라고 한다. 
+
+###### ObjectInputStream, ObjectOutputStream
+
+    ObjectOutputStream 은 바이트 출력 스트림과 연결되어 객체를 직렬화 하는 역할
+    ObjectInputStream 은 바이트 입력 스트림과 연결되어 객체를 역직렬화 하는 역할
+    
+    ObjectOutputStream oos = new ObjectOutputStream( 바이트출력스트림 );
+    ObjectInputStream ois = new ObjectInputStream( 바이트입력스트림 );
+    
+    ObjectOutputStream 으로 객체를 직렬화 하기 위해서는 writeObject() 메소드 사용
+    ObjectInputStream 으로 객체를 역직렬화 하기 위해서는 readObject() 메소드 사용 
+    
+```java
+public class ObjectInputOutputStreamExample {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:Temp/Object.dat");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+        oos.writeObject(new Integer(10));
+        oos.writeObject(new Double(3.14));
+        oos.writeObject(new int[]{1, 2, 3});
+        oos.writeObject(new String("홍길동"));
+        oos.flush();
+        oos.close();
+        fos.close();
+
+        FileInputStream fis = new FileInputStream("C:Temp/Object.dat");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        Integer obj1 = (Integer) ois.readObject();
+        Double obj2 = (Double) ois.readObject();
+        int[] obj3 = (int[]) ois.readObject();
+        String obj4 = (String) ois.readObject();
+
+        ois.close();
+        fis.close();
+
+        System.out.println(obj1);
+        System.out.println(obj2);
+        System.out.println(obj3[0] + " " + obj3[1] + " " + obj3[2]);
+        System.out.println(obj4);
+    }
+}
+```
+    
+###### 직렬화가 가능한 클래스 (Serializable)
+    자바는 Serializable 인터페이스를 구현한 클래스만 직렬화 할 수 있도록
+    제한하고 있다.
+    Serializable 인터페이스는 빈 인터페이스 지만, 객체를 직렬화할 때
+    private 필드를 포함한 모든 필드를 바이트로 변환해도 좋다는 표시 역할을 함
+    
+    public class XXX implements Serializable {}
+    
+    객체를 직렬화 하면 바이트로 변환되는 것은 필드들이고,
+    생성자 및 메소드는 직렬화에 포함되지 않는다.
+    따라서 역직렬화할 때에는 필드의 값만 복원된다.
+    또 필드 선언에 static, transient 가 붙어 있을 경우 직렬화 되지 않는다.
+    
+```java
+public class ClassA implements Serializable {
+    int filed1;
+    ClassB field2 = new ClassB();
+    static int field3;
+    transient int field4;
+}
+
+class ClassB implements Serializable {
+    int field1;
+}
+
+class SerializableWriter {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/Object.dat");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        ClassA classA = new ClassA();
+
+        classA.filed1 = 1;
+        classA.field2.field1 = 2;
+        classA.field3 = 3;
+        classA.field4 = 4;
+
+        oos.writeObject(classA);
+        oos.flush();
+        oos.close();
+        fos.close();
+    }
+}
+
+class SerializableReader {
+    public static void main(String[] args) throws Exception{
+        FileInputStream fis = new FileInputStream("C:/Temp/Object.dat");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        ClassA v = (ClassA) ois.readObject();
+        System.out.println(v.filed1);
+        System.out.println(v.field2.field1);
+        System.out.println(v.field3);
+        System.out.println(v.field4);
+    }
+}
+```
+
+###### serialVersionUID 필드
+    직렬화된 객체를 역직렬화 할때는 직렬화했을 때와 같은 클래스를 사용해야 한다.
+    다른 클래스를 사용하면 InvalidClassException 을 보내는데
+    serialVersionUID가 다르다는 내용을 출력한다.
+    
+    serialVersionUID 는 같은 클래스임을 알려주는 식별자 역할을 하는데
+    Serializable 인터페이스를 구현한 클래스를 컴파일하면 
+    자동적으로 serialVersionUID 정적 필드로 추가 된다.
+    
+    문제는 재컴파일 시 seiralVersionUID 값이 달라진다는 것 
+
+#####
+    사용했던 클래스를 재컴파일한 후 역직렬화 했을때 오류 발생
+    Exception in thread "main" java.io.InvalidClassException: examples.ClassC; 
+    local class incompatible: stream classdesc serialVersionUID = -1281483431667898299, local class serialVersionUID = -6980895423757183431
+```java
+public class ClassC implements Serializable {
+    int field1;
+    int field2; // 나중에 추가
+}
+
+class SerialVersionUIDExample1 {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/Object.dat");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        ClassC classC = new ClassC();
+        classC.field1 = 1;
+        oos.writeObject(classC);
+        oos.flush();
+        oos.close();
+        fos.close();
+    }
+}
+
+class SerialVersionUIDExample2 {
+    public static void main(String[] args) throws Exception {
+        FileInputStream fis = new FileInputStream("C:/Temp/Object.dat");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        ClassC classC = (ClassC) ois.readObject();
+        System.out.println(classC.field1);
+    }
+}
+```
+    만약 불가피하게 클래스의 수정이필요하다면 클래스 작성 시 
+    serialVersionUID 를 명시적으로 선언
+    static final long serialVerrsionUID = 정수값;
+    
+    자바는 jdk \bin 폴더에 serialVersionUID 값을 자동으로 생성시켜주는
+    serialver.exe 명령어를 제공
+    
+###### writeObject(), readObject() 메소드
+    상속관계에 있는 두 클래스 중 부모가 Serializable 인터페이스를 구현하고 있다면
+    자식 클래스는 자동으로 Serializable 성질을 갖는다 ( 직렬화 가능 )
+    그러나 자식 클래스만 Serializable 인터페이스를 구현하고 있을 경우
+    부모의 필드는 직렬화에서 제외된다.
+    이때 방법은
+    1. 부모 클래스가 Serializable 인터페이스를 구현하도록 한다.
+    2. 자식 클래스에서 writeObject(), readObject() 를 선언해서
+       부모 객체의 필드를 직접 출력 시킨다.
+       
+```java
+public class Parent {
+    public String field1;
+}
+
+class Child extends Parent implements Serializable {
+    public String field2;
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeUTF(field1);
+        oos.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        field1 = ois.readUTF();
+        ois.defaultReadObject();
+    }
+}
+
+class NonSerializableParentExample {
+    public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("C:/Temp/Object.dat");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        Child child = new Child();
+        child.field1 = "홍길동";
+        child.field2 = "홍삼원";
+        oos.writeObject(child);
+        oos.flush();
+        oos.close();
+        fos.close();
+
+        FileInputStream fis = new FileInputStream("C:/Temp/Object.dat");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        Child v = (Child) ois.readObject();
+
+        System.out.println(v.field1);
+        System.out.println(v.field2);
+        ois.close();
+        fis.close();
+    }
+}
+```
+    writeObject() 메소드는 직렬화될 때 자동으로 호출되고, 
+    readObject() 메소드는 역직렬화될 때 자동으로 호출된다.
+    
+    주의할 점은 접근 제한자가 private가 아니면 자동으로 호출되지 않는다.
+    
+    defaultWriteObject() 와 defaultReadObject() 는 자식클래스에
+    정의된 필드들을 모두 직렬화하고 역직렬화한다.
+    
+### 64. 네트워크 기초
+    IP 주소는 네트워크 어댑터 ( 랜(LAN) 카드 ) 마다 할당 됨
+    
+#### InetAddress
+    자바에서는 IP 주소를 InetAddress 객체로 표현
+    
+    InetAddress ia = InetAddress.getLocalHost();
+    
+    도메인 이름으로 IP 주소 가져오기
+    InetAddress ia = InetAddress.getByName(String host);
+    InetAddress[] iaArr = InetAddress.getAllByName(String host);
+    
+    String ip = InetAddress.getHostAddress();
+    
+```java
+public class InetAddressExample {
+    public static void main(String[] args) {
+        try {
+            InetAddress local = InetAddress.getLocalHost();
+            System.out.println(local.getHostAddress());
+
+            InetAddress[] iaArr = InetAddress.getAllByName("www.naver.com");
+            for(InetAddress ia : iaArr){
+                System.out.println(ia.getHostAddress());
+            }
+        } catch (UnknownHostException e) {
+        }
+    }
+}
+```
+
+### 65. TCP 네트워킹
+    TCP (Transmission Control Protocol) 연결 지향적 프로토콜
+    클라이언트가 연결 요청을 하고, 서버가 연결을 수락하면 통신 선로가 고정
+    그 선로를 통해서 데이터가 순차적으로 전달
+    그래서 TCP 는 데이터를 정확하고 안정적으로 전달
+    그러나 TCP는 데이터 전송 전 반드시 연결, 고정된 통신선로가 최단선이 아닐경우
+    상대적으로 UDP (User Datagram Protocol) 보다 데이터 전송속도가 느릴수 있다.
+    
+#### ServerSocket, Socket
+    ServerSocket : 클라이언트의 연결 요청을 기다리면서 연결 수락
+    Socket : 연결된 클라이언트와 통신
+    
+    ServerSocket serverSocket = new ServerSocket();
+    serverSocket.bind(new InetSocketAddress(5001));
+    
+    serverSocket.bind(new InetSocketAddress(ip, 5001));
+
+    클라이언트가 연결 요청을 하면 Socket을 만들어 리턴 ( 연결 수락 )    
+    Socket socket = serverSocket.accept();
+    InetSocketAddress socketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+    
+    Exception
+        BindException : 해당 포트가 이미 사용중
+        SocketException : accept()에서 블로킹 되어있을때
+        IOException : close()
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드명</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getHostName()</td>
+        <td>클라이언트 IP 리턴</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>getPort()</td>
+        <td>클라이언트 포트 번호 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString()</td>
+        <td>"IP:포트번호" 형태의 문자열 리턴</td>
+    </tr>
+</table>
+
+    Socket socket = new Socket(ip, port);
+    
+    Socket socket = new Socket(new InetSocketAddress(ip, port));
+    
+    Socket socket = new Socket();
+    socket.connect(new InetSocketAddress(ip, port));
+    
+    Exception
+        UnknownHostException : 잘못 된 IP주소를 입력
+        IOException : 주어진 포트로 접속할 수 없을 때 발생, close()
+
+```java
+public class ServerExample {
+    public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress("localhost", 5001));
+            while (true) {
+                System.out.println("연결 기다림");
+                Socket socket = serverSocket.accept();
+                InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+                System.out.println("연결 수락함 : " + isa.getHostName());
+            }
+        } catch (Exception e) {
+        }
+
+        if (!serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+
+            }
+        }
+    }
+}
+
+class ClientExample {
+    public static void main(String[] args) {
+        Socket socket = null;
+        try {
+            socket = new Socket();
+            System.out.println("연결 요청");
+            socket.connect(new InetSocketAddress("localhost", 5001));
+            System.out.println("연결 성공");
+        } catch (Exception e) {
+        }
+
+        if (!socket.isClosed()) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+}
+```
+
+#### Socket 데이터 통신
+    connect() 와 accept() 로 얻은 Socket 객체로부터
+    각각 InputStream, OutputStream 을 얻어낼 수 있음.
+    
+    보낼 데이터를 byte[] 배열로 생성하고 OutputStream 
+    write() 메소드를 통해 전송한다.
+    
+    받을 데이터는 InputStream read() 메소드를 통해 받는다.
+    
+```java
+public class ServerExample {
+    public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress("localhost", 5001));
+            while (true) {
+                System.out.println("연결 기다림");
+                Socket socket = serverSocket.accept();
+                InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+                System.out.println("연결 수락함 : " + isa.getHostName());
+
+                byte[] bytes = null;
+                String message = null;
+
+                InputStream is = socket.getInputStream();
+                bytes = new byte[100];
+                int readByteCount = is.read(bytes);
+                message = new String(bytes, 0, readByteCount, "UTF-8");
+                System.out.println("데이터 받기 성공 : " + message);
+
+                OutputStream os = socket.getOutputStream();
+                message = "Hello Client";
+                bytes = message.getBytes("UTF-8");
+                os.write(bytes);
+                os.flush();
+
+                is.close();
+                os.close();
+                socket.close();
+
+            }
+        } catch (Exception e) {
+        }
+
+        if (!serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+
+            }
+        }
+    }
+}
+
+class ClientExample {
+    public static void main(String[] args) {
+        Socket socket = null;
+        try {
+            socket = new Socket();
+            System.out.println("연결 요청");
+            socket.connect(new InetSocketAddress("localhost", 5001));
+            System.out.println("연결 성공");
+
+            byte[] bytes = null;
+            String message = null;
+
+            OutputStream os = socket.getOutputStream();
+            message = "Hello Server";
+            bytes = message.getBytes("UTF-8");
+            os.write(bytes);
+            os.flush();
+            System.out.println("데이터 보내기 성공");
+
+            InputStream is = socket.getInputStream();
+
+            bytes = new byte[100];
+            int readByteCount = is.read(bytes);
+
+            message = new String(bytes, 0, readByteCount, "UTF-8");
+            System.out.println("데이터 받기 성공 : " + message);
+
+            os.close();
+            is.close();
+
+        } catch (Exception e) {
+        }
+
+        if (!socket.isClosed()) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+}
+```
+    
+    InputStream 의 read() 메소드가 호출되면 상대방이 데이터를 보내기 전까지
+    블로킹(blocking) 되는데, read() 메소드가 블로킹 해제되고 리턴되는 경우는
+    세 가지이다.
+
+<table>
+    <tr>
+        <th>블로킹이 해제되는 경우</th>
+        <th>리턴값</th>
+    </tr>
+    <tr>
+        <td>상대방이 데이터를 보냄</td>
+        <td>읽은 바이트 수</td>
+    </tr>
+    <tr>
+        <td>상대방이 정상적으로 Socket 의 close()를 호출</td>
+        <td>-1</td>
+    </tr>
+    <tr>
+        <td>상대방이 비정상적으로 종료</td>
+        <td>IOException 발생</td>
+    </tr>
+</table>
+
+#### 스레드 병렬 처리
+    ServerSocket 의 accept() 를 실행하거나
+    Socket 생성자 또는 connect() 를 실행할 경우에
+    해당 작업이 완료되기 전까지 블로킹(blocking) 된다.
+    한 스레드가 직접 입출력 작업을 담당하게 되면 한 작업이 완료될때까지
+    다음 작업을 진행할 수 없다.
+    따라서 별도의 작업 스레드를 생성해서 병렬적으로 처리하는 것이 좋다.
+    accept(), connect(), read(), write()
+
+### 66. UDP 네트워킹
+    UDP (User Datagram Protocol) 비연결 지향적 프로토콜
+    데이터를 주고 받을 때 연결 절차를 거치지 않고, 발신자가 일방적으로 데이터를 발신하는 방식
+    연결 과정이 없기 때문에 TCP 보다는 빠른 전송을 할 수 있지만 데이터 전달의 신뢰성은 떨어짐
+    UDP 는 발신자가 데이터 패킷을 순차적으로 보내더라도 
+    이 패킷들은 서로 다른 통신 선로를 통해 전달될 수 있다.
+    먼저 보낸 패킷이 느린 선로를 통해 전송될 경우 나중에 보낸 패킷보다 늦게 도착할 수 있다.
+    일부 패킷은 잘못된 선로로 전송되어 잃어버릴 수도 있다.
+
+#### 발신자 구현
+    DatagramSocket, DatagramPacket
+    
+    DatagramSocket datagramSocket = new DatagramSocket();
+    
+    첫번째 매개값은 보낼 데이터, 두번째 매개값은 데이터 항목수, 세번째 매개값은 수신자 InetSocketAddress
+    DatagramPacket packet = new DatagramPacket(
+        byteArr, byteArr.length,
+        new InetSocketAddress("localhost",5001)
+    )
+    
+    datagramSocket.send(packet); 으로 데이터를 보낸다.
+
+#### 수신자 구현
+    DatagramSocket datagramSocket = new DatagramSocket(5001);
+
+    첫번째 매개값은 읽은 패킷 데이터를 저장한 바이트 배열, 두번째 매개값은 읽을 수 있는 최대 바이트 수
+    DatagramPacket packet = new DatagramPacket(new byte[100], 100)
+    
+    receiver를 호출했다면 패킷을 받을때까지 블로킹됨
+    datagramSocket.receive(packet);
+    
+    String data = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
+    
+    받은 패킷에서 발신자의 IP와 포트 알아냄
+    SocketAddress socketAddress = packet.getSocketAddress();
+    
+```java
+public class UdpSendExample {
+    public static void main(String[] args) throws Exception {
+        DatagramSocket datagramSocket = new DatagramSocket();
+        for (int i = 1; i < 3; i++) {
+            String data = "메세지" + i;
+            byte[] byteArr = data.getBytes("UTF-8");
+            DatagramPacket datagramPacket = new DatagramPacket(
+                    byteArr, byteArr.length,
+                    new InetSocketAddress("localhost", 5001)
+            );
+            datagramSocket.send(datagramPacket);
+            System.out.println(" 보낸 바이트 수 : " + byteArr.length);
+        }
+        System.out.println("발신 종료");
+        datagramSocket.close();
+    }
+}
+
+class UdpReceiveExample {
+    public static void main(String[] args) throws Exception {
+        DatagramSocket datagramSocket = new DatagramSocket(5001);
+        Thread thread = new Thread(() -> {
+            System.out.println("수신 시작");
+            try {
+                while (true) {
+                    DatagramPacket packet = new DatagramPacket(new byte[100], 100);
+                    datagramSocket.receive(packet);
+                    String data = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
+                    System.out.println(packet.getSocketAddress() + " " + data);
+                }
+            } catch (Exception e) {
+                System.out.println("수신 종료");
+            }
+        });
+
+        thread.start();
+        Thread.sleep(10000);
+        datagramSocket.close();
+    }
+}
+```
+
+### 67. NIO (New Input / Output)
+    
+<table>
+    <tr>
+        <th>NIO 패키지</th>
+        <th>포함되어 있는 내용</th>
+    </tr>
+    <tr>
+        <td>java.nio</td>
+        <td>다양한 버퍼 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.channels</td>
+        <td>파일 채널, TCP 채널, UDP 채널 등의 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.channels.spi</td>
+        <td>java.nio.channels 패키지를 위한 서비스 제공자 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.charset</td>
+        <td>문자셋, 인코더, 디코더 API</td>
+    </tr>
+    <tr>
+        <td>java.nio.charset.spi</td>
+        <td>java.nio.charset 패키지를 위한 서비스 제공자 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.file</td>
+        <td>파일 및 파일 시스템에 접근하기 위한 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.file.attribute</td>
+        <td>파일 및 파일 시스템의 속성에 접근하기 위한 클래스</td>
+    </tr>
+    <tr>
+        <td>java.nio.file.spi</td>
+        <td>java.nio.file 패키지를 위한 서비스 제공자 클래스</td>
+    </tr>    
+</table>
+
+#### IO와 NIO의 차이점
+<table>
+    <tr>
+        <th>구분</th>
+        <th>IO</th>
+        <th>NIO</th>
+    </tr>
+    <tr>
+        <td>입출력 방식</td>
+        <td>스트림 방식</td>
+        <td>채널 방식</td>
+    </tr>
+    <tr>
+        <td>버퍼 방식</td>
+        <td>넌버퍼(non-buffer)</td>
+        <td>버퍼(buffer)</td>
+    </tr>
+    <tr>
+        <td>비동기 방식</td>
+        <td>지원안함</td>
+        <td>지원</td>
+    </tr>
+    <tr>
+        <td>블로킹 / 넌블로킹 방식</td>
+        <td>블로킹 방식만 지원</td>
+        <td>블로킹 / 넌블로킹 방식 모두 지원</td>
+    </tr>
+</table>
+
+###### 스트림 vs 채널
+    IO는 스트림 기반이다. 스트림은 입력, 출력 스트림으로 구분되어 있기 때문에
+    데이터를 읽고 저장하려면 InputStream, OutputStream 별도로 생성해야 한다.
+    
+    NIO는 채널 기반이다. 채널은 스트림과 달리 양방향으로 입력과 출력이 가능하다.
+    데이터를 읽고 저장하려면 Channel 하나만 생성하면 된다.
+    
+###### 넌버퍼 vs 버퍼
+    IO에서는 출력 스트림이 1바이트를 쓰면 입력 스트림이 1바이트를 읽는다.
+    그래서 빠른 시스템을 위해 Bufferd Input / Output Stream 을 보조 스트림으로 연결해 사용한다.
+    NIO에서는 기본적으로 버퍼를 사용해 입출력을 한다.
+    
+###### 블로킹 vs 넌블로킹
+    IO는 블로킹 된다. 입력 스트림의 read() 메소드를 호출하면 데이터가 입력되기 전까지
+    스레드는 블로킹( 대기 상태 ) 된다.
+    NIO는 블로킹과 넌블로킹 특징을 모두 가지고 있다.
+    IO 블로킹과의 차이점은 NIO 블로킹은 스레드를 인터럽트함으로써 빠져나올 수가 있다는 것이다.
+    NIO의 넌블로킹은 입출력 작업 준비가 완료된 채널만 선택해서 작업 스레드가 처리한다.
+    
+#### IO와 NIO의 선택
+    NIO는 불특정 다수의 클라이언트 연결, 멀티파일들을 넌블로킹이나 비동기로 처리할 수 있기 때문에 
+    과도한 스레드 생성을 피하고 스레드를 효과적으로 재사용할 수 있음.
+    스레드에서 입출력 처리가 오래 걸린다면 대기하는 작업의 수가 늘어나기 때문에
+    오히려 제한된 스레드로 처리하는 것이 불리할 수 있다.
+    
+    대용량 데이터를 처리할 경우에는 IO가 유리하다.
+    모든 입출력 작업에 버퍼를 무조건 사용해야 하므로 받은 즉시 처리하는 IO보다 NIO가 더 복잡하다.
+    
+    연결 클라이언트 수가 적고, 전송되는 데이터가 대용량이면서 순차적으로 처리될 필요성이 있을 경우 IO가 더 좋다
+    
+### 68. 파일과 디렉토리
+
+#### 경로 정의
+    Path는 IO 의 java.io.File 클래스에 대응되는 NIO 인터페이스이다.
+    
+    Path path = Paths.get(String first, String... more)
+    Path path = Paths.get(URI uri);
+    
+    절대경로
+    Path path = Paths.get("C:/Temp/dir/file.txt");
+    Path path = Paths.get("C:/Temp/dir", "file.txt");
+    Path path = Paths.get("C:", "Temp", "dir", "file.txt");
+    
+    상대경로
+    Path path = Paths.get("dir/file.txt");
+    Path path = Paths.get("./dir/file.txt");
+    Path path = Paths.get("../dir2/file.txt");
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>compareTo(Path other)</td>
+        <td>파일 경로가 동일하면 0을 리턴,<br>
+        상위 경로면 음수,<br>
+        하위 경로면 양수를 리턴,<br>
+        음수와 양수 값의 차이나는 문자열의 수</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>getFileName()</td>
+        <td>부모 경로를 제외한 파일 또는 디렉토리 이름만 가진 Path 리턴</td>
+    </tr>
+    <tr>
+        <td>FileSystem</td>
+        <td>getFileSystem()</td>
+        <td>FileSystem 객체 리턴</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>getName(int index)</td>
+        <td>C:\Temp\dir\file.txt 일 경우<br>
+        index 가 0이면 "Temp"의 Path 객체 리턴<br>
+        index 가 1이면 "dir"의 Path 객체 리턴<br>
+        index 가 2이면 "file.txt"의 Path 객체 리턴<br></td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>getNameCount()</td>
+        <td>중첩 경로 수, C"\Temp\dir\file.txt 일 경우 3을 리턴</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>getParent()</td>
+        <td>바로 위 부모 폴더의 Path 리턴</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>getRoot()</td>
+        <td>루트 디렉토리의 Path 리턴</td>
+    </tr>
+    <tr>
+        <td>Iterator&lt;Path&gt;</td>
+        <td>iterator()</td>
+        <td>경로에 있는 모든 디렉토리와 파일을 Path 객체로 생성하고 반복자를 리턴</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>normalize()</td>
+        <td>상대 경로로 표기할 때 불필요한 요소를 제거<br>
+        C:\Temp\dir1\..\dir2\file.txt -> C:\Temp\dir2\file.txt</td>
+    </tr>
+    <tr>
+        <td>WatchKey</td>
+        <td>register(...)</td>
+        <td>WatchService를 등록</td>
+    </tr>
+    <tr>
+        <td>File</td>
+        <td>toFile()</td>
+        <td>java.io.File 객체로 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString()</td>
+        <td>파일 경로를 문자열로 리턴</td>
+    </tr>
+    <tr>
+        <td>URI</td>
+        <td>toUri()</td>
+        <td>파일 경로를 URI 객체로 리턴</td>
+    </tr>
+</table>
+
+```java
+public class PathExample {
+    public static void main(String[] args) throws Exception {
+        Path path = Paths.get("src/examples/PathExample.java");
+        System.out.println("파일명 : " + path.getFileName());
+        System.out.println("부모 디렉토리명 : " + path.getParent());
+        System.out.println("중첩 경로 수 : " + path.getNameCount());
+
+        System.out.println();
+
+        for (int i = 0; i < path.getNameCount(); i++) {
+            System.out.println(path.getName(i));
+        }
+
+        System.out.println();
+
+        Iterator<Path> iterator = path.iterator();
+        while (iterator.hasNext()) {
+            Path temp = iterator.next();
+            System.out.println(temp.getFileName());
+        }
+
+    }
+}
+```
     
