@@ -8152,4 +8152,422 @@ public class PathExample {
     }
 }
 ```
+
+#### 파일 시스템 정보(FileSystem)
+
+    운영체제의 파일 시스템은 FileSystem 인터페이스를 통하여 접근할 수 있다.
+    FileSystem fileSystem = FileSystems.getDefault();
     
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Iterable&lt;FileStore&gt;</td>
+        <td>getFileStores()</td>
+        <td>드라이버 정보를 가진 FileStore 객체들을 리턴</td>
+    </tr>
+    <tr>
+        <td>Iterable&lt;Path&gt;</td>
+        <td>getRootDirectoriees()</td>
+        <td>루트 디렉토리 정보를 가진 Path 객체들을 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getSeparator()</td>
+        <td>디렉토리 구분자 리턴</td>
+    </tr>
+</table>
+
+    FileStore Method
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>getTotalSpace()</td>
+        <td>드라이버 전체 공간 크기( 단위: 바이트 ) 리턴</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>getUnallocatedSpace()</td>
+        <td>할당되지 않은 공간 크기( 단위: 바이트 ) 리턴</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>getUsableSpace()</td>
+        <td>사용 가능한 공간 크기, getUnallocatedSpace()와 동일한 값</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isReadOnly()</td>
+        <td>읽기 전용 여부</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>name()</td>
+        <td>드라이버명 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>type()</td>
+        <td>파일 시스템 종류</td>
+    </tr>
+</table>
+
+```java
+public class FileSystemExample {
+    public static void main(String[] args) throws Exception {
+        FileSystem fileSystem = FileSystems.getDefault();
+
+        for (FileStore store : fileSystem.getFileStores()) {
+            System.out.println("드라이버명: " + store.name());
+            System.out.println("파일시스템: " + store.type());
+            System.out.println("전체 공간: " + store.getTotalSpace() + "바이트");
+            System.out.println("사용 중인 공간: " + (store.getTotalSpace() - store.getUnallocatedSpace()) + "바이트");
+            System.out.println("사용 가능한 공간: " + store.getUsableSpace() + "바이트");
+            System.out.println();
+        }
+        System.out.println("파일 구분자: " + fileSystem.getSeparator());
+        System.out.println();
+
+        for (Path path : fileSystem.getRootDirectories()) {
+            System.out.println(path.toString());
+        }
+    }
+}
+```
+#### 파일 속성 읽기 및 파일, 디렉토리 생성 / 삭제
+    java.nio.file.Files 클래스 메소드
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>long 또는 Path</td>
+        <td>copy(...)</td>
+        <td>복사</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>createDirectories(...)</td>
+        <td>모든 부모 디렉토리생성</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>createDirectory()</td>
+        <td>경로의 마지막 디렉토리만 생성</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>createFile(...)</td>
+        <td>파일 생성</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>delete(...)</td>
+        <td>삭제</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>deleteIfExists(...)</td>
+        <td>존재한다면 삭제</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>exists(...)</td>
+        <td>존재 여부</td>
+    </tr>
+    <tr>
+        <td>FileStore</td>
+        <td>getFileStore(...)</td>
+        <td>파일이 위치한 FileStore( 드라이브 ) 리턴</td>
+    </tr>
+    <tr>
+        <td>FileTime</td>
+        <td>getLastModifiedTime(...)</td>
+        <td>마지막 수정 시간을 리턴</td>
+    </tr>
+    <tr>
+        <td>UserPrincipal</td>
+        <td>getOwner(...)</td>
+        <td>소유자 정보를 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDirectory(...)</td>
+        <td>디렉토리인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isExecutable(...)</td>
+        <td>실행 가능 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isHidden(...)</td>
+        <td>숨김 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isReadable(...)</td>
+        <td>읽기 가능 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isRegularFile(...)</td>
+        <td>일반 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isSameFile(...)</td>
+        <td>같은 파일인지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isWritable(...)</td>
+        <td>쓰기 가능 여부</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>move(...)</td>
+        <td>파일 이동</td>
+    </tr>
+    <tr>
+        <td>BufferedReader</td>
+        <td>newBufferedReader(...)</td>
+        <td>텍스트 파일을 읽는 BufferedReader 리턴</td>
+    </tr>
+    <tr>
+        <td>BufferedWriter</td>
+        <td>newBufferedWriter(...)</td>
+        <td>텍스트 파일을 쓰는 BufferedWriter 리턴</td>
+    </tr>
+    <tr>
+        <td>SeekableByteChannel</td>
+        <td>newByteChannel(...)</td>
+        <td>파일에 읽고 쓰는 바이트 채널을 리턴</td>
+    </tr>
+    <tr>
+        <td>DirectoryStream&lt;Path&gt;</td>
+        <td>newDirectoryStream(...)</td>
+        <td>디렉토리의 모든 내용을 스트림으로 리턴</td>
+    </tr>
+    <tr>
+        <td>InputStream</td>
+        <td>newInputStream(...)</td>
+        <td>파일의 InputStream 리턴</td>
+    </tr>
+    <tr>
+        <td>OutputStream</td>
+        <td>newOutputStream(...)</td>
+        <td>파일의 OutputStream 리턴</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>notExists(...)</td>
+        <td>존재하지 않는지 여부</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>probeContentType(...)</td>
+        <td>파일의 MIME 타입을 리턴</td>
+    </tr>
+    <tr>
+        <td>byte[]</td>
+        <td>readAllBytes(...)</td>
+        <td>파일의 모든 바이트를 읽고 배열로 리턴</td>
+    </tr>
+    <tr>
+        <td>List&lt;String&gt;</td>
+        <td>readAllLines(...)</td>
+        <td>텍스트 파일의 모든 라인을 읽고 리턴</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>size(...)</td>
+        <td>파일의 크기 리턴</td>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td>write(...)</td>
+        <td>파일에 바이트나 문자열을 저장</td>
+    </tr>
+</table>
+
+```java
+public class FileExample2 {
+    public static void main(String[] args) throws  Exception{
+        Path path = Paths.get("src/examples/FileExample2.java");
+        System.out.println("디렉토리 여부 : "+ Files.isDirectory(path));
+        System.out.println("파일 여부 : "+ Files.isRegularFile(path));
+        System.out.println("마지막 수정시간 : "+ Files.getLastModifiedTime(path));
+        System.out.println("파일 크기 "+ Files.size(path));
+        System.out.println("소유자 "+ Files.getOwner(path).getName());
+        System.out.println("숨김 파일 여부 "+ Files.isHidden(path));
+        System.out.println("읽기 가능 여부 "+ Files.isReadable(path));
+        System.out.println("쓰기 가능 여부 "+ Files.isWritable(path));
+    }
+}
+```
+```java
+public class DirectoryExample {
+    public static void main(String[] args) throws Exception {
+        Path path1 = Paths.get("C:/Temp/dir/subdir");
+        Path path2 = Paths.get("C:/Temp/file.txt");
+
+        if (Files.notExists(path1)) {
+            Files.createDirectories(path1);
+        }
+        if (Files.notExists(path2)) {
+            Files.createFile(path2);
+        }
+        Path path3 = Paths.get("C:/Temp");
+        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path3);
+
+        for (Path path : directoryStream) {
+            if (Files.isDirectory(path)) {
+                System.out.println("디렉토리 " + path.getFileName());
+            } else {
+                System.out.println("파일 " + path.getFileName());
+            }
+        }
+    }
+}
+```
+
+#### 와치 서비스(WatchService) ( ★ 다시 공부 )
+    디렉토리 내부에서 파일 생성, 삭제 수정 등의 내용 변화를 감시하는데 사용된다.
+    WatchService watchService = FileSystems.getDefault().newWatchService();
+    
+    감시가 필요한 디렉토리의 Path 객체에서 register() 메소드로 WatchService를 등록
+    path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
+                                StandardWatchEventKinds.ENTRY_MODIFY,
+                                StandardWatchEventKinds.ENTRY_DELETE);
+                                
+    디렉토리 내부에서 변경이 발생되면 와치 이벤트(Watch Event) 가 발생하고
+    WatchService 는 해당 이벤트 정보를 가진 와치키(WatchKey)를 생성하여 큐에 넣어준다.
+    프로그램은 무한 루프를 돌면서 WatchService 의 take() 메소드를 호출하여 WatchKey가
+    큐에 들어올 때까지 대기하고 있다가 WatchKey가 큐에 들어오면 WatchKey를 얻어 처리
+    while(true) {
+        WatchKey watchKey = watchService.take(); // 큐에 WatchKey가 들어올 때까지 대기
+    }
+    
+    WatchKey를 얻고 나선 pollEvents() 메소드를 호출하여 WatchEvent 리스트를 얻는다.
+    List<WatchEvent<?>> list = watchKey.pollEvents();
+    
+    한번 사용된 WatchKey는 reset() 메소드로 초기화
+    boolean valid = watchKey.reset();
+    
+### 69. 버퍼
+    NIO에서는 데이터를 입출력하기 위해 항상 버퍼를 사용해야 한다.
+
+#### Buffer 종류
+    버퍼는 저장되는 데이터 타입에 따라 분류될 수 있고, 
+    어떤 메모리를 사용하느냐에 따라 다이렉트와 넌다이렉트로 분류할 수도 있다.
+    
+###### 데이터 타입에 따른 버퍼
+    Buffer - ByteBuffer - MappedByteBuffer
+           - CharBuffer
+           - ShortBuffer
+           - IntBuffer
+           - LongBuffer
+           - FloatBuffer
+           - DoubleBuffer  
+    MappedByteBuffer 는 ByteBuffer 의 하위 클래스로 
+    파일의 내용에 랜덤하게 접근하기 위해 파일의 내용을 메모리와 매핑 시킨 버퍼
+###### 넌다이렉트와 다이렉트 버퍼
+    넌다이렉트(non-direct)는 JVM이 관리하는 힙 메모리 공간을 이용하는 버퍼이고,
+    다이렉트(direct)는 운영체제가 관리하는 메모리 공간을 이용하는 버퍼이다. 
+<table>
+    <tr>
+        <th>구분</th>
+        <th>넌다이렉트 버퍼</th>
+        <th>다이렉트 버퍼</th>
+    </tr>
+    <tr>
+        <td>사용하는 메모리 공간</td>
+        <td>JVM의 힙 메모리</td>
+        <td>운영체제의 메모리</td>
+    </tr>
+    <tr>
+        <td>버퍼 생성 시간</td>
+        <td>버퍼 생성이 빠르다.</td>
+        <td>버퍼 생성이 느리다.</td>
+    </tr>
+    <tr>
+        <td>버퍼의 크기</td>
+        <td>작다.</td>
+        <td>크다.( 큰 데이터를 처리할 때 유리 )</td>
+    </tr>
+    <tr>
+        <td>입출력 성능</td>
+        <td>낮다.</td>
+        <td>높다.( 입출력이 빈번할 때 유리 )</td>
+    </tr>
+</table>    
+
+```java
+public class PerformanceExample {
+    public static void main(String[] args) throws Exception {
+        Path from = Paths.get("src/examples/testImage.jpg");
+        Path to1 = Paths.get("src/examples/testImage2.jpg");
+        Path to2 = Paths.get("src/examples/testImage3.jpg");
+
+        long size = Files.size(from);
+
+        FileChannel fileChannel_from = FileChannel.open(from);
+        FileChannel fileChannel_to1 = FileChannel.open(to1, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+        FileChannel fileChannel_to2 = FileChannel.open(to2, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+
+        ByteBuffer nonDirectBuffer = ByteBuffer.allocate((int) size);
+        ByteBuffer directBuffer = ByteBuffer.allocateDirect((int) size);
+
+        long start, end;
+
+        start = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            fileChannel_from.read(nonDirectBuffer);
+            nonDirectBuffer.flip();
+            fileChannel_to1.write(nonDirectBuffer);
+            nonDirectBuffer.clear();
+        }
+        end = System.nanoTime();
+        System.out.println("넌다이렉트 :\t" + (end - start) + "ns");
+
+        fileChannel_from.position(0);
+        start = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            fileChannel_from.read(directBuffer);
+            directBuffer.flip();
+            fileChannel_to2.write(directBuffer);
+            directBuffer.clear();
+        }
+        end = System.nanoTime();
+        System.out.println("다이렉트 :\t" + (end - start) + "ns");
+
+        fileChannel_from.close();
+        fileChannel_to1.close();
+        fileChannel_to2.close();
+    }
+}
+```
+    다이렉트 버퍼는 채널을 사용해서 버퍼의 데이터를 읽고 
+    저장할 경우에만 운영체제의 native I/O를 수행한다.
+    만약 채널을 사용하지 않고 ByteBuffer의 get() / put() 메소드를 사용했다면
+    이 작업은 내부적으로 JNI(Java Native Interface) 호출해서 native I/O를 
+    수행하기 때문에 JNI 호출이라는 오버헤더가 추가된다.
+    그렇기 때문에 오히려 넌다이렉트 버퍼의 get() / put() 메소드 성능이 
+    더 좋게 나올수도 있다.
+    
+###### allocate() 메소드
+    JVM
