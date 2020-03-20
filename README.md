@@ -9720,3 +9720,340 @@ public class ChannelClientExample {
     </tr>
 </table>
 
+####  스레드 병렬 처리
+    TCP 블로킹 방식은 데이터 입출력이 완료되기 전까지
+    read() 와 write() 메소드가 블로킹된다.
+    그렇기 때문에 클라이언트 연결( 채널 ) 하나에 
+    작업 스레드 하나를 할당해서 병렬 처리해야 한다.
+    
+#### 블로킹과 인터럽트
+    IO의 Socket에서는 입출력 스트림의 read() 와 write() 
+    메소드로 인해 작업 스레드가 블로킹 되었을 때 다른 스레드가 
+    작업 스레드의 interrupt() 메소드를 호출해도 블로킹 상태가
+    풀리지 안흔다. 그래서 close() 메소드를 호출해서 
+    SocketException을 발생시켜야 한다.
+    그러나 NIO 의 SocketChannel 의 경우 read() 와 write() 
+    메소드로 인해 작업 스레드가 블로킹 되었을 때 다른 스레드가
+    작업 스레드의 interrupt() 메소드를 호출하면 ClosedByInterruptException
+    이 발생하고 SocketChannel 은 즉시 닫히면서 블로킹 상태가 풀린다.
+    물론 close() 메소드를 호출해서 SocketChannel을 닫을 수도 있는데, 이때에는
+    AsynchronousCloseException이 발생되면서 블로킹 상태가 풀린다.
+
+### 73. TCP 넌블로킹 채널
+    블로킹 (blocking) 방식은 클라이언트가 언제 연결 요청을 할지 모르기 때문에
+    accept() 메소드에서 블로킹 된다. 그리고 언제 데이터를 보낼지 모르므로 
+    read() 메소드는 항상 데이터를 받을 준비를 하기 위해 블로킹 된다.
+    그렇기 때문에 ServerSocketChannel 과 연결된 SocketChannel 당
+    하나의 스레드가 할당되어야 한다.
+    
+    넌블로킹 (non-blocking) 방식은 connect(), accept(), read(), write() 
+    메소드에 블로킹이 없다. 클라이언트의 연결 요청이 없으면 accept()는 즉시 null을 리턴하고
+    데이터를 보내지 않으면 read()는 즉시 0을 리턴하고 매개값으로 전달된 ByteBuffer에는
+    어떤 데이터도 저장되지 않는다. 
+    accept() 메소드가 블로킹 되지 않고 바로 리턴되기 때문에 클라이언트가 연결 요청을
+    보내기 전까지 while 블록 내의 코드가 쉴새 없이 실행된다.
+    
+    그래서 넌블로킹은 이벤트 리스너 역할을 하는 셀렉터 (Selector) 를 사용한다.
+    Selector 는 멀티 채널의 작업을 싱글 스레드에서 처리할 수 있도록 해주는 
+    멀티플렉서(multiplexor) 역할을 한다.
+    
+    1. 채널은 Selector 에 자신을 등록할 때 작업 유형을 키 ( SelectionKey ) 로 생성하고,
+       Selector 의 관심 키셋( interest-set ) 에 저장시킨다.
+    2. 클라이언트가 처리 요청을 하면
+    3. Selector 는 관심 키셋에 등록된 키 중에서 작업 처리 준비가 된 키를 
+       선택된 키셋 ( selected-set ) 에 별도로 저장한다.
+    4. 그리고 작업 스레드가 선택된 키셋에 있는 키를 하나씩 꺼내어 키와 연관된
+       채널 작업을 처리하게 된다.
+     
+    작업 스레드가 선택된 키셋에 있는 모든 키를 처리하게 되면 선택된 키셋은 비워지고,
+    Selector 는 다시 관심키셋에서 작업 처리 준비가 된 키들을 선택해서 선택된 키셋을 채운다.
+    
+#### 셀렉터 생성과 등록
+    Selector 는 정적 메소드인 open() 메소드를 호출하여 생성한다.
+    open() 메소드는 IOException 예외 처리가 필요하다.
+    
+    Selector 에 등록할 수 있는 채널은 SelectableChannel 의 하위 채널만 가능하다.
+    
+    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+    serverSocketChannel.configureBlocking(false);
+    
+    SocketChannel socketChannel = SocketChannel.open();
+    serverSocketChannel.configureBlocking(false);
+    
+    각 채널은 register() 메소드를 이용해서 Selector에 등록
+    첫번째 매개값은 Selector 두번째 매개값은 작업 유형( SelectionKey의 상수 )
+    SelectionKey selectionKey = serverSocketChannel.register(Selector sel, int ops);
+    SelectionKey selectionKey = socketChannel.register(Selector sel, int ops);
+    
+<table>
+    <tr>
+        <th>SelectionKey 의 상수</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>OP_ACCEPT</td>
+        <td>ServerSocketChannel 의 연결 수락 작업</td>
+    </tr>
+    <tr>
+        <td>OP_CONNECT</td>
+        <td>SocketChannel 의 서버 연결 작업</td>
+    </tr>
+    <tr>
+        <td>OP_READ</td>
+        <td>SocketChannel 의 데이터 읽기 작업</td>
+    </tr>
+    <tr>
+        <td>OP_WRITE</td>
+        <td>SocketChannel 의 데이터 쓰기 작업</td>
+    </tr>
+</table>
+    
+    SelectionKey selectionKey = serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+    SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
+    SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
+    SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_WRITE);
+    
+    주의할 점은 동일한 SocketChannel로 두가지 이상의 작업 유형을 등록할 수 없다.
+    작업 유형이 변경되면 이미 생성된 SelectionKey를 수정해야 한다.
+    
+    register() 가 리턴한 SelectionKey는 작업 유형 변경, 첨부 객체 저장, 채널 등록 취소 등을 할 때 사용된다.
+    채널이 Selector를 등록하면 채널의 keyFor() 메소드로 SelectionKey를 언제든지 얻을 수 있다.
+    
+#### 선택된 키셋
+    Selector 를 구동하려면 select() 메소드를 호출해야 한다.
+    select() 는 관심 키셋에 저장된 SelectionKey로부터 
+    작업 처리 준비가 되었다는 통보가 올 때까지 대기(블로킹) 한다.
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>select()</td>
+        <td>최소한 하나의 채널이 작업 처리 준비가 될 때까지 블로킹 된다.</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>select(long timeout)</td>
+        <td>select() 와 동일한데, 주어진 시간( 밀리세컨드 ) 동안만 블로킹 된다.</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>selectNow()</td>
+        <td>호출 즉시 리턴된다. 작업 처리 준비된 채널이 있으면<br>
+        채널 수를 리턴하고, 0을 리턴한다.</td>
+    </tr>
+</table>
+
+    select() 가 리턴하는 경우는 다음 세가지 이다.
+    1. 채널이 작업 처리 준비가 되었다는 통보를 할 때
+    2. Selector의 wakeup() 메소드를 호출 할 때
+    3. select()를 호출한 스레드가 인터럽트 될 때
+    
+    SocketChannel은 상황에 따라서 읽기 작업과 쓰기 작업을 
+    번갈아가며 작업 유형을 변경할 수 있다.
+    채널의 작업 유형이 변경되면 SelectionKey 작업 유형을 
+    interestOps() 메소드로 변경해야 작업 스레드가 올바르게 작업을 할수 있다.
+
+    SelectionKey의 작업 유형이 변경되면 Selector의 wakeup() 메소드를 호출해서
+    블로킹 되어있는 select()를 즉시 리턴하고, 변경된 작업 유형을 감지하도록 select()를
+    다시 실행해야 한다.
+    
+    selectionKey.interestOps(SElectionKey.OP_WRITE);
+    selector.wakeup();
+    
+    다음은 select() 메소드가 1 이상의 값을 리턴 할 경우, selectedKeys() 메소드로
+    작업 처리 준비된 SelectionKey 들을 Set 컬렉션으로 얻는다.
+    
+    int keyCount = selector.select();
+    if(keyCount > 1){
+        Set<SelectionKey> selectedKeys = selector.selectedKeys();
+    }
+    
+#### 채널 작업 처리
+    SelectionKey가 어떤 작업 유형인지 알아내는 방법은
+    SelectionKey의 어떤 메소드가 true를 리턴하는지 조사하면 된다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isAcceptable()</td>
+        <td>작업 유형이 OP_ACCEPT 인 경우</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isConnectable()</td>
+        <td>작업 유형이 OP_CONNECT 인 경우</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isReadable()</td>
+        <td>작업 유형이 OP_READ 인 경우</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isWritable()</td>
+        <td>작업 유형이 OP_WRITE 인 경우</td>
+    </tr>
+</table>
+    
+    작업 스레드가 채널 작업을 처리하려면 채널 객체가 필요한데,
+    SelectionKey의 channel() 메소드를 호출하면 얻을 수 있다.
+    
+    ServerSocketChannel serverSocketChannel = (ServerSocketChannel) selectionKey.channel();
+    
+    작업 스레드가 채널 객체 이외에 다른 객체가 필요할 경우 
+    SelectionKey의 attach() 메소드를 사용하여 첨부
+    attachment() 메소드를 사용하여 객체를 얻어낼 수 있다.
+
+### 74. TCP 비동기 채널
+    NIO는 TCP 블로킹, 넌블로킹 채널 이외에 TCP 비동기 채널로,
+    AsynchronousServerSocketChannel 과 AsynchronousSocketChannel 를 제공
+    ServerSocketChannel과 SocketChannel에 대응하는 클래스
+    
+#### 비동기 채널의 특징
+    연결 요청 connect(), 연결 수락 accept(), 읽기 read(), 쓰기 write() 를 호출하면 즉시 리턴
+    이것은 넌블러킹 방식과 동일하다.
+    차이점은 이 메소드들을 호출하면 스레드풀에게 작업 처리 요청하고 이 메소드들은 즉시 리턴
+    작업 성공 후 처리해야 할 메소드가 있다면 콜백 메소드에서 작성 completed()
+    
+#### 비동기 채널 그룹
+    AsynchronousChannelGroup 은 같은 스레드풀을 공유하는 비동기 채널들의 묶음
+    AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(
+        Runtime.getRuntime().availableProcessors(),
+        Executors.defaultThreadFactory()
+    );
+    
+#### 비동기 서버소켓 채널
+    open() 메소드를 통해 얻을 수 있다.
+    AsynchronousServerSocketChannel asynchronousServerSocketChannel = 
+        AsynchronousServerSocketChannel.open();
+    
+    AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(
+        Runtime.getRuntime().availableProcessors(),
+        Executors.defaultThreadFactory()
+    );
+    AsynchronousServerSocketChannel asynchronousServerSocketChannel = 
+            AsynchronousServerSocketChannel.open(channelGroup);
+    asynchronousSeverSocketChannel.bind(new InetSocketAddress(5001));
+    
+    accept(A attachment, CompletionHandler<AsynchronousSocketChannel, A> handler);
+    첫번째 매개값은 콜백 메소드의 매개값으로 제공할 첨부 객체,
+    두번째 매개값은 콜백 메소드를 가지고 있는 구현 객체
+    
+#### 비동기 소켓 채널
+    open() 메소드를 통해 얻을 수 있다.
+    AsynchronousSocketChannel asynchronousSocketChannel = 
+            AsynchronousSocketChannel.open();
+
+    AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(
+            Runtime.getRuntime().availableProcessors(),
+            Executors.defaultThreadFactory()
+        );
+    AsynchronousSocketChannel asynchronousSocketChannel = 
+            AsynchronousSocketChannel.open(channelGroup);
+    
+    connect(SocketAddress remote, A attachment, CompletionHandler<Void, A> handler);
+    첫번째 매개값은 서버 IP와 연결 포트 정보를 가진 InetSocketAddress 객체
+    두번째 매개값은 콜백 메소드의 매개값으로 제공할 첨부 객체
+    세번째 매개값은 CompletionHandler 구현 객체
+    
+#### 비동기 소켓 채널 데이터 통신
+    read(ByteBuffer dst, A attachment, CompletionHandler<Integer, A> handler);
+    write(ByteBuffer dst, A attachment, CompletionHandler<Integer, A> handler);
+    첫번째 매개값은 읽고 쓰기 위한 ByteBuffer 객체
+    두번째 매개값은 콜백 메소드의 매개값으로 제공할 첨부 객체
+    세번째 매개값은 CompletionHandler<Integer, A> 구현 객체
+        Integer는 읽고 쓴 바이트 수, A는 첨부 객체 타입
+        
+### 75. UDP 채널
+    NIO에서 UDP 채널은 DatagramChannel이다.
+
+#### 발신자 만들기
+    open() 메소드를 호출
+    ProtocolFamily 인터페이스 타입의 매개값을 가지는데,
+    IPv4 와 IPv6를 구분한다.
+    DatagramChannel datagramChannel = DatagramChannel.open(StandardProtocolFamily.INET);
+    
+    send()메소드를 통하여 데이터를 보낸다
+    int byteCount = datagramChannel.send(byteBuffer, new InetSocketAddress("localhost" 5001));
+    
+```java
+public class NIOUdpSendExample {
+    public static void main(String[] args) throws Exception {
+        DatagramChannel datagramChannel =
+                DatagramChannel.open(StandardProtocolFamily.INET);
+        System.out.println("[ 발신 시작 ]");
+
+        for (int i = 1; i < 3; i++) {
+            String data = "메시지" + i;
+            Charset charset = Charset.forName("UTF-8");
+            ByteBuffer byteBuffer = charset.encode(data);
+
+            int byteCount = datagramChannel.send(
+                    byteBuffer,
+                    new InetSocketAddress("localhost", 5001)
+            );
+            System.out.println("[ 보낸 바이트 수 ] " + byteCount + " bytes");
+        }
+        System.out.println("[ 발신 종료 ]");
+        datagramChannel.close();
+    }
+}
+```
+
+#### 수신자 만들기
+    DatagramChannel의 bind() 메소드를 호출해서 포트와 바인딩
+    receive() 메소드로 데이터를 받음
+    receive() 의 리턴 타입은 원격 클라이언트의 IP와 포트 정보를 가지고 있는
+    SocketAddress 이다.
+    
+    SocketAddress socketAddress = datagramChannel.receive(ByteBuffer dst);
+    
+    데이터를 받기 전까지 receive() 메소드는 블로킹 되고, 데이터를 받으면 리턴
+    수신자는 항상 데이터를 받을 준비를 해야 하므로 작업 스레들ㄹ 생성해서
+    receive() 메소드를 반복적으로 호출
+    작업스레드를 종료 시키는 방법은 
+    interrupt() 호출 하여 ClosedByInterruptException 예외 발생
+    close() 호출하여  AsynchronousCloseException 예외 발생
+    
+```java
+public class NIOUdpReceiveExample {
+    public static void main(String[] args) throws Exception {
+        DatagramChannel datagramChannel =
+                DatagramChannel.open(StandardProtocolFamily.INET);
+        datagramChannel.bind(new InetSocketAddress(5001));
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                System.out.println("[ 수신 시작 ]");
+                try {
+                    while (true) {
+                        ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+                        SocketAddress socketAddress = datagramChannel.receive(byteBuffer);
+                        byteBuffer.flip();
+
+                        Charset charset = Charset.forName("UTF-8");
+                        String data = charset.decode(byteBuffer).toString();
+                        System.out.println("[ 받은 내용 : " + socketAddress.toString() + " ] " + data);
+                    }
+                } catch (Exception e) {
+                    System.out.println("[ 수신 종료 ]");
+                }
+            }
+        };
+        thread.start();
+
+        Thread.sleep(10000);
+        datagramChannel.close();
+    }
+}
+```
