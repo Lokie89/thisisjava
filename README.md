@@ -8570,4 +8570,1153 @@ public class PerformanceExample {
     더 좋게 나올수도 있다.
     
 ###### allocate() 메소드
-    JVM
+    JVM 힙 메모리에 넌다이렉트 버퍼를 생성
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>ByteBuffer</td>
+        <td>ByteBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 byte 값을 저장</td>
+    </tr>
+    <tr>
+        <td>CharBuffer</td>
+        <td>CharBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 char 값을 저장</td>
+    </tr>
+    <tr>
+        <td>DoubleBuffer</td>
+        <td>DoubleBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 double 값을 저장</td>
+    </tr>
+    <tr>
+        <td>FloatBuffer</td>
+        <td>FloatBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 float 값을 저장</td>
+    </tr>
+    <tr>
+        <td>IntBuffer</td>
+        <td>IntBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 int 값을 저장</td>
+    </tr>
+    <tr>
+        <td>LongBuffer</td>
+        <td>LongBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 long 값을 저장</td>
+    </tr>
+    <tr>
+        <td>ShortBuffer</td>
+        <td>ShortBuffer.allocate(int capacity)</td>
+        <td>capacity 개 만큼의 short 값을 저장</td>
+    </tr>            
+</table>
+
+###### wrap() 메소드
+    이미 생성되어 있는 자바 배열을 래핑해서 Buffer 객체를 생성한다.
+    자바 배열은 JVM 힙 메모리에 생성되므로 wrap()은 넌다이렉트 버퍼를 생성한다.
+    
+    byte[] byteArray = new byte[100];
+    ByteBuffer bytebuffer = ByteBuffer.wrap(byteArray);
+    
+    byte[] byteArray = new byte[100];
+    ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray, 0, 50);
+    
+###### allocateDirect() 메소드
+    JVM 힙 메모리 바깥쪽, 즉 운영체제가 관리하는 메모리에 다이렉트 버퍼를 생성한다.
+    이 메소드는 각 타입별 Buffer 클래스에는 없고, ByteBuffer 에서만 제공된다.
+    그래서 asCharBuffer(), asShortBuffer(), asIntBuffer(), asLongBuffer(),
+    asFloatBuffer(), asDoublebuffer() 메소드를 이용해서 해당 타입별 Buffer를 얻으면 된다.
+
+```java
+public class DirectBufferCapacityExample {
+    public static void main(String[] args) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(100);
+        System.out.println("저장용량: " + byteBuffer.capacity() + " 바이트");
+
+        CharBuffer charBuffer = ByteBuffer.allocateDirect(100).asCharBuffer();
+        System.out.println("저장용량: " + charBuffer.capacity() + " 문자");
+
+        IntBuffer intBuffer = ByteBuffer.allocateDirect(100).asIntBuffer();
+        System.out.println("저장용량: " + intBuffer.capacity() + " 정수");
+    }
+}
+```
+
+###### byte 해석 순서
+    데이터를 처리할 때 바이트 처리 순서는 운영체제마다 차이가 있다.
+    앞쪽 바이트부터 먼저 처리하는 것을 Big endian 이라고 하고,
+    뒤쪽 바이트부터 먼저 처리하는 것을 Little endian 이라고 한다.
+    
+    JRE가 설치된 어떤 환경이든 JVM은 무조건 Big endian으로 동작하도록 되어 있다.
+
+```java
+public class ComputerByteOrderExample {
+    public static void main(String[] args) {
+        System.out.println("운영 체제 종류: " + System.getProperty("os.name"));
+        System.out.println("네이티브의 바이트 해석 순서: " + ByteOrder.nativeOrder());
+    }
+}
+```
+    운영체제와 JVM의 바이트 해석 순서가 다를 경우에는 
+    JVM이 운영체제와 데이터를 교환할 때 자동적으로 처리해주기 때문에 문제는 없다.
+    하지만 다이렉트 버퍼일 경우 운영체제의 native I/O를 사용하므로
+    운영체제의 기본 해석 순서로 JVM의 해석 순서를 맞추는 것이 성능에 도움이 된다.
+    
+    ByteBuffer byteBuffer = ByteBuffer.allocateDirect(100).order(ByteOrder.nativeOrder());
+    
+#### Buffer 의 위치 속성
+
+<table>
+    <tr>
+        <th>속성</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>position</td>
+        <td>현재 읽거나 쓰는 위치값이다. 인덱스 값이기 때문에 0부터 시작하며, limit 보다 큰 값을 가질 수 없다.<br>
+        만약 position 과 limit 의 값이 같아진다면 더 이상 데이터를 쓰거나 읽을 수 없다는 뜻이 된다.</td>
+    </tr>
+    <tr>
+        <td>limit</td>
+        <td>버퍼에서 읽거나 쓸수 있는 위치의 한계를 나타낸다. 이 값은 capacity 보다 작거나 같은 값을 가진다.<br>
+        최초에 버퍼를 만들었을 때는 capacity 와 같은 값을 가진다.</td>
+    </tr>
+    <tr>
+        <td>capacity</td>
+        <td>버퍼의 최대 데이터 개수( 메모리 크기 )를 나타낸다. 인덱스 값이 아니라 수량임을 주의하자.</td>
+    </tr>
+    <tr>
+        <td>mark</td>
+        <td>reset() 메소드를 실행했을 때에 돌아오는 위치를 지정하는 인덱스로서 mark() 메소드로 지정할 수 있다.<br>
+        주의할 점은 반드시 position 이하의 값으로 지정해주어야 한다. position 이나 limit 의 값이<br>
+        mark 값보다 작은 경우, mark 는 자동 제거된다. mark 가 없는 상태에서 reset() 메소드를 호출하면<br>
+        InvalidMarkException 이 발생한다.</td>
+    </tr>
+</table>
+
+    0 <= mark => position <= limit <= capacity
+
+#### Buffer 메소드
+
+###### 각 타입별 공통 메소드
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Object</td>
+        <td>array()</td>
+        <td>버퍼가 래핑(wrap) 한 배열을 리턴</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>arrayOffset()</td>
+        <td>버퍼의 첫 번째 요소가 있는 내부 배열의 인덱스를 리턴</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>capacity()</td>
+        <td>버퍼의 전체 크기를 리턴</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>clear()</td>
+        <td>버퍼의 위치 속성을 초기화( position=0, limit=capacity )</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>flip()</td>
+        <td>limit 을 position 으로, position 을 0 인덱스로 이동</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>hasArray()</td>
+        <td>버퍼가 래핑(wrap)한 배열을 가지고 있는지 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>hasRemaining()</td>
+        <td>position 과 limit 사이에 요소가 있는지 여부( position&lt;limit )</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isDirect()</td>
+        <td>운영체제의 버퍼를 사용하지는 여부</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>isReadOnly()</td>
+        <td>버퍼가 읽기 전용인지 여부</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>limit()</td>
+        <td>limit 위치를 리턴</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>limit(int newLimit)</td>
+        <td>newLimit 으로 limit 위치를 변경</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>mark()</td>
+        <td>현재 위치를 mark 로 표시</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>position()</td>
+        <td>position 위치를 리턴</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>position(int newPosition)</td>
+        <td>newPosition 으로 position 위치를 변경</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>remaining()</td>
+        <td>position 과 limit 사이의 요소의 개수</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>reset()</td>
+        <td>position 을 mark 위치로 이동</td>
+    </tr>
+    <tr>
+        <td>Buffer</td>
+        <td>rewind()</td>
+        <td>position 을 0 인덱스로 이동</td>
+    </tr>
+</table>
+    
+###### 데이터를 읽고 저장하는 메소드
+    버퍼에 데이터를 저장하는 메소드는 put(), 데이터를 읽는 메소드는 get() 이다.
+    이 메소드들은 Buffer 추상 클래스에는 없고, 각 타입별 하위 Buffer 클래스가 가지고 있다.
+    
+    get(), put() 메소드는 상대적과 절대적으로 구분된다.
+    버퍼 내의 현재 위치 속성인 position 에서 데이터를 읽고 저장할 경우에는 상대적
+    position 과 상관없이 주어진 인덱스에서 데이터를 읽고 저장할 경우에는 절대적이다.
+    
+    상대적 get() 과 put() 을 호출하면 position 의 값은 증가하지만
+    절대적 get() 과 put() 을 호출하면 position 의 값은 증가하지 않는다.
+    만약 position 값이 limit 값까지 증가했을때 
+    상대적 get() 을 사용하면 BufferUnderflowException
+    상대적 put() 을 사용하면 BufferOverflowException 예외 발생
+    
+<table>
+    <tr>
+        <th colspan="2">구분</th>
+        <th>ByteBuffer</th>
+        <th>CharBuffer</th>
+    </tr>
+    <tr>
+        <td rowspan="2">get()</td>
+        <td>상대적()</td>
+        <td>get()<br>
+        get(byte[] dst)<br>
+        get(byte[] dst, int offset, int length)<br>
+        getChar()<br>
+        getDouble()<br>
+        getFloat()<br>
+        getInt()<br>
+        getLong()<br>
+        getShort()</td>
+        <td>get()<br>
+        get(char[] dst)<br>
+        get(char[] dst, int offset, int length)</td>
+    </tr>
+    <tr>
+        <td>절대적</td>
+        <td>get(int index)<br>
+        getChar(int index)<br>
+        getDouble(int index)<br>
+        getFloat(int index)<br>
+        getInt(int index)<br>
+        getLong(int index)<br>
+        getShort(int indxt)</td>
+        <td>get(int index)</td>
+    </tr>
+    <tr>
+        <td rowspan="2">put()</td>
+        <td>상대적</td>
+        <td>put(byte b)<br>
+        put(byte[] src)<br>
+        put(byte[] src, int offset, int length)<br>
+        put(ByteBuffer src)<br>
+        putChar(char value)<br>
+        putDouble(double value)<br>
+        putFloat(float value)<br>
+        putInt(int value)<br>
+        putLong(long value)<br>
+        putShort(short value)</td>
+        <td>put(char c)<br>
+        put(char[] src)<br>
+        put(char[] src, int offset, int length)<br>
+        put(CharBuffer src)<br>
+        put(String src)<br>
+        put(String src, int start, int end)</td>
+    </tr>
+    <tr>
+        <td>절대적</td>
+        <td>put(int index, byte b)<br>
+        putChar(int index, char value)<br>
+        putDouble(int index, char value)<br>
+        putFloat(int index, float value)<br>
+        putInt(int index, int value)<br>
+        putLong(int index, long value)<br>
+        putShort(int index, short value)</td>
+        <td>put(int index, char c)</td>
+    </tr>
+</table>
+
+###### 버퍼 예외의 종류
+    
+<table>
+    <tr>
+        <th>예외</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>BufferOverflowException</td>
+        <td>position 이 limit 에 도달했을 때 put() 을 호출하면 발생</td>
+    </tr>
+    <tr>
+        <td>BufferUnderflowException</td>
+        <td>position 이 limit 에 도달했을 때 get() 을 호출하면 발생</td>
+    </tr>
+    <tr>
+        <td>InvalidMarkException</td>
+        <td>mark 가 없는 상태에서 reset() 메소드를 호출하면 발생</td>
+    </tr>
+    <tr>
+        <td>ReadOnlyBufferException</td>
+        <td>읽기 전용 버퍼에서 put() 또는 compact() 메소드를 호출하면 발생</td>
+    </tr>
+</table>
+
+```java
+public class BufferExample {
+    public static void main(String[] args) {
+        System.out.println("[ 7바이트 크기로 버퍼 생성 ]");
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(7);
+        printState(byteBuffer);
+
+        // 상대적 저장
+        byteBuffer.put((byte) 10);
+        byteBuffer.put((byte) 11);
+        System.out.println("[ 2바이트 저장 후 ]");
+        printState(byteBuffer);
+
+        // 상대적 저장
+        byteBuffer.put((byte) 12);
+        byteBuffer.put((byte) 13);
+        byteBuffer.put((byte) 14);
+        System.out.println("[ 3바이트 저장 후 ]");
+        printState(byteBuffer);
+
+        byteBuffer.flip(); // 데이터를 읽기 위해 위치 속성값 변경
+        System.out.println("[ flip() 실행 후 ]");
+        printState(byteBuffer);
+
+        // 상대적 읽기
+        byteBuffer.get(new byte[3]);
+        System.out.println("[ 3바이트 읽은 후 ]");
+        printState(byteBuffer);
+
+        byteBuffer.mark(); // 마킹
+        System.out.println("------[ 현재 위치를 마크 해놓음 ]");
+
+        // 상대적 읽기
+        byteBuffer.get(new byte[2]);
+        System.out.println("[ 2바이트 읽은 후 ]");
+        printState(byteBuffer);
+
+        byteBuffer.reset();
+        System.out.println("------[ position 을 마크 위치로 옮김 ]");
+        printState(byteBuffer);
+
+        byteBuffer.rewind(); // position 을 0 으로 이동
+        System.out.println("[ rewind() 실행 후 ]");
+        printState(byteBuffer);
+
+        byteBuffer.clear(); // 모든 위치 속성값을 초기화
+        System.out.println("[ clear() 실행 후 ]");
+        printState(byteBuffer);
+
+    }
+
+    public static void printState(Buffer buffer) {
+        System.out.print("\tposition: " + buffer.position() + ", ");
+        System.out.print("\tlimit: " + buffer.limit() + ", ");
+        System.out.println("\tcapacity: " + buffer.capacity());
+    }
+}
+```
+    실행 결과
+    
+    [ 7바이트 크기로 버퍼 생성 ]
+    	position: 0, 	limit: 7, 	capacity: 7
+    [ 2바이트 저장 후 ]
+    	position: 2, 	limit: 7, 	capacity: 7
+    [ 3바이트 저장 후 ]
+    	position: 5, 	limit: 7, 	capacity: 7
+    [ flip() 실행 후 ]
+    	position: 0, 	limit: 5, 	capacity: 7
+    [ 3바이트 읽은 후 ]
+    	position: 3, 	limit: 5, 	capacity: 7
+    ------[ 현재 위치를 마크 해놓음 ]
+    [ 2바이트 읽은 후 ]
+    	position: 5, 	limit: 5, 	capacity: 7
+    ------[ position 을 마크 위치로 옮김 ]
+    	position: 3, 	limit: 5, 	capacity: 7
+    [ rewind() 실행 후 ]
+    	position: 0, 	limit: 5, 	capacity: 7
+    [ clear() 실행 후 ]
+    	position: 0, 	limit: 7, 	capacity: 7
+    	
+######
+    compact() 메소드
+    
+```java
+public class CompactExample {
+    public static void main(String[] args) {
+        System.out.println("[ 7바이트 크기로 버퍼 생성 ]");
+        ByteBuffer buffer = ByteBuffer.allocateDirect(7);
+        buffer.put((byte) 10);
+        buffer.put((byte) 11);
+        buffer.put((byte) 12);
+        buffer.put((byte) 13);
+        buffer.put((byte) 14);
+        buffer.flip();
+        printState(buffer);
+
+        buffer.get(new byte[3]);
+        System.out.println("[ 3바이트 읽음 ]");
+
+        buffer.compact();
+        System.out.println("[ compact() 실행 후 ]");
+        printState(buffer);
+    }
+
+    public static void printState(ByteBuffer buffer) {
+        System.out.print(buffer.get(0)+", ");
+        System.out.print(buffer.get(1)+", ");
+        System.out.print(buffer.get(2)+", ");
+        System.out.print(buffer.get(3)+", ");
+        System.out.println(buffer.get(4));
+
+        System.out.print("position: " + buffer.position() + ", ");
+        System.out.print("limit: " + buffer.limit() + ", ");
+        System.out.println("capacity: " + buffer.capacity());
+    }
+}
+```
+    실행결과
+    
+    [ 7바이트 크기로 버퍼 생성 ]
+    10, 11, 12, 13, 14
+    position: 0, limit: 5, capacity: 7
+    [ 3바이트 읽음 ]
+    [ compact() 실행 후 ]
+    13, 14, 12, 13, 14
+    position: 2, limit: 7, capacity: 7
+    
+#### Buffer 변환
+
+###### ByteBuffer <-> String
+    채널을 통해 문자열을 파일이나 네트워크로 전송하려면 특정 문자셋(UTF-8, EUC-KR) 으로
+    인코딩해서 ByteBuffer로 변환해야 한다. 
+    문자셋을 표현하는 java.nio.charset.Charset 객체가 필요하다
+    
+    Charset charset = Charset.forName("UTF-8");
+    Charset charset = Charset.defaultCharset(); // 운영체제가 사용하는 디폴트 문자셋
+
+    // 전송 전 encoding    
+    String data = ...;
+    ByteBuffer byteBuffer = charset.encode(data);
+    
+    // 읽을 때 decoding
+    ByteBuffer byteBuffer = ...;
+    Stirng data = charset.decode(byteBuffer).toString();
+    
+```java
+public class ByteBufferToStringExample {
+    public static void main(String[] args) {
+        Charset charset = Charset.forName("UTF-8");
+
+        // 문자열 -> 인코딩 -> ByteBuffer
+        String data = "하이!";
+        ByteBuffer byteBuffer = charset.encode(data);
+
+        // ByteBuffer -> 디코딩 -> 문자열
+        data = charset.decode(byteBuffer).toString();
+        System.out.println("문자열 복원 "+data);
+    }
+}
+```
+
+###### ByteBuffer <-> IntBuffer
+    int[] 을 생성하고 이것을 파일이나 네트워크로 출력하려면 int[] 또는 IntBuffer 로부터
+    ByteBuffer 를 생성해야함. int 타입은 4Byte 크기를 가지므로 int[] 크기 또는 
+    IntBuffer 의 capacity 보다 4배 큰 ByteBuffer를 생성해야 함.
+
+    int[] data = new int[] {10, 20};
+    IntBuffer intBuffer = IntBuffer.wrap(data);
+    ByteBuffer byteBuffer = ByteBuffer.allocate(intBuffer.capacity()*4);
+    for(int i=0; i<intBuffer.capacity(); i++){
+        byteBuffer.putInt(intBuffer.get(i));
+    }
+    byteBuffer.flip();
+    
+    주의, putInt() 메소드는 position 을 이동 시키기 때문에 모두 저장한 후에는
+    position 을 0으로 되돌려 놓는 flip() 메소드를 호출해야 함
+    
+    반대로 ByteBuffer에 4바이트씩 연속된 int 데이터가 저장되어 있을 경우,
+    ByteBuffer 의 asIntBuffer() 메소드를 통해 IntBuffer 를 얻고
+    get() 메소드를 통해 int 값들을 얻을 수 있다.
+    
+    ByteBuffer byteBuffer = ...;
+    IntBuffer intBuffer = byteBuffer.asIntBuffer();
+    int[] data = new int[intBuffer.capacity()];
+    intBuffer.get(data);
+    
+```java
+public class ByteBufferToIntBuffer {
+    public static void main(String[] args) throws Exception {
+        
+        // int[] -> IntBuffer -> ByteBuffer
+        int[] writeData = {10, 20};
+        IntBuffer writeIntBuffer = IntBuffer.wrap(writeData);
+        ByteBuffer writeByteBuffer = ByteBuffer.allocate(writeIntBuffer.capacity() * 4);
+        for (int i = 0; i < writeIntBuffer.capacity(); i++) {
+            writeByteBuffer.putInt(writeIntBuffer.get(i));
+        }
+        writeByteBuffer.flip();
+
+        // ByteBuffer -> IntBuffer -> int[]
+        ByteBuffer readByteBuffer = writeByteBuffer;
+        IntBuffer readIntBuffer = readByteBuffer.asIntBuffer();
+        int[] readData = new int[readIntBuffer.capacity()];
+        readIntBuffer.get(readData);
+        System.out.println("배열 복원 " + Arrays.toString(readData));
+    }
+}
+```
+
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>변환 메소드</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>ShortBuffer</td>
+        <td>asShortBuffer()</td>
+        <td>2바이트씩 연속된 short 데이터를 가진 ByteBuffer일 경우</td>
+    </tr>
+    <tr>
+        <td>IntBuffer</td>
+        <td>asIntBuffer()</td>
+        <td>4바이트씩 연속된 int 데이터를 가진 ByteBuffer일 경우</td>
+    </tr>
+    <tr>
+        <td>LongBuffer</td>
+        <td>asLongBuffer()</td>
+        <td>8바이트씩 연속된 long 데이터를 가진 ByteBuffer일 경우</td>
+    </tr>
+    <tr>
+        <td>FloatBuffer</td>
+        <td>asFloatBuffer()</td>
+        <td>4바이트씩 연속된 float 데이터를 가진 ByteBuffer일 경우</td>
+    </tr>
+    <tr>
+        <td>DoubleBuffer</td>
+        <td>asDoubleBuffer()</td>
+        <td>8바이트씩 연속된 double 데이터를 가진 ByteBuffer일 경우</td>
+    </tr>
+</table>
+
+### 70. 파일 채널
+
+    java.nio.channels.FileChannel 을 이용하면 파일 읽기와 쓰기를 할 수 있음.
+    동기화 처리가 되어 있기 때문에 멀티 스레드 환경에서도 안전하다
+    
+#### FileChannel 생성과 닫기
+    FileChannel fileChannel = FileChannel.open(Path path, OpenOption... options);
+    
+    FileChannel fileChannel = FileChannel.open(
+        Paths.get("C:/Temp/file.txt"),
+        StandardOpenOption.CREATE_NEW,
+        StandardOpenOption.WRITE
+    )
+###### StandardOpenOption
+<table>
+    <tr>
+        <th>열거 상수</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>READ</td>
+        <td>읽기용으로 파일을 연다.</td>
+    </tr>
+    <tr>
+        <td>WRITE</td>
+        <td>쓰기용으로 파일을 연다.</td>
+    </tr>
+    <tr>
+        <td>CREATE</td>
+        <td>파일이 없다면 새 파일을 생성한다.</td>
+    </tr>
+    <tr>
+        <td>CREATE_NEW</td>
+        <td>새 파일을 만든다. 이미 파일이 있으면 예외와 함께 실패한다.</td>
+    </tr>
+    <tr>
+        <td>APPEND</td>
+        <td>파일 끝에 데이터를 추가한다( WRITE 나 CREATE 와 함께 사용됨 )</td>
+    </tr>
+    <tr>
+        <td>DELETE_ON_CLOSE</td>
+        <td>채널를 닫을 때 파일을 삭제한다( 임시 파일을 삭제할 때 사용 )</td>
+    </tr>
+    <tr>
+        <td>TRUNCATE_EXISTING</td>
+        <td>파일을 0바이트로 잘라낸다( WRITE 옵션과 함께 사용됨 )</td>
+    </tr>
+</table>
+
+#### 파일 쓰기와 읽기
+
+###### 파일 쓰기
+    파일에 바이트를 쓰려면 FileChannel 의 write() 메소드를 호출 하면 됨
+    파일에 쓰여지는 바이트는 매개값으로 주어지는 ByteBuffer 의 
+    position 부터 limit 까지이다.
+    
+    int bytesCount = fileChannel.write(ByteBuffer src);
+    
+```java
+public class FileChannelWriteExample {
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("C:/Temp/file.txt");
+        Files.createDirectories(path.getParent());
+        FileChannel fileChannel = FileChannel.open(
+                path, StandardOpenOption.CREATE, StandardOpenOption.WRITE
+        );
+        String data = "안녕하세요";
+        Charset charset = Charset.defaultCharset();
+        ByteBuffer byteBuffer = charset.encode(data);
+
+        int byteCount = fileChannel.write(byteBuffer);
+        System.out.println("file.txt : " + byteCount + " bytes written");
+
+        fileChannel.close();
+
+    }
+}
+```
+
+###### 파일 읽기
+    파일로부터 바이트를 읽으려면 FileChannel 의 read() 메소드를 호출 하면 됨
+    파일로부터 읽혀지는 바이트는 매개값으로 주어지는 ByteBuffer 에
+    읽혀지는 ByteBuffer의 position 부터 저장된다.
+    
+    int bytesCount = fileChannel.read(ByteBuffer dst);
+    
+```java
+public class FileChannelReadExample {
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("C:/Temp/file.txt");
+        FileChannel fileChannel = FileChannel.open(
+                path, StandardOpenOption.READ
+        );
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+        Charset charset = Charset.defaultCharset();
+        String data = "";
+        int byteCount;
+
+        while (true) {
+            byteCount = fileChannel.read(byteBuffer);
+            if (byteCount == -1) {
+                break;
+            }
+            byteBuffer.flip();
+            data += charset.decode(byteBuffer).toString();
+            byteBuffer.clear();
+        }
+        fileChannel.close();
+        System.out.println(data);
+    }
+}
+```
+
+###### 파일 복사
+    하나의 ByteBuffer 를 사이에 두고, 파일 읽기용 FileChannel 과
+    파일 쓰기용 FileChannel 이 읽기와 쓰기를 교대로 번갈아 수행하도록 하면 됨
+
+```java
+public class FileCopyExample {
+    public static void main(String[] args) throws IOException {
+        Path from = Paths.get("src/examples/goodPo.jpg");
+        Path to = Paths.get("src/examples/goodPo2.jpg");
+
+        FileChannel fileChannel_from = FileChannel.open(
+                from, StandardOpenOption.READ
+        );
+
+        FileChannel fileChannel_to = FileChannel.open(
+                to, StandardOpenOption.CREATE, StandardOpenOption.WRITE
+        );
+
+        ByteBuffer buffer = ByteBuffer.allocateDirect(100);
+        int byteCount;
+
+        while (true) {
+            buffer.clear();
+            byteCount = fileChannel_from.read(buffer);
+            if (byteCount == -1) {
+                break;
+            }
+            buffer.flip();
+            fileChannel_to.write(buffer);
+        }
+        fileChannel_from.close();
+        fileChannel_to.close();
+        System.out.println("파일 복사 성공");
+    }
+}
+```
+
+    단순히 파일을 복사할 목적이라면 NIO의 Files 클래스의 copy() 메소드를 사용하는 것이 더 편리
+    
+    Path targetPath = Files.copy(Path source, Path target, CopyOption... options);
+
+<table>
+    <tr>
+        <th>열거 상수</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>REPLACE_EXISTING</td>
+        <td>타겟 파일이 존재하면 대체한다.</td>
+    </tr>
+    <tr>
+        <td>COPY_ATTRIBUTES</td>
+        <td>파일의 속성까지도 복사한다.</td>
+    </tr>
+    <tr>
+        <td>NOFOLLOW_LINKS</td>
+        <td>링크 파일일 경우 링크 파일만 복사하고 링크된 파일은 복사하지 않는다.</td>
+    </tr>
+</table>
+
+```java
+public class FilesCopyMethodExample {
+    public static void main(String[] args) throws IOException {
+        Path from = Paths.get("src/examples/goodPo.jpg");
+        Path to = Paths.get("src/examples/goodPo3.jpg");
+        Files.copy(from,to, StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("파일 복사 성공");
+    }
+}
+```
+
+### 71. 파일 비동기 채널
+    FileChannel 의 read() 와 write() 메소드는 파일 입출력 작업 동안 블로킹된다.
+    따라서 별도의 작업 스레드를 생성해서 호출하기 때문에 스레드수가 증가한다.
+    자바 NIO는 불특정 다수의 파일 및 대용량 파일의 입출력 작업을 위해
+    비동기 파일 채널(AsynchronousFileChannel) 을 별도로 제공
+    
+    // 내부에서 생성되는 스레드풀 사용
+    AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(
+        Path path,
+        OpenOption... options
+    )
+    
+    // 개발자가 지정하는 스레드풀 사용
+    AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(
+        Path path,
+        Set<? extends OpenOption> options,
+        ExecutorSErvice executor,
+        FileAttribute<?>... attrs
+    )
+    
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+    
+    AsynchronousFileChannel fileChannel = Asynchronous FileChannel.open(
+        Paths.get("C:/Temp/file.txt"),
+        EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE),
+        executorService
+    );
+    
+#### 파일 읽기와 쓰기
+    read(ByteBuffer dst, long position, A attachment, CompletionHandler<Integer, A> handler);
+    write(ByteBuffer dst, long position, A attachment, CompletionHandler<Integer, A> handler);
+    
+    attachment 매개값은 콜백 메소드로 전달할 첨부 객체이다.
+    첨부 객체는 콜백 메소드에서 결과값 외에 추가적인 정보를 얻고자 할 때 사용하는 객체를 말함.
+    
+    handler 매개값은 CompletionHandler<Integer, A> 구현 객체를 지정
+    Integer 는 입출력 작업의 결과 타입으로 read() 와 write() 가 읽거나 쓴 바이트 수이다.
+    A는 첨부 객체 타입으로 CompletionHandler 구현 객체를 작성할 때
+    임의로 지정이 가능하다.
+    CompletionHandler 구현 객체는 비동기 작업이 정상적으로 완료된 경우와 예외 발생으로 실패된 경우
+    자동 콜백되는 다음 두가지 메소드를 가지고 있어야 한다.
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드명</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>completed(Integer result, A attachment)</td>
+        <td>작업이 정상적으로 완료된 경우 콜백</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>failed(Throwable exc, A attachment)</td>
+        <td>예외 때문에 작업이 실패된 경우 콜백</td>
+    </tr>
+</table>
+
+###### 비동기로 파일 쓰기
+
+```java
+public class AsynchronousFileChannelWriteExample {
+    public static void main(String[] args) throws Exception {
+        // 스레드풀 생성
+        ExecutorService executorService = Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors()
+        );
+
+        for (int i = 0; i < 10; i++) {
+            Path path = Paths.get("C:/Temp/file" + i + ".txt");
+            Files.createDirectories(path.getParent());
+
+            // 비동기 파일 채널 생성
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(
+                    path,
+                    EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE),
+                    executorService
+            );
+
+            // 파일에 저장할 데이터를 ByteBuffer 에 저장
+            Charset charset = Charset.defaultCharset();
+            ByteBuffer byteBuffer = charset.encode("하이!");
+
+            // 첨부 객체 생성
+            class Attachment {
+                Path path;
+                AsynchronousFileChannel fileChannel;
+
+                Attachment(Path path, AsynchronousFileChannel fileChannel) {
+                    this.path = path;
+                    this.fileChannel = fileChannel;
+                }
+            }
+            Attachment attachment = new Attachment(path, fileChannel);
+
+            // CompletionHandler 객체 생성
+            CompletionHandler<Integer, Attachment> completionHandler =
+                    new CompletionHandler<Integer, Attachment>() {
+                        @Override
+                        public void completed(Integer result, Attachment attachment) {
+                            System.out.println(attachment.path.getFileName() + " : " + result + " bytes written : " + Thread.currentThread().getName());
+                            try {
+                                attachment.fileChannel.close();
+                            } catch (IOException e) {
+                            }
+                        }
+
+                        @Override
+                        public void failed(Throwable exc, Attachment attachment) {
+                            exc.printStackTrace();
+                            try {
+                                attachment.fileChannel.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                    };
+            fileChannel.write(byteBuffer, 0, attachment, completionHandler);
+        }
+        Thread.sleep(1000);
+        executorService.shutdown();
+    }
+}
+```
+
+###### 비동기로 파일 읽기
+
+```java
+public class AsynchronousFileChannelReadExample {
+    public static void main(String[] args) throws Exception {
+        // 스레드풀 생성
+        ExecutorService executorService = Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors()
+        );
+
+        for (int i = 0; i < 10; i++) {
+            Path path = Paths.get("C:/Temp/file" + i + ".txt");
+            Files.createDirectories(path.getParent());
+
+            // 비동기 파일 채널 생성
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(
+                    path,
+                    EnumSet.of(StandardOpenOption.READ),
+                    executorService
+            );
+
+            // 파일의 크기와 동일한 capacity 를 갖는 버퍼 생성
+            ByteBuffer byteBuffer = ByteBuffer.allocate((int) fileChannel.size());
+
+            // 첨부 객체 생성
+            class Attachment {
+                Path path;
+                AsynchronousFileChannel fileChannel;
+                ByteBuffer byteBuffer;
+
+                Attachment(Path path, AsynchronousFileChannel fileChannel, ByteBuffer byteBuffer) {
+                    this.path = path;
+                    this.fileChannel = fileChannel;
+                    this.byteBuffer = byteBuffer;
+                }
+            }
+            Attachment attachment = new Attachment(path, fileChannel, byteBuffer);
+
+            // CompletionHandler 객체 생성
+            CompletionHandler<Integer, Attachment> completionHandler =
+                    new CompletionHandler<Integer, Attachment>() {
+                        @Override
+                        public void completed(Integer result, Attachment attachment) {
+                            attachment.byteBuffer.flip();
+                            // 버퍼에 저장된 데이터를 문자열로 복원
+                            Charset charset = Charset.defaultCharset();
+                            String data = charset.decode(attachment.byteBuffer).toString();
+                            System.out.println(attachment.path.getFileName() + " : " + data + " : " + Thread.currentThread().getName());
+                            try {
+                                fileChannel.close();
+                            } catch (IOException e) {
+                            }
+                        }
+
+                        @Override
+                        public void failed(Throwable exc, Attachment attachment) {
+                            exc.printStackTrace();
+                            try {
+                                attachment.fileChannel.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                    };
+            // 파일 읽기
+            fileChannel.read(byteBuffer, 0, attachment, completionHandler);
+        }
+        // 스레드풀 종료
+        executorService.shutdown();
+    }
+}
+```
+### 72. TCP 블로킹 채널
+    NIO 를 이용해서 TCP 서버 / 클라이언트 애플리케이션을 개발하려면
+    블로킹, 넌블로킹, 비동기 구현방식 중에서 하나를 결정해야 한다.
+    
+#### ServerSocketChannel, SocketChannel
+    ServerSocketChannel 은 IO의 ServerSocket, 
+    SocketChannel 은 IO의 Socket에 대응되는 클래스이다.
+    두 클래스 모두 버퍼를 이용하며 블로킹과 넌블로킹 방식을 지원한다.
+
+    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+    serverSocketChannel.configureBlocking(true);
+    serverSocketChannel.bind(new InetSocketAddress(5001));
+    
+    SocketChannel socketChannel = serverSocketChannel.accept();
+    
+    InetSocketAddress socketAddress = (InetSocketAddress) socketChannel.getRemoteAddress();
+    
+<table>
+    <tr>
+        <th>리턴 타입</th>
+        <th>메소드명</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>getHostName()</td>
+        <td>클라이언트 IP 리턴</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>getPort()</td>
+        <td>클라이언트 포트 번호 리턴</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>toString()</td>
+        <td>"IP:포트번호" 형태의 문자열 리턴</td>
+    </tr>
+</table>
+
+```java
+public class ChannelServerExample {
+    public static void main(String[] args) {
+        ServerSocketChannel serverSocketChannel = null;
+        try {
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(true);
+            serverSocketChannel.bind(new InetSocketAddress(5001));
+            while (true) {
+                System.out.println("[ 연결 기다림 ]");
+                SocketChannel socketChannel = serverSocketChannel.accept();
+                InetSocketAddress isa = (InetSocketAddress) socketChannel.getRemoteAddress();
+                System.out.println("[ 연결 수락함 ] " + isa.getHostName());
+            }
+        } catch (Exception e) {
+        }
+        if (serverSocketChannel.isOpen()) {
+            try {
+                serverSocketChannel.close();
+            } catch (IOException e) {
+            }
+
+        }
+    }
+}
+```
+
+    connect() 메소드는 서버와 연결이 될 때 까지 블로킹 된다.
+    
+```java
+public class ChannelClientExample {
+    public static void main(String[] args) {
+        SocketChannel socketChannel = null;
+        try {
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(true);
+            System.out.println("[ 연결 요청 ]");
+            socketChannel.connect(new InetSocketAddress("localhost", 5001));
+            System.out.println("[ 연결 성공 ]");
+
+            if (socketChannel.isOpen()) {
+                try {
+                    socketChannel.close();
+                } catch (IOException e) {
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+}
+```
+
+#### 소켓 채널 데이터 통신
+    서버와 클라이언트의 연결 후 SocketChannel 객체의 read(), write() 메소드를 호출하여
+    데이터 통신을 할 수 있다. 이 메소드들은 모두 버퍼를 이용한다. 
+    
+```java
+public class ChannelServerExample {
+    public static void main(String[] args) {
+        ServerSocketChannel serverSocketChannel = null;
+        try {
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(true);
+            serverSocketChannel.bind(new InetSocketAddress(5001));
+            while (true) {
+                System.out.println("[ 연결 기다림 ]");
+                SocketChannel socketChannel = serverSocketChannel.accept();
+                InetSocketAddress isa = (InetSocketAddress) socketChannel.getRemoteAddress();
+                System.out.println("[ 연결 수락함 ] " + isa.getHostName());
+
+                ByteBuffer byteBuffer = null;
+                Charset charset = Charset.forName("UTF-8");
+
+                byteBuffer = ByteBuffer.allocate(100);
+                int byteCount = socketChannel.read(byteBuffer);
+                byteBuffer.flip();
+                String message = charset.decode(byteBuffer).toString();
+                System.out.println("[ 데이터 받기 성공 ] "+message);
+
+                byteBuffer = charset.encode("안녕?");
+                socketChannel.write(byteBuffer);
+                System.out.println("[ 데이터 보내기 성공 ]");
+            }
+        } catch (Exception e) {
+        }
+        if (serverSocketChannel.isOpen()) {
+            try {
+                serverSocketChannel.close();
+            } catch (IOException e) {
+            }
+
+        }
+    }
+}
+```
+```java
+public class ChannelClientExample {
+    public static void main(String[] args) {
+        SocketChannel socketChannel = null;
+        try {
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(true);
+            System.out.println("[ 연결 요청 ]");
+            socketChannel.connect(new InetSocketAddress("localhost", 5001));
+            System.out.println("[ 연결 성공 ]");
+
+            ByteBuffer byteBuffer = null;
+            Charset charset = Charset.forName("UTF-8");
+
+            byteBuffer = charset.encode("하이! 서버!");
+            socketChannel.write(byteBuffer);
+            System.out.println("[ 데이터 보내기 성공 ]");
+
+            byteBuffer = ByteBuffer.allocate(100);
+            int byteCount = socketChannel.read(byteBuffer);
+            byteBuffer.flip();
+            String message = charset.decode(byteBuffer).toString();
+            System.out.println("[ 데이터 받기 성공 ] " + message);
+
+            if (socketChannel.isOpen()) {
+                try {
+                    socketChannel.close();
+                } catch (IOException e) {
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+}
+```
+    read() 메소드 호출 시 상대방이 데이터를 보내기 전까지 블로킹
+    블로킹이 해제 되는 경우
+
+<table>
+    <tr>
+        <th>블로킹이 해제되는 경우</th>
+        <th>리턴값</th>
+    </tr>
+    <tr>
+        <td>상대방이 데이터 보냄</td>
+        <td>읽은 바이트 수</td>
+    </tr>
+    <tr>
+        <td>상대방이 정상적으로 SocketChannel 의 close() 를 호출</td>
+        <td>-1</td>
+    </tr>
+    <tr>
+        <td>상대방이 비정상적으로 종료</td>
+        <td>IOException 발생</td>
+    </tr>
+</table>
+
